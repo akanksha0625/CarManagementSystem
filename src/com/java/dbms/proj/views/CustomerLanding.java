@@ -2,13 +2,13 @@ package com.java.dbms.proj.views;
 
 public class CustomerLanding {
 
-	public static void CustomerLanding() {
-		System.out.println("		Enter Your Choice :  ");
-		System.out.println("	1. Profile");
-		System.out.println("	2. Register Car");
-		System.out.println("	3. Services");
-		System.out.println("	4. Invoices");
-		System.out.println("	5. Logout");
+	public static void displayLandingPage() {
+		System.out.println("Please select from the following user options:");
+		System.out.println("\tEnter '1' to  Profile");
+		System.out.println("\tEnter '2' to  Register Car");
+		System.out.println("\tEnter '3' to  Services");
+		System.out.println("\tEnter '4' to	Invoices");
+		System.out.println("\tEnter '5' to  Logout");
 
 	}
 	
