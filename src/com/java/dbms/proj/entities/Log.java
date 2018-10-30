@@ -1,4 +1,4 @@
-package com.java.dbms.proj.main;
+package com.java.dbms.proj.entities;
 
 public class Log {
 	String LogID;

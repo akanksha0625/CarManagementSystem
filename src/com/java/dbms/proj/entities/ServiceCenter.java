@@ -1,4 +1,4 @@
-package com.java.dbms.proj.main;
+package com.java.dbms.proj.entities;
 
 public class ServiceCenter {
 	int SC_ID;
