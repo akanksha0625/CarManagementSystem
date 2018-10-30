@@ -6,6 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="E:/NCSU/DBMS/ProjectWorkspace/CarRepairApplication/CarManagement/lib/classes12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Carmella/Desktop/CSC_540_P1/CarManagementSystem/lib/classes12.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
