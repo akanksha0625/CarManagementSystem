@@ -1,4 +1,4 @@
-package com.java.dbms.proj.main;
+package com.java.dbms.proj.entities;
 import java.util.Date;
 
 public class Vehicle {
