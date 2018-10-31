@@ -5,7 +5,7 @@ public class ManagerOrdersView {
 	public static void displayOrdersMenu() {
 		System.out.println("*****************************************************************************************************************************");
 		System.out.println("|                                    .d88888b.              888                                                             |");
-		System.out.println("|                                   d88P" "Y88b             888                                                             |");
+		System.out.println("|                                   d88P\" \"Y88b             888                                                             |");
 		System.out.println("|                                   888     888             888                                                             |");
 		System.out.println("|                                   888     888 888d888 .d88888  .d88b.  888d888 .d8888b                                    |");
 		System.out.println("|                                   888     888 888P\"  d88\" 888 d8P  Y8b 888P\"   88K                                        |");
