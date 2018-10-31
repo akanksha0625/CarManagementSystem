@@ -1,6 +1,6 @@
 package com.java.dbms.proj.views;
 
-public class EmployeeViewProfile {
+public class EmployeeProfile {
 	public void displaypage() {
 		System.out.println("*************************************************************************************************************************************");
 		System.out.println("| 8888888888                        888                                          8888888b.                   .d888 d8b 888          |"); 
@@ -17,6 +17,8 @@ public class EmployeeViewProfile {
 		System.out.println("*************************************************************************************************************************************\n"); 
 		
 		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to Go Back." );
+		System.out.println("\tEnter '1' to View Profile." );
+		System.out.println("\tEnter '2' to Update Profile." );
+		System.out.println("\tEnter '3' to Go Back." );
 	}
 }

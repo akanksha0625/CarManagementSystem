@@ -1,7 +1,7 @@
 package com.java.dbms.proj.views;
 
 public class SignUp {
-	public void signUp() {
+	public void displaypage() {
 		System.out.println("************************************************************************************************************************");
 		System.out.println("|                              .d8888b.  d8b                        888     888                                        |");
 		System.out.println("|		                      d88P  Y88b Y8P                        888     888                                        |");

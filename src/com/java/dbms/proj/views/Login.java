@@ -1,7 +1,7 @@
 package com.java.dbms.proj.views;
 
 public class Login {
-	public void login() {
+	public void displaypage() {
 		System.out.println("************************************************************************************************************************");
 		System.out.println("|                                        888                       d8b                                                 |");          
 		System.out.println("|                                        888                       Y8P                                                 |");      

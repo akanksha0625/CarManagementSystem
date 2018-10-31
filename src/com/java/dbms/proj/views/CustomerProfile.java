@@ -1,7 +1,7 @@
 package com.java.dbms.proj.views;
 
-public class Profile {
-	public void profile() {
+public class CustomerProfile {
+	public void displaypage() {
 		System.out.println("************************************************************************************************************************");
 		System.out.println("        d8888                                            888         8888888b.                   .d888 d8b 888          |");        
 		System.out.println("       d88888                                            888         888   Y88b                 d88P\"  Y8P 888          |");      

@@ -1,7 +1,7 @@
 package com.java.dbms.proj.views;
 
 public class EmployeeUpdateProfile {
-	public void employeeUpdateProfile() {
+	public void displaypage() {
 		System.out.println("*************************************************************************************************************************************");
 		System.out.println("| 8888888888                        888                                          8888888b.                   .d888 d8b 888          |"); 
 		System.out.println("| 888                               888                                          888   Y88b                 d88P\"  Y8P 888         |"); 

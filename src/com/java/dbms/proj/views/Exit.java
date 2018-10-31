@@ -5,7 +5,7 @@ import com.java.dbms.proj.common.DBFacade;
 
 public class Exit {
 	 
-    public static void goodbye() throws SQLException {
+    public static void displaypage() throws SQLException {
     	System.out.println("*********************************************************************************************************************************************************************");
     	System.out.println("|                                                                                                                                                                   |");
     	System.out.println("|88888888888 888                        888                     .d888                       .d8888b.  888                                 d8b                       |");

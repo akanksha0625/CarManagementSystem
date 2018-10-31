@@ -1,7 +1,7 @@
 package com.java.dbms.proj.views;
 
 public class Home {
-	public static void welcome() {
+	public static void displaypage() {
     	System.out.println("************************************************************************************************************************");
     	System.out.println("|                                                                                                                      |");
     	System.out.println("|            d8888                                      .d8888b.                            d8b                        |");
