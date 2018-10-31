@@ -40,13 +40,17 @@ public class DBFacade {
     
 
 
-public static void createConnection() throws SQLException, ClassNotFoundException {
+public static Connection createConnection() throws SQLException, ClassNotFoundException {
 	Class.forName( "oracle.jdbc.driver.OracleDriver" );
-    connection = DriverManager.getConnection( JDBC_URL, connectionUserName, connectionPassword );
+    return connection = DriverManager.getConnection( JDBC_URL, connectionUserName, connectionPassword );
 }
 
 public static void closeConnection() throws SQLException{
 	connection.close();
+}
+
+public static Connection getConnection() {
+	return connection;
 }
 
 
