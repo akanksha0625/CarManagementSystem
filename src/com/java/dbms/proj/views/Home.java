@@ -3,7 +3,7 @@ package com.java.dbms.proj.views;
 import java.util.Scanner;
 
 public class Home {
-	public static String displayHome() {
+	public static String displayHome(Scanner input) {
     	System.out.println("************************************************************************************************************************");
     	System.out.println("|                                                                                                                      |");
     	System.out.println("|            d8888                                      .d8888b.                            d8b                        |");
@@ -31,13 +31,11 @@ public class Home {
 		System.out.println( "\tEnter \"2\" to Sign Up");
 		System.out.println( "\tEnter \"3\" to Exit");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3"));
-		input.close();
 		return userInput;
 	}
 }

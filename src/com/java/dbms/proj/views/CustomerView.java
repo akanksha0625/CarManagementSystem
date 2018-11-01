@@ -3,7 +3,7 @@ package com.java.dbms.proj.views;
 import java.util.Scanner;
 
 public class CustomerView {
-	public static String displayLanding() {
+	public static String displayLanding(Scanner input) {
 		System.out.println("******************************************************************************************************************************************************");
 		System.out.println("| 888       888          888                                               .d8888b.                    888                                           |");                                       
 		System.out.println("| 888   o   888          888                                              d88P  Y88b                   888                                           |");                                   
@@ -21,49 +21,45 @@ public class CustomerView {
 		System.out.println("\tEnter '4' to	Invoices");
 		System.out.println("\tEnter '5' to  Logout");
 
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3") &&
 				!userInput.equals("4") && !userInput.equals("5"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displaySignUp() {
-		System.out.println("************************************************************************************************************************");
-		System.out.println("|                              .d8888b.  d8b                        888     888                                        |");
-		System.out.println("|		                      d88P  Y88b Y8P                        888     888                                        |");
-		System.out.println("|	                     	  Y88b.                                 888     888                                        |");
-		System.out.println("|		                       \"Y888b.   888  .d88b.  88888b.       888     888 88888b.                                |"); 
-		System.out.println("|		                          \"Y88b. 888 d88P\"88b 888 \"88b      888     888 888 \"88b                               |"); 
-		System.out.println("|		                            \"888 888 888  888 888  888      888     888 888  888                               |"); 
-		System.out.println("|		                      Y88b  d88P 888 Y88b 888 888  888      Y88b. .d88P 888 d88P                               |"); 
-		System.out.println("|		                       \"Y8888P\"  888  \"Y88888 888  888       \"Y88888P\"  88888P\"                                |");
-		System.out.println("|		                                          888                           888                                    |"); 
-		System.out.println("|		                                     Y8b d88P                           888                                    |"); 
-		System.out.println("|	                                          \"Y88P\"                            888                                    |");                                                   
-		System.out.println("************************************************************************************************************************\n"); 
+	public static String displaySignUp(Scanner input) {
+		System.out.println("*****************************************************************************");
+		System.out.println("|         .d8888b.  d8b                        888     888                  |");
+		System.out.println("|        d88P  Y88b Y8P                        888     888                  |");
+		System.out.println("|        Y88b.                                 888     888                  |");
+		System.out.println("|         \"Y888b.   888  .d88b.  88888b.       888     888 88888b.          |");
+		System.out.println("|            \"Y88b. 888 d88P\"88b 888 \"88b      888     888 888 \"88b         |");
+		System.out.println("|              \"888 888 888  888 888  888      888     888 888  888         |");
+		System.out.println("|        Y88b  d88P 888 Y88b 888 888  888      Y88b. .d88P 888 d88P         |");
+		System.out.println("|         \"Y8888P\"  888  \"Y88888 888  888       \"Y88888P\"  88888P\"          |");
+		System.out.println("|                            888                           888              |");
+		System.out.println("|                       Y8b d88P                           888              |");
+		System.out.println("|                        \"Y88P\"                            888              |");
+		System.out.println("*****************************************************************************\n");
 		
 		System.out.println("Please select from the following user options:");
 		System.out.println("\tEnter '1' to Sign Up.");
 		System.out.println("\tEnter '2' to Go Back." );
-		
-		Scanner input = new Scanner(System.in);
+
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
-		input.close();
-		
+			
 		return userInput;
 	}
 	
-	public static String displayProfile() {
+	public static String displayProfile(Scanner input) {
 		System.out.println("************************************************************************************************************************");
 		System.out.println("        d8888                                            888         8888888b.                   .d888 d8b 888          |");        
 		System.out.println("       d88888                                            888         888   Y88b                 d88P\"  Y8P 888          |");      
@@ -80,19 +76,17 @@ public class CustomerView {
 		System.out.println("\tEnter '2' to Update Profile." );
 		System.out.println("\tEnter '3' to Go Back." );
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3") &&
 				!userInput.equals("4") && !userInput.equals("5"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayInvoice() {
+	public static String displayInvoice(Scanner input) {
 		System.out.println("*******************************************************************************************************************************************");
 		System.out.println("|  .d8888b.                    888                                                8888888                            d8b                  |"); 
 		System.out.println("| d88P  Y88b                   888                                                  888                              Y8P                  |"); 
@@ -106,19 +100,17 @@ public class CustomerView {
 		System.out.println("Please select from the following user options:");
 		System.out.println("\tEnter '1' to  View Invoice details");
 		System.out.println("\tEnter '2' to Go back");
-		
-		Scanner input = new Scanner(System.in);
+
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayInvoiceDetails() {
+	public static String displayInvoiceDetails(Scanner input) {
 		System.out.println("*********************************************************************************************************************");
 		System.out.println("| 8888888                            d8b                       8888888b.           888             d8b 888          |"); 
 		System.out.println("|   888                              Y8P                       888  \"Y88b          888             Y8P 888          |"); 
@@ -133,18 +125,16 @@ public class CustomerView {
 		System.out.println("Please select from the following user options:");
 		System.out.println("\tEnter '1' to Go back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayCarRegistration() {
+	public static String displayCarRegistration(Scanner input) {
 		System.out.println("*************************************************************************************************************************************");
 		System.out.println("    .d8888b.                        8888888b.                   d8b          888                    888    d8b                      |");           
 		System.out.println("   d88P  Y88b                       888   Y88b                  Y8P          888                    888    Y8P                      |");               
@@ -162,18 +152,16 @@ public class CustomerView {
 		System.out.println("\tEnter '1' to Register");
 		System.out.println("\tEnter '2' to Cancel");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayReschedule1() {
+	public static String displayReschedule1(Scanner input) {
 		System.out.println("********************************************************************************************************************************************************");
 		System.out.println("| 8888888b.                            888                    888          888                .d8888b.                            d8b                  |");
 		System.out.println("| 888   Y88b                           888                    888          888               d88P  Y88b                           Y8P                  |");
@@ -188,17 +176,15 @@ public class CustomerView {
 		System.out.println("\tEnter '1' to  Pick a service");
 		System.out.println("\tEnter '2' to	Go back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
-		input.close();
 		
 		return userInput;
 	}
-	public static String displayReschedule2() {
+	public static String displayReschedule2(Scanner input) {
 		System.out.println("********************************************************************************************************************************************************");
 		System.out.println("| 8888888b.                            888                    888          888                .d8888b.                            d8b                  |");
 		System.out.println("| 888   Y88b                           888                    888          888               d88P  Y88b                           Y8P                  |");
@@ -213,18 +199,16 @@ public class CustomerView {
 		System.out.println("\tEnter '1' to  Reschedule date");
 		System.out.println("\tEnter '2' to	Go back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayScheduleMaintenance1() {
+	public static String displayScheduleMaintenance1(Scanner input) {
 		System.out.println("*****************************************************************************************************************************************************************************");
 		System.out.println("|   .d8888b.           888                    888          888               888b     d888          d8b          888                                                        |");
 		System.out.println("|  d88P  Y88b          888                    888          888               8888b   d8888          Y8P          888                                                        |");
@@ -240,18 +224,16 @@ public class CustomerView {
 		System.out.println("\tEnter '2' to	Schedule Repair");
 		System.out.println("\tEnter '3' to	Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3"));
-		input.close();
 		
 		return userInput;
 	}
 		
-	public static String displayScheduleMaintenance2() {
+	public static String displayScheduleMaintenance2(Scanner input) {
 		System.out.println("*****************************************************************************************************************************************************************************");
 		System.out.println("|   .d8888b.           888                    888          888               888b     d888          d8b          888                                                        |");
 		System.out.println("|  d88P  Y88b          888                    888          888               8888b   d8888          Y8P          888                                                        |");
@@ -266,18 +248,16 @@ public class CustomerView {
 		System.out.println("\tEnter '1' to  Schedule on Date");
 		System.out.println("\tEnter '2' to	Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
-		input.close();
 		
 		return userInput;
 	}
 		
-	public static String displayScheduleRepair1() {
+	public static String displayScheduleRepair1(Scanner input) {
 		System.out.println("******************************************************************************************************************************");
 		System.out.println("|  .d8888b.           888                    888          888               8888888b.                            d8b         |"); 
 		System.out.println("| d88P  Y88b          888                    888          888               888   Y88b                           Y8P         |");  
@@ -301,18 +281,16 @@ public class CustomerView {
 		System.out.println("\tEnter '7' to select \"Check engine light\"");
 		System.out.println("\tEnter '8' to Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3") &&
 				!userInput.equals("4") && !userInput.equals("5") && !userInput.equals("6") && !userInput.equals("7") && !userInput.equals("8"));
-		input.close();
 		
 		return userInput;
 	}
-		public static String displayScheduleRepair2() {
+		public static String displayScheduleRepair2(Scanner input) {
 			System.out.println("******************************************************************************************************************************");
 			System.out.println("|  .d8888b.           888                    888          888               8888888b.                            d8b         |"); 
 			System.out.println("| d88P  Y88b          888                    888          888               888   Y88b                           Y8P         |");  
@@ -330,18 +308,16 @@ public class CustomerView {
 			System.out.println("\tEnter '1' to schedule your date for Repair");
 			System.out.println("\tEnter '2' Go Back");
 			
-			Scanner input = new Scanner(System.in);
 			String userInput = "";
 			System.out.print("\nOption Selection : ");
 			do {
 				userInput = input.nextLine();
 			}while(!userInput.equals("1") && !userInput.equals("2"));
-			input.close();
 			
 			return userInput;
 		}
 			
-		public static String displayScheduleService() {
+		public static String displayScheduleService(Scanner input) {
 			System.out.println("****************************************************************************************************************************************");
 			System.out.println("|   .d8888b.           888                    888          888                .d8888b.                            d8b                   |");
 			System.out.println("|  d88P  Y88b          888                    888          888               d88P  Y88b                           Y8P                   |");
@@ -357,18 +333,16 @@ public class CustomerView {
 			System.out.println("\tEnter '2' to	Schedule Repair");
 			System.out.println("\tEnter '3' to	Go Back");
 			
-			Scanner input = new Scanner(System.in);
 			String userInput = "";
 			System.out.print("\nOption Selection : ");
 			do {
 				userInput = input.nextLine();
 			}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3"));
-			input.close();
 			
 			return userInput;
 		}
 			
-		public static String displayService() {
+		public static String displayService(Scanner input) {
 			System.out.println("************************************************************************************************************");
 			System.out.println("|	                         .d8888b.                            d8b                                       |");                  
 			System.out.println("|	                        d88P  Y88b                           Y8P                                       |");                
@@ -384,18 +358,16 @@ public class CustomerView {
 			System.out.println("\tEnter '2' to	Schedule Services");
 			System.out.println("\tEnter '3' to	Reshchedule Services");
 			
-			Scanner input = new Scanner(System.in);
 			String userInput = "";
 			System.out.print("\nOption Selection : ");
 			do {
 				userInput = input.nextLine();
 			}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3"));
-			input.close();
 			
 			return userInput;
 		}
 		
-		public static String displayServiceHistory() {
+		public static String displayServiceHistory(Scanner input) {
 			System.out.println("**************************************************************************************************************************");
 			System.out.println("|  .d8888b.                            d8b                       888    888 d8b          888                             |");
 			System.out.println("| d88P  Y88b                           Y8P                       888    888 Y8P          888                             |");
@@ -412,18 +384,16 @@ public class CustomerView {
 			System.out.println("Please select from the following user options:");
 			System.out.println("\tEnter '1' to  Go Back");
 			
-			Scanner input = new Scanner(System.in);
 			String userInput = "";
 			System.out.print("\nOption Selection : ");
 			do {
 				userInput = input.nextLine();
 			}while(!userInput.equals("1"));
-			input.close();
 			
 			return userInput;
 		}
 			
-		public static String displayUpdateProfile() {
+		public static String displayUpdateProfile(Scanner input) {
 			System.out.println("*************************************************************************************************************************************");
 			System.out.println("  .d8888b.                    888                                                8888888b.                   .d888 d8b 888          |");
 			System.out.println(" d88P  Y88b                   888                                                888   Y88b                 d88P\"  Y8P 888          |"); 
@@ -443,19 +413,17 @@ public class CustomerView {
 			System.out.println("\tEnter '5' to Update your Email." );
 			System.out.println("\tEnter '6' to Update your Password." );
 			
-			Scanner input = new Scanner(System.in);
 			String userInput = "";
 			System.out.print("\nOption Selection : ");
 			do {
 				userInput = input.nextLine();
 			}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3") &&
 					!userInput.equals("4") && !userInput.equals("5") && !userInput.equals("6"));
-			input.close();
 			
 			return userInput;
 		}
 			
-		public static String displayViewProfile() {
+		public static String displayViewProfile(Scanner input) {
 			System.out.println("*************************************************************************************************************************************");
 			System.out.println("  .d8888b.                    888                                                8888888b.                   .d888 d8b 888          |");
 			System.out.println(" d88P  Y88b                   888                                                888   Y88b                 d88P\"  Y8P 888          |"); 
@@ -470,13 +438,11 @@ public class CustomerView {
 			System.out.println("Please select from the following user options:");
 			System.out.println("\tEnter '1' to Go Back." );
 			
-			Scanner input = new Scanner(System.in);
 			String userInput = "";
 			System.out.print("\nOption Selection : ");
 			do {
 				userInput = input.nextLine();
 			}while(!userInput.equals("1"));
-			input.close();
 			
 			return userInput;
 		}

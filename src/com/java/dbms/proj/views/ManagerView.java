@@ -3,7 +3,7 @@ package com.java.dbms.proj.views;
 import java.util.Scanner;
 
 public class ManagerView {
-	public static String dsiplayAddEmployee() {
+	public static String dsiplayAddEmployee(Scanner input) {
 		System.out.println("*********************************************************************************************************************************************************");
 		System.out.println("|        d8888      888      888      888b    888                             8888888888                        888                                      |");
 		System.out.println("|       d88888      888      888      8888b   888                             888                               888                                      |");
@@ -20,19 +20,17 @@ public class ManagerView {
 		System.out.println("Please select from the following user options:");
 		System.out.println("\tEnter '1' to	Add");
 		System.out.println("\tEnter '2' to	Go Back");
-		
-		Scanner input = new Scanner(System.in);
+
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayPayroll() {
+	public static String displayPayroll(Scanner input) {
 		
 		System.out.println("*****************************************************************************************************************************");
 		System.out.println("|                               8888888b.                                   888 888                                         |");
@@ -48,20 +46,19 @@ public class ManagerView {
 		System.out.println("|                                                   \"Y88P\"                                                                  |");
 		System.out.println("*****************************************************************************************************************************\n");
 		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to Go Back");
+		System.out.println("\tEnter '1' to Enter Employee ID");
+		System.out.println("\tEnter '2' to Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
-		}while(!userInput.equals("1"));
-		input.close();
+		}while(!userInput.equals("1") && !userInput.equals("2"));
 		
 		return userInput;
 	}
 	
-	public static String displayOrders() {
+	public static String displayOrders(Scanner input) {
 		System.out.println("*****************************************************************************************************************************");
 		System.out.println("|                                    .d88888b.              888                                                             |");
 		System.out.println("|                                   d88P\" \"Y88b             888                                                             |");
@@ -77,18 +74,16 @@ public class ManagerView {
 		System.out.println("\tEnter '2' to New Order");
 		System.out.println("\tEnter '3' to Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayOrderHistory() {
+	public static String displayOrderHistory(Scanner input) {
 		System.out.println("***************************************************************************************************************************");
 		System.out.println("|        .d88888b.              888                       888    888 d8b          888                                     |");
 		System.out.println("|       d88P\" \"Y88b             888                       888    888 Y8P          888                                     |");
@@ -102,21 +97,23 @@ public class ManagerView {
 		System.out.println("|                                                                                                        Y8b d88P         |");
 		System.out.println("|                                                                                                         \"Y88P\"          |");
 		System.out.println("***************************************************************************************************************************\n");
+		
+		//TODO call controller that will dump order history details into view
+		System.out.println("CALL CONTROLLER TO GET ORDER DETAILS\n");
+		
 		System.out.println("Please select from the following user options:");
 		System.out.println("\tEnter '1' to Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayNewOrder() {
+	public static String displayNewOrder(Scanner input) {
 		System.out.println("***************************************************************************************************************");
 		System.out.println("|             888b    888                              .d88888b.              888                              |");
 		System.out.println("|             8888b   888                             d88P\" \"Y88b             888                              |");
@@ -128,21 +125,19 @@ public class ManagerView {
 		System.out.println("|             888    Y888  \"Y8888   \"Y8888888P\"        \"Y88888P\"  888     \"Y88888  \"Y8888  888                 |");
 		System.out.println("****************************************************************************************************************\n");
 		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '2' to Place Orders");
-		System.out.println("\tEnter '1' to Go Back");
+		System.out.println("\tEnter '1' to Place Orders");
+		System.out.println("\tEnter '2' to Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayNotifications() {		
+	public static String displayNotifications(Scanner input) {		
 		System.out.println("***************************************************************************************************************************");
 		System.out.println("|        888b    888          888    d8b  .d888 d8b                   888    d8b                                          |");
 		System.out.println("|        8888b   888          888    Y8P d88P\"  Y8P                   888    Y8P                                          |");
@@ -153,17 +148,19 @@ public class ManagerView {
 		System.out.println("|        888   Y8888 Y88..88P Y88b.  888 888    888 Y88b.    888  888 Y88b.  888 Y88..88P 888  888      X88               |");
 		System.out.println("|        888    Y888  \"Y88P\"   \"Y888 888 888    888  \"Y8888P \"Y888888  \"Y888 888  \"Y88P\"  888  888  88888P'               |");
 		System.out.println("***************************************************************************************************************************\n");
+		
+		//TODO call controller to dump notifications into view
+		System.out.println("CALL CONTROLLER TO GET NOTIFICATION\n");
+		
 		System.out.println("Please select from the following user options:");
 		System.out.println("\tEnter '1' to	Order ID");
 		System.out.println("\tEnter '2' to	Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
-		input.close();
 		
 		return userInput;
 	}
@@ -193,7 +190,7 @@ public class ManagerView {
 		return userInput;
 	}
 	
-	public static String displayLanding() {
+	public static String displayLanding(Scanner input) {
 		System.out.println("**********************************************************************************************************************************************");
 		System.out.println("| 888       888          888                                              888b     d888                                                      |"); 
 		System.out.println("| 888   o   888          888                                              8888b   d8888                                                      |"); 
@@ -221,7 +218,6 @@ public class ManagerView {
 		System.out.println("\tEnter '11' to	Invoices");
 		System.out.println("\tEnter '12' to	Logout");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
@@ -229,12 +225,11 @@ public class ManagerView {
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3") && !userInput.equals("4") &&
 				!userInput.equals("5") && !userInput.equals("6") && !userInput.equals("7") && !userInput.equals("8") &&
 				!userInput.equals("9") && !userInput.equals("10") && !userInput.equals("11") && !userInput.equals("12"));
-		input.close();
-		
+
 		return userInput;
 	}
 	
-	public static String displayInvoices() {
+	public static String displayInvoices(Scanner input) {
 		System.out.println("***************************************************************************************");
 		System.out.println("|           8888888                            d8b                                    |");
 		System.out.println("|             888                              Y8P                                    |");
@@ -245,21 +240,23 @@ public class ManagerView {
 		System.out.println("|             888   888  888  Y8bd8P  Y88..88P 888 Y88b.   Y8b.          X88          |");
 		System.out.println("|           8888888 888  888   Y88P    \"Y88P\"  888  \"Y8888P \"Y8888   88888P'          |");
 		System.out.println("***************************************************************************************\n");
+		
+		//TODO call controller to dump in details
+		System.out.println("CALL CONTROLLER TO GET INVOICE DETAILS\n");
+		
 		System.out.println("Please select from the following user options:");
 		System.out.println("\tEnter '1' to Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayInventory() {
+	public static String displayInventory(Scanner input) {
 		System.out.println("*****************************************************************************************************************************");
 		System.out.println("|                     8888888                                     888                                                       |");
 		System.out.println("|                       888                                       888                                                       |");
@@ -274,21 +271,22 @@ public class ManagerView {
 		System.out.println("|                                                                                         \"Y88P\"                            |");
 		System.out.println("*****************************************************************************************************************************\n");
 
+		//TODO call inventory controller to dump the details in
+		System.out.println("CALL CONTROLLER TO GET INVENTORY DETAILS\n");
+		
 		System.out.println("Please select from the following user options:");
 		System.out.println("\tEnter '1' to Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayCarServiceDetails() {
+	public static String displayCarServiceDetails(Scanner input) {
 		System.out.println("********************************************************************************************************************************************************");
 		System.out.println("|  .d8888b.                         .d8888b.                            d8b                       8888888b.           888             d8b 888          |");
 		System.out.println("| d88P  Y88b                       d88P  Y88b                           Y8P                       888  \"Y88b          888             Y8P 888          |");
@@ -299,21 +297,23 @@ public class ManagerView {
 		System.out.println("| Y88b  d88P 888  888 888          Y88b  d88P Y8b.     888      Y8bd8P  888 Y88b.   Y8b.          888  .d88P Y8b.     Y88b.  888  888 888 888      X88 |");
 		System.out.println("|  \"Y8888P\"  \"Y888888 888           \"Y8888P\"   \"Y8888  888       Y88P   888  \"Y8888P \"Y8888       8888888P\"   \"Y8888   \"Y888 \"Y888888 888 888  88888P' |");
 		System.out.println("********************************************************************************************************************************************************\n");
+		
+		//TODO call controller to dump the details in
+		System.out.println("CALL CONTROLLER TO GET SERVICE DETAILS\n");
+		
 		System.out.println("Please select from the following user options:");
 		System.out.println("\tEnter '1' to	Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayServiceHistory() {
+	public static String displayServiceHistory(Scanner input) {
 		System.out.println("**************************************************************************************************************************");
 		System.out.println("|  .d8888b.                            d8b                       888    888 d8b          888                             |");
 		System.out.println("| d88P  Y88b                           Y8P                       888    888 Y8P          888                             |");
@@ -327,21 +327,23 @@ public class ManagerView {
 		System.out.println("|	                                                                                                            Y8b d88P |");
 		System.out.println("|	                                                                                                             \"Y88P\"  |");
 		System.out.println("**************************************************************************************************************************\n");
+		
+		//TODO call controller to dump details in
+		System.out.println("CALL CONTROLLER TO GET SERVICE HISTORY DETAILS\n");
+		
 		System.out.println("Please select from the following user options:");
 		System.out.println("\tEnter '1' to	Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1"));
-		input.close();
 		
 		return userInput;
 	}
 	
-	public static String displayNewCarModel() {
+	public static String displayNewCarModel(Scanner input) {
 		System.out.println("*************************************************************************************************************************");
 		System.out.println("| 888b    888                              .d8888b.                        888b     d888               888          888 |");
 		System.out.println("| 8888b   888                             d88P  Y88b                       8888b   d8888               888          888 |");
@@ -357,13 +359,11 @@ public class ManagerView {
 		System.out.println("\tEnter '1' to Add Car");
 		System.out.println("\tEnter '2' to Go Back");
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
-		input.close();
 		
 		return userInput;
 	}

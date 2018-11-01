@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Login {
 	
-	public static String displayLogin() {
+	public static String displayLogin(Scanner input) {
 		System.out.println("************************************************************************************************************************");
 		System.out.println("|                                        888                       d8b                                                 |");          
 		System.out.println("|                                        888                       Y8P                                                 |");      
@@ -23,14 +23,12 @@ public class Login {
 		System.out.println("\tEnter '1' to Login.");
 		System.out.println("\tEnter '2' to Go Back." );
 		
-		Scanner input = new Scanner(System.in);
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 			System.out.println(userInput);
 		}while(!userInput.equals("1") && !userInput.equals("2"));
-		input.close();
 		return userInput;
 				
 	}
