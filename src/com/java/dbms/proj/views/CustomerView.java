@@ -33,7 +33,7 @@ public class CustomerView {
 		return userInput;
 	}
 	
-	public String displaySignUp() {
+	public static String displaySignUp() {
 		System.out.println("************************************************************************************************************************");
 		System.out.println("|                              .d8888b.  d8b                        888     888                                        |");
 		System.out.println("|		                      d88P  Y88b Y8P                        888     888                                        |");

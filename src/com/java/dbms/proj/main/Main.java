@@ -25,16 +25,17 @@ public class Main {
 	 * @return status of exit.
 	 */
     public static void main( String[] args ) {
-		/* Print welcome screen for the user. */
-    	Home.displaypage();
-       	try {
-       	ApplicationController applicationController=new ApplicationController();
-	       	 	
-     	} catch( Exception e ) {
-			/* Error occurred while creating a connection with the database. */
-     		System.out.println( "Sorry for the inconvenience. Our System is out of service. Please try after some time." + e.getMessage() );
-		}
-	 
+//		/* Print welcome screen for the user. */
+//    	Home.displaypage();
+//       	try {
+//       	ApplicationController applicationController=new ApplicationController();
+//	       	 	
+//     	} catch( Exception e ) {
+//			/* Error occurred while creating a connection with the database. */
+//     		System.out.println( "Sorry for the inconvenience. Our System is out of service. Please try after some time." + e.getMessage() );
+//		}
+    	
+    	com.java.dbms.proj.controller.SampleFlow.home();
 	}
 }
 

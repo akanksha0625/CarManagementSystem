@@ -13,7 +13,7 @@ public class LoginController{
 		Login login=new Login();		
 		UserLogin userLogin=new UserLogin();
 		public String userLogin() throws ClassNotFoundException, SQLException {
-		login.displaypage();
+		login.displayLogin();
 		Scanner userInput = new Scanner(System.in);
 		int attempts = 0;
 		Statement statement = DBFacade.createConnection().createStatement();

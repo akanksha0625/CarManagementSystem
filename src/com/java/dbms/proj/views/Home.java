@@ -1,7 +1,9 @@
 package com.java.dbms.proj.views;
 
+import java.util.Scanner;
+
 public class Home {
-	public static void displaypage() {
+	public static String displayHome() {
     	System.out.println("************************************************************************************************************************");
     	System.out.println("|                                                                                                                      |");
     	System.out.println("|            d8888                                      .d8888b.                            d8b                        |");
@@ -23,7 +25,19 @@ public class Home {
     	System.out.println("|                                   \"Y8888P\"   \"Y8888\"  888  888  \"Y888 \"Y8888  888                                    |");
     	System.out.println("|                                                                                                                      |");
     	System.out.println("************************************************************************************************************************\n");
-    
-    	
+
+		System.out.println("Please select from the following user options:\n");
+		System.out.println( "\tEnter \"1\" to Login"); 
+		System.out.println( "\tEnter \"2\" to Sign Up");
+		System.out.println( "\tEnter \"3\" to Exit");
+		
+		Scanner input = new Scanner(System.in);
+		String userInput = "";
+		System.out.print("\nOption Selection : ");
+		do {
+			userInput = input.nextLine();
+		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3"));
+		input.close();
+		return userInput;
 	}
 }
