@@ -38,7 +38,7 @@ public class ApplicationController {
 			//TODO login controller should return the role of the user to determine next redirect
 			//String role = signInController()
 			
-			String role = "manager"; // string just for testing redirect --> remove later
+			String role = "receptionist"; // string just for testing redirect --> remove later
 			if( role.equalsIgnoreCase("manager")){
 				/*Redirect to manager landing page*/
 				manager();
@@ -64,6 +64,7 @@ public class ApplicationController {
 		if(response.equals("1")) {
 			/*Redirect to display manager profile page*/
 			employeeProfile();
+			manager();
 		} else if(response.equals("2")) {
 			/*Redirect to display customer profile page.*/
 			searchCustomer();
@@ -132,8 +133,120 @@ private static void payroll() {
 //---------------------------------------------------------------------------------------------Receptionist
 	private static void receptionist() {
 		response = ReceptionistView.displayLanding(input);
-		//TODO like manager
+		if(response.equals("1")) {
+			/*Redirect to display manager profile page*/
+			employeeProfile();
+			receptionist();
+		} else if(response.equals("2")) {
+			/*Redirect to display customer profile page.*/
+			searchCustomer();
+			receptionist();
+		}else if(response.equals("3")){
+			/*Redirect to add Register Car.*/
+			registerCar();
+			receptionist();
+		}else if(response.equals("4")){
+			/*Redirect to service history page*/
+			//controller called from view
+			response = ManagerView.displayServiceHistory(input);
+			receptionist();
+		}else if(response.equals("5")){
+			/*Redirect to display Schedule Service*/
+			scheduleService();
+			receptionist(); //go back
+		}else if(response.equals("6")){
+			/*Redirect to display Reschedule Service*/
+			rescheduleService();
+			receptionist();
+		}else if(response.equals("7")){
+			/*Redirect to display invoices page*/
+			//controller called from view
+			response = ReceptionistView.displayInvoice(input);
+			receptionist();
+		}else if(response.equals("8")){
+			/*Redirect to the Task Update page*/
+			response = ReceptionistView.displayTaskUpdateInventory(input);
+			receptionist();//go back
+		}else if(response.equals("9")){
+			/*Redirect to the Task Record Deliveries*/
+			response = ReceptionistView.displayTaskUpdateDeliveries(input);
+			if(response.equals("1")) {
+				//TODO call controller to process delivery updates.
+				System.out.println("CALL CONTROLLER TO HANDLE DELIVER UPDATES");
+			}
+			receptionist();
+		}else {
+			Logout.logout();
+			//TODO set a timer
+			home();
+		}	
 	}
+private static void rescheduleService() {
+	do {
+		response = ReceptionistView.displayRescheduleService1(input);
+		if(response.equals("1")) {
+			System.out.println("Enter the Service ID of the service you would like to reschedule : ");
+			response = input.nextLine();
+			//TODO add controller to verify service ID and select two dates for service
+			response = ReceptionistView.displayRescheduleService2(input);
+			if(response.equals("1")) {
+				//TODO call controller to have customer choose from the two dates
+				System.out.println("CALL CONTROLLER TO HAVE CUSTOMER SELECT THE DATE");
+			}
+			response = "1";
+		}
+	}while(response.equals("1"));
+}
+private static void scheduleService() {
+	do {
+		response = ReceptionistView.displayScheduleService(input);
+		if(response.equals("1")) {
+			scheduleMaintenance();
+		}else if(response.equals("2")) {
+			scheduleRepair();
+		}
+		System.out.println("Stuck?????");
+	}while(!response.equals("1") && !response.equals("2") && !response.equals("3"));
+	System.out.println("GO BACK?");
+	receptionist();
+}
+private static void scheduleRepair() {
+	response = ReceptionistView.displayScheduleRepair1(input);
+	if(response.equals("8")) {
+		//TODO call controller to have create diagnostic report
+		System.out.println("CALL CONTROLLER TO CREATE DIAGNOSTIC REPORT");
+		response = ReceptionistView.displayScheduleRepair2(input);
+		if(!response.equals("1")) {
+			//TODO call controller to have customer choose from the two dates
+			System.out.println("CALL CONTROLLER TO HAVE CUSTOMER SELECT THE DATE");
+		}
+		//go back
+	}
+	scheduleService();
+}
+private static void scheduleMaintenance() {
+	do {
+		response = ReceptionistView.displayScheduleMaintenance1(input);
+		if(response.equals("1")) {
+			response = ReceptionistView.displayScheduleMaintenance2(input);
+			if(response.equals("1")) {
+				//TODO call controller to have customer choose from the two dates
+				System.out.println("CALL CONTROLLER TO HAVE CUSTOMER SELECT THE DATE");
+			}
+			//go back
+		}
+	}while(response.equals("1"));
+	scheduleService();
+}
+private static void registerCar() {
+	do {
+		response = ReceptionistView.displayRegisterCar(input);
+		if(response.equals("1")) {
+			//TODO call controller to handle registering a car
+			System.out.println("CALL CONTROLLER TO HANDLE CAR REGISTRATION");
+		}
+	}while(response.equals("1"));
+}
 //---------------------------------------------------------------------------------------------Customer	
 	private static void customer() {
 		response = CustomerView.displayLanding(input);
@@ -184,8 +297,6 @@ private static void payroll() {
 			employeeProfile(); // only option is to go back to the profile
 		} else if(response.equals("2")) {
 			updateProfile();
-		} else {
-			manager(); // only option is to go back
 		}		
 	}
 
