@@ -24,10 +24,10 @@ public class Login {
 		System.out.println("\tEnter '2' to Go Back." );
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
-			System.out.println(userInput);
 		}while(!userInput.equals("1") && !userInput.equals("2"));
 		return userInput;
 				

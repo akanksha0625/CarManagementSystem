@@ -1,5 +1,4 @@
 package com.java.dbms.proj.views;
-
 import java.util.Scanner;
 
 public class ManagerView {
@@ -22,8 +21,9 @@ public class ManagerView {
 		System.out.println("\tEnter '2' to	Go Back");
 
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
 		
@@ -50,8 +50,9 @@ public class ManagerView {
 		System.out.println("\tEnter '2' to Go Back");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
 		
@@ -75,8 +76,9 @@ public class ManagerView {
 		System.out.println("\tEnter '3' to Go Back");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3"));
 		
@@ -105,8 +107,9 @@ public class ManagerView {
 		System.out.println("\tEnter '1' to Go Back");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1"));
 		
@@ -129,8 +132,9 @@ public class ManagerView {
 		System.out.println("\tEnter '2' to Go Back");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
 		
@@ -157,8 +161,9 @@ public class ManagerView {
 		System.out.println("\tEnter '2' to	Go Back");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
 		
@@ -181,8 +186,9 @@ public class ManagerView {
 		
 		Scanner input = new Scanner(System.in);
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1"));
 		input.close();
@@ -205,22 +211,23 @@ public class ManagerView {
 		System.out.println("|                                                                                                                   \"Y88P\"                   |"); 
 		System.out.println("**********************************************************************************************************************************************\n");
 		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to  Profile");
-		System.out.println("\tEnter '2' to	View Customer Profile");
-		System.out.println("\tEnter '3' to  Add new Employee");
-		System.out.println("\tEnter '4' to	Payroll");
-		System.out.println("\tEnter '5' to  Inventory");
-		System.out.println("\tEnter '6' to	Orders");
-		System.out.println("\tEnter '7' to  Notifications");
-		System.out.println("\tEnter '8' to	New Car Model");
-		System.out.println("\tEnter '9' to  Car Service Details");
+		System.out.println("\tEnter '1'  to Profile");
+		System.out.println("\tEnter '2'  to	View Customer Profile");
+		System.out.println("\tEnter '3'  to Add new Employee");
+		System.out.println("\tEnter '4'  to	Payroll");
+		System.out.println("\tEnter '5'  to Inventory");
+		System.out.println("\tEnter '6'  to	Orders");
+		System.out.println("\tEnter '7'  to Notifications");
+		System.out.println("\tEnter '8'  to	New Car Model");
+		System.out.println("\tEnter '9'  to Car Service Details");
 		System.out.println("\tEnter '10' to	Service History");
 		System.out.println("\tEnter '11' to	Invoices");
 		System.out.println("\tEnter '12' to	Logout");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3") && !userInput.equals("4") &&
 				!userInput.equals("5") && !userInput.equals("6") && !userInput.equals("7") && !userInput.equals("8") &&
@@ -248,8 +255,9 @@ public class ManagerView {
 		System.out.println("\tEnter '1' to Go Back");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1"));
 		
@@ -278,8 +286,9 @@ public class ManagerView {
 		System.out.println("\tEnter '1' to Go Back");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1"));
 		
@@ -305,8 +314,9 @@ public class ManagerView {
 		System.out.println("\tEnter '1' to	Go Back");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1"));
 		
@@ -335,8 +345,9 @@ public class ManagerView {
 		System.out.println("\tEnter '1' to	Go Back");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1"));
 		
@@ -360,8 +371,9 @@ public class ManagerView {
 		System.out.println("\tEnter '2' to Go Back");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
 		

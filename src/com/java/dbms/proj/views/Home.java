@@ -32,8 +32,9 @@ public class Home {
 		System.out.println( "\tEnter \"3\" to Exit");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
+		
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3"));
 		return userInput;

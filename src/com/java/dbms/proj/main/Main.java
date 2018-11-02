@@ -35,7 +35,7 @@ public class Main {
 //     		System.out.println( "Sorry for the inconvenience. Our System is out of service. Please try after some time." + e.getMessage() );
 //		}
     	
-    	com.java.dbms.proj.controller.SampleFlow.home();
+    	com.java.dbms.proj.controller.ApplicationController.home();
 	}
 }
 

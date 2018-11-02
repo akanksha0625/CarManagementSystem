@@ -94,7 +94,7 @@ public class EmployeeView {
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
-		}while(!userInput.equals("1"));
+		}while(!userInput.equals("1") && !userInput.equals("2"));
 		
 		return userInput;
 	}
