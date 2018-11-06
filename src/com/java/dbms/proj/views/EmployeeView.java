@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class EmployeeView {
 	/*Displays the Employee Profile Landing Page*/
-	public static String displayProfileLanding(Scanner input) {
+	public static void displayProfileLanding() {
 		System.out.println( "*************************************************************************************************************************************" );
 		System.out.println( "| 8888888888                        888                                          8888888b.                   .d888 d8b 888          |" ); 
 		System.out.println( "| 888                               888                                          888   Y88b                 d88P\"  Y8P 888          |" ); 
@@ -18,19 +18,6 @@ public class EmployeeView {
 		System.out.println( "|                          888                   Y8b d88P                                                                           |" ); 
 		System.out.println( "|                          888                    \"Y88P\"                                                                            |" );
 		System.out.println( "*************************************************************************************************************************************\n" ); 
-		
-		System.out.println( "Please select from the following user options:" );
-		System.out.println( "\tEnter '1' to View Profile." );
-		System.out.println( "\tEnter '2' to Update Profile." );
-		System.out.println( "\tEnter '3' to Go Back." );
-		
-		String userInput = "";
-		System.out.print( "\nOption Selection : " );
-		do {
-			userInput = input.nextLine();
-		}while( !userInput.equals( "1" ) && !userInput.equals( "2" ) && !userInput.equals( "3" ) );
-		
-		return userInput;
 	}
 	
 	public static String displayProfileUpdate(Scanner input) {

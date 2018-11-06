@@ -67,7 +67,7 @@ public class ApplicationController {
 		response = ManagerView.displayLanding( input );
 		if( response.equals( "1" ) ) {
 			/*Redirect to manager profile*/
-			employeeProfile();
+			EmployeeProfileController.profileLanding(input);
 			manager();
 		} else if( response.equals( "2" ) ) {
 			/*Redirect to display customer profile page.*/
@@ -118,8 +118,7 @@ public class ApplicationController {
 //---------------------------------------------------------------------------------------------Employee	
 	/*Handles the flow of the mechanic*/
 	private static void mechanic() {
-		response = EmployeeView.displayProfileLanding( input );
-		employeeProfile();
+		EmployeeProfileController.profileLanding(input);
 	} 
 	
 //---------------------------------------------------------------------------------------------Receptionist
@@ -127,8 +126,8 @@ public class ApplicationController {
 	private static void receptionist() {
 		response = ReceptionistView.displayLanding(input);
 		if(response.equals("1")) {
-			/*Redirect to display manager profile page*/
-			employeeProfile();
+			/*Redirect to display employee profile page*/
+			EmployeeProfileController.profileLanding(input);
 			receptionist();
 		} else if(response.equals("2")) {
 			/*Redirect to display customer profile page.*/
@@ -136,46 +135,40 @@ public class ApplicationController {
 			receptionist();
 		}else if(response.equals("3")){
 			/*Redirect to add Register Car.*/
-			receptionistRegisterCar();
+			ReceptionistRegisterCarController.registerCar(input);
 			receptionist();
 		}else if(response.equals("4")){
 			/*Redirect to service history page*/
-			//controller called from view
-			ManagerServiceHistoryController.serviceHistory(input);
+			ReceptionistServiceHistoryController.serviceHistory(input);
 			receptionist();
 		}else if(response.equals("5")){
 			/*Redirect to display Schedule Service*/
-			receptionistScheduleService();
+			ReceptionistScheduleServiceController.scheduleServiceLanding(input);
 			receptionist(); //go back
 		}else if(response.equals("6")){
 			/*Redirect to display Reschedule Service*/
-			rescheduleService();
+			ReceptionistRescheduleServiceController.rescheduleService(input);
 			receptionist();
 		}else if( response.equals("7")){
 			/*Redirect to display invoices page*/
-			//controller called from view
-			response = ReceptionistView.displayInvoice(input);
+			ReceptionistInvoiceController.invoice(input);
 			receptionist();
 		}else if(response.equals("8")){
 			/*Redirect to the Task Update page*/
-			response = ReceptionistView.displayTaskUpdateInventory(input);
+			ReceptionistTaskUpdateInventoryController.updateInventory(input);
 			receptionist();//go back
 		}else if(response.equals("9")){
 			/*Redirect to the Task Record Deliveries*/
-			response = ReceptionistView.displayTaskUpdateDeliveries(input);
-			if(response.equals("1")) {
-				//TODO call controller to process delivery updates.
-				System.out.println("CALL CONTROLLER TO HANDLE DELIVER UPDATES");
-			}
+			ReceptionistTaskRecordDeliveriesController.recordDeliveries(input);
 			receptionist();
 		}else {
 			Logout.logout();
-			//TODO set a timer
+			for(int i = 0; i < 1000000; i++) {} //simulate timer to return to homepage
 			home();
 		}	
 	}
 
-//---------------------------------------------------------------------------------------------Customer	
+	//---------------------------------------------------------------------------------------------Customer	
 	/*Handles the flow of the customer*/
 	private static void customer() {
 		response = CustomerView.displayLanding(input);
@@ -185,7 +178,7 @@ public class ApplicationController {
 			customer();
 		} else if(response.equals("2")) {
 			/*Redirect to display register car profile page.*/
-			receptionistRegisterCar();
+			//receptionistRegisterCar();
 			customer();
 		}else if(response.equals("3")){
 			/*Redirect to Service page.*/
@@ -202,89 +195,10 @@ public class ApplicationController {
 		}	
 	}
 	
-	//--------------------------------------------------------------------------------------------- Helper Methods
-	/*Handles the flow of the employee profile page.*/
-	private static void employeeProfile() {
-		response = EmployeeView.displayProfileLanding( input );
-		if( response.equals( "1" ) ) {
-			/*Redirect to Employee View Profile*/
-			EmployeeViewProfileController.viewProfile( input );
-			employeeProfile();
-		} else if( response.equals( "2" ) ) {
-			/*Redirect to Employee Update Profile*/
-			EmployeeUpdateProfileController.updateProfile(input);
-			employeeProfile();
-		}	
-	}
 	
-	
-	//---------------------------------------------------------------------------------------------Receptionist Helper Methods
-	private static void rescheduleService() {
-		do {
-			response = ReceptionistView.displayRescheduleService1(input);
-			if(response.equals("1")) {
-				System.out.println("Enter the Service ID of the service you would like to reschedule : ");
-				response = input.nextLine();
-				//TODO add controller to verify service ID and select two dates for service
-				response = ReceptionistView.displayRescheduleService2(input);
-				if(response.equals("1")) {
-					//TODO call controller to have customer choose from the two dates
-					System.out.println("CALL CONTROLLER TO HAVE CUSTOMER SELECT THE DATE");
-				}
-				response = "1";
-			}
-		}while(response.equals("1"));
-	}
-	private static void receptionistScheduleService() {
-		do {
-			response = ReceptionistView.displayScheduleService(input);
-			if(response.equals("1")) {
-				receptionistScheduleMaintenance();
-			}else if(response.equals("2")) {
-				receptionistScheduleRepair();
-			}
-			System.out.println("Stuck?????");
-		}while(!response.equals("1") && !response.equals("2") && !response.equals("3"));
-		System.out.println("GO BACK?");
-		receptionist();
-	}
-	private static void receptionistScheduleRepair() {
-		response = ReceptionistView.displayScheduleRepair1(input);
-		if(!response.equals("8")) {
-			//TODO call controller to have create diagnostic report
-			System.out.println("CALL CONTROLLER TO CREATE DIAGNOSTIC REPORT");
-			response = ReceptionistView.displayScheduleRepair2(input);
-			if(!response.equals("1")) {
-				//TODO call controller to have customer choose from the two dates
-				System.out.println("CALL CONTROLLER TO HAVE CUSTOMER SELECT THE DATE");
-			}
-			//go back
-		}
-		receptionistScheduleService();
-	}
-	private static void receptionistScheduleMaintenance() {
-		do {
-			response = ReceptionistView.displayScheduleMaintenance1(input);
-			if(response.equals("1")) {
-				response = ReceptionistView.displayScheduleMaintenance2(input);
-				if(response.equals("1")) {
-					//TODO call controller to have customer choose from the two dates
-					System.out.println("CALL CONTROLLER TO HAVE CUSTOMER SELECT THE DATE");
-				}
-				//go back
-			}
-		}while(response.equals("1"));
-		receptionistScheduleService();
-	}
-	private static void receptionistRegisterCar() {
-		do {
-			response = ReceptionistView.displayRegisterCar(input);
-			if(response.equals("1")) {
-				//TODO call controller to handle registering a car
-				System.out.println("CALL CONTROLLER TO HANDLE CAR REGISTRATION");
-			}
-		}while(response.equals("1"));
-	}
+
+
+
 	//---------------------------------------------------------------------------------------------Customer Helper Methods
 	private static void customerService() {
 		response = CustomerView.displayService(input);
@@ -294,11 +208,11 @@ public class ApplicationController {
 			customerService(); //Go Back
 		}else if(response.equals("2")){
 			/*Redirect to display Schedule Service*/
-			receptionistScheduleService();
+			//receptionistScheduleService();
 			customerService(); //go back
 		}else if(response.equals("3")){
 			/*Redirect to display Reschedule Service*/
-			rescheduleService();
+			//rescheduleService();
 			customerService();
 		}else {
 			customer(); //Go Back
