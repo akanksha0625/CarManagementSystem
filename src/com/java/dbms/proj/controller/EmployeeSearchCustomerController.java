@@ -12,8 +12,8 @@ public class EmployeeSearchCustomerController {
 		System.out.println( "\tEnter '1' to Go Back." );
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while( !userInput.equals( "1" ) );
 	}

@@ -13,7 +13,6 @@ public class ManagerInvoicesController {
 		System.out.println( "\tEnter '1' to Go Back" );
 		
 		String userInput = "";
-		
 		do {
 			System.out.print( "\nOption Selection : " );
 			userInput = input.nextLine();

@@ -174,99 +174,25 @@ public class ApplicationController {
 		response = CustomerView.displayLanding(input);
 		if(response.equals("1")) {
 			/*Redirect to display customer profile page*/
-			customerProfile();
+			CustomerProfileController.profileLanding(input);
 			customer();
 		} else if(response.equals("2")) {
 			/*Redirect to display register car profile page.*/
-			//receptionistRegisterCar();
+			CustomerRegisterCarController.registerCar(input);
 			customer();
 		}else if(response.equals("3")){
 			/*Redirect to Service page.*/
-			customerService();
+			CustomerServiceController.serviceLanding(input);
 			customer();
 		}else if(response.equals("4")){
 			/*Redirect to service invoice page*/
-			CustomerView.displayInvoice(input);
+			CustomerInvoiceController.invoice(input);
 			customer();
 		}else {
 			Logout.logout();
-			//TODO set a timer
+			for(int i = 0; i < 1000000; i++) {} //simulate timer to return to homepage
 			home();
 		}	
-	}
-	
-	
-
-
-
-	//---------------------------------------------------------------------------------------------Customer Helper Methods
-	private static void customerService() {
-		response = CustomerView.displayService(input);
-		if(response.equals("1")){
-			/*Redirect to Customer Service History page*/
-			response = CustomerView.displayServiceHistory(input);
-			customerService(); //Go Back
-		}else if(response.equals("2")){
-			/*Redirect to display Schedule Service*/
-			//receptionistScheduleService();
-			customerService(); //go back
-		}else if(response.equals("3")){
-			/*Redirect to display Reschedule Service*/
-			//rescheduleService();
-			customerService();
-		}else {
-			customer(); //Go Back
-		}
-	}
-	private static void customerProfile() {
-		response = CustomerView.displayProfile(input);
-		
-		if(response.equals("1")) {
-			/*Redirect to customer view profile*/
-			response = CustomerView.displayViewProfile(input);
-			customerProfile(); // only option is to go back to the profile
-		} else if(response.equals("2")) {
-			updateCustomerProfile();
-		}
-		
-	}
-	private static void updateCustomerProfile() {
-		do {
-			response = CustomerView.displayUpdateProfile(input);
-			//TODO call controller with (response) to determine what to update
-			System.out.println("CALL CONTROLLER TO UPDATE PROFILE DETAIL");
-		}while(!response.equals("7"));
-		customerProfile(); //done editing profile, send back to profile landing page.
-	}
-	private static void customerScheduleService() {
-		do {
-			response = CustomerView.displayScheduleService(input);
-			if(response.equals("1")) {
-				customerScheduleMaintenance();
-			}else if(response.equals("2")) {
-				customerScheduleRepair();
-			}
-		}while(!response.equals("1") && !response.equals("2") && !response.equals("3"));
-		customerService();
-	}
-	private static void customerScheduleRepair() {
-		response = CustomerView.displayScheduleRepair1(input);
-		if(!response.equals("8")) {
-			//TODO call controller to have create diagnostic report
-			System.out.println("CALL CONTROLLER TO CREATE DIAGNOSTIC REPORT");
-			response = CustomerView.displayScheduleRepair2(input);
-			if(!response.equals("1")) {
-				//TODO call controller to have customer choose from the two dates
-				System.out.println("CALL CONTROLLER TO HAVE CUSTOMER SELECT THE DATE");
-			}
-			//go back
-		}
-		customerScheduleService();
-		
-	}
-	private static void customerScheduleMaintenance() {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

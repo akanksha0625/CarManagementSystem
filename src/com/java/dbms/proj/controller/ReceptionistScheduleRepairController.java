@@ -19,8 +19,8 @@ public class ReceptionistScheduleRepairController {
 		System.out.println("\tEnter '8' to	Go Back");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3") &&
 				!userInput.equals("4") && !userInput.equals("5") && !userInput.equals("6") && !userInput.equals("7") && !userInput.equals("8"));

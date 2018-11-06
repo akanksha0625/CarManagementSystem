@@ -60,7 +60,6 @@ public class ReceptionistView {
 		System.out.println("|  Y88b  d88P Y88b.    888  888 Y8b.     Y88b 888 Y88b 888 888 Y8b.          Y88b  d88P Y8b.     888      Y8bd8P  888 Y88b.   Y8b.      |");
 		System.out.println("|   \"Y8888P\"   \"Y8888P 888  888  \"Y8888   \"Y88888  \"Y88888 888  \"Y8888        \"Y8888P\"   \"Y8888  888       Y88P   888  \"Y8888P \"Y8888   |");
 		System.out.println("*****************************************************************************************************************************************\n");
-
 	}
 	
 	public static void displayScheduleRepair1() {
@@ -190,8 +189,8 @@ public class ReceptionistView {
 		System.out.println("\tEnter '10' to	Logout");
 		
 		String userInput = "";
-		System.out.print("\nOption Selection : ");
 		do {
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3") &&
 				!userInput.equals("4") && !userInput.equals("5") && !userInput.equals("6") && 

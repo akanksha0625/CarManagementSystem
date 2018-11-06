@@ -1,17 +1,7 @@
 package com.java.dbms.proj.views;
 import java.util.Scanner;
 
-/*
- * Class contains all views associated with the manager.
- */
 public class ManagerView {
-	/*
-	 * View that allows a manager to add a new employee to the system.
-	 * 
-	 * @param input
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
 	public static void dsiplayAddEmployee() {
 		System.out.println( "*********************************************************************************************************************************************************" );
 		System.out.println( "|        d8888      888      888      888b    888                             8888888888                        888                                      |" );
@@ -28,15 +18,7 @@ public class ManagerView {
 		System.out.println( "**********************************************************************************************************************************************************\n" );
 	}
 	
-	/*
-	 * View that allows a manager to check the payroll of a certain employee
-	 * 
-	 * @param input
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
 	public static void displayPayroll() {
-		
 		System.out.println( "*****************************************************************************************************************************" );
 		System.out.println( "|                               8888888b.                                   888 888                                         |" );
 		System.out.println( "|                               888   Y88b                                  888 888                                         |" );
@@ -52,13 +34,6 @@ public class ManagerView {
 		System.out.println( "*****************************************************************************************************************************\n" );
 	}
 	
-	/*
-	 * View is the Order Landing Page
-	 * 
-	 * @param input
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
 	public static void displayOrders() {
 		System.out.println( "*****************************************************************************************************************************" );
 		System.out.println( "|                                    .d88888b.              888                                                             |" );
@@ -72,13 +47,6 @@ public class ManagerView {
 		System.out.println( "*****************************************************************************************************************************\n" );
 	}
 	
-	/*
-	 * View shows the entire order history of the service center
-	 * 
-	 * @param input
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
 	public static void displayOrderHistory() {
 		System.out.println( "***************************************************************************************************************************" );
 		System.out.println( "|        .d88888b.              888                       888    888 d8b          888                                     |" );
@@ -95,13 +63,6 @@ public class ManagerView {
 		System.out.println( "***************************************************************************************************************************\n" );
 	}
 	
-	/*
-	 * View displays the new order screen
-	 *
-	 * @param input
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
 	public static void displayNewOrder() {
 		System.out.println( "***************************************************************************************************************" );
 		System.out.println( "|             888b    888                              .d88888b.              888                              |" );
@@ -115,13 +76,6 @@ public class ManagerView {
 		System.out.println( "****************************************************************************************************************\n" );
 	}
 	
-	/*
-	 * View shows manager options for manager notifications
-	 * 
-	 * @param input
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
 	public static void displayNotifications() {		
 		System.out.println( "***************************************************************************************************************************" );
 		System.out.println( "|        888b    888          888    d8b  .d888 d8b                   888    d8b                                          |" );
@@ -135,13 +89,6 @@ public class ManagerView {
 		System.out.println( "***************************************************************************************************************************\n" );
 	}
 	
-	/*
-	 * View shows the current notification details of an order
-	 * 
-	 * @param input
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
 	public static void displayNotificationsDetail() {		
 		System.out.println( "*******************************************************************************************************************************************************" );
 		System.out.println( "| 888b    888          888    d8b  .d888 d8b                   888    d8b                        8888888b.           888             d8b 888          |" );
@@ -155,13 +102,6 @@ public class ManagerView {
 		System.out.println( "*******************************************************************************************************************************************************\n" );
 	}
 	
-	/*
-	 * View is the manager landing page and gives all manager options
-	 * 
-	 * @param input
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
 	public static String displayLanding( Scanner input ) {
 		System.out.println( "**********************************************************************************************************************************************" );
 		System.out.println( "| 888       888          888                                              888b     d888                                                      |" ); 
@@ -201,14 +141,6 @@ public class ManagerView {
 		return userInput;
 	}
 	
-	/*
-	 * View gives the options for viewing invoices
-	 * 
-	 * @param input
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
-	 
 	public static void displayInvoices() {
 		System.out.println( "***************************************************************************************" );
 		System.out.println( "|           8888888                            d8b                                    |" );
@@ -222,13 +154,6 @@ public class ManagerView {
 		System.out.println( "***************************************************************************************\n" );
 	}
 	
-	/*
-	 * View that displays the service center inventory
-	 * 
-	 * @param input
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
 	public static void displayInventory() {
 		System.out.println( "*****************************************************************************************************************************" );
 		System.out.println( "|                     8888888                                     888                                                       |" );
@@ -245,13 +170,6 @@ public class ManagerView {
 		System.out.println( "*****************************************************************************************************************************\n" );
 	}
 	
-	/*
-	 * View displays the car service details for the center
-	 * 
-	 * @param input
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
 	public static void displayCarServiceDetails() {
 		System.out.println( "********************************************************************************************************************************************************" );
 		System.out.println( "|  .d8888b.                         .d8888b.                            d8b                       8888888b.           888             d8b 888          |" );
@@ -265,13 +183,6 @@ public class ManagerView {
 		System.out.println( "********************************************************************************************************************************************************\n" );
 	}
 	
-	/*
-	 * View displays the Service History
-	 * 
-	 * @param inputFo
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
 	public static void displayServiceHistory() {
 		System.out.println( "**************************************************************************************************************************" );
 		System.out.println( "|  .d8888b.                            d8b                       888    888 d8b          888                             |" );
@@ -288,13 +199,6 @@ public class ManagerView {
 		System.out.println( "**************************************************************************************************************************\n" );
 	}
 	
-	/*
-	 * View displays the options for creating a new car model in the system.
-	 * 
-	 * @param input
-	 * 		Scanner to process user input.
-	 * @return user input.
-	 */
 	public static void displayNewCarModel() {
 		System.out.println( "*************************************************************************************************************************" );
 		System.out.println( "| 888b    888                              .d8888b.                        888b     d888               888          888 |" );

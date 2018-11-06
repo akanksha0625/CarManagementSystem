@@ -1,9 +1,6 @@
 package com.java.dbms.proj.views;
 
-import java.util.Scanner;
-
 public class EmployeeView {
-	/*Displays the Employee Profile Landing Page*/
 	public static void displayProfileLanding() {
 		System.out.println( "*************************************************************************************************************************************" );
 		System.out.println( "| 8888888888                        888                                          8888888b.                   .d888 d8b 888          |" ); 
@@ -20,7 +17,7 @@ public class EmployeeView {
 		System.out.println( "*************************************************************************************************************************************\n" ); 
 	}
 	
-	public static String displayProfileUpdate(Scanner input) {
+	public static void displayProfileUpdate() {
 		System.out.println( "*************************************************************************************************************************************");
 		System.out.println( "| 8888888888                        888                                          8888888b.                   .d888 d8b 888          |"); 
 		System.out.println( "| 888                               888                                          888   Y88b                 d88P\"  Y8P 888          |"); 
@@ -34,27 +31,8 @@ public class EmployeeView {
 		System.out.println( "|                          888                   Y8b d88P                                                                           |"); 
 		System.out.println( "|                          888                    \"Y88P\"                                                                            |");
 		System.out.println( "*************************************************************************************************************************************n"); 
-		
-		System.out.println( "Please select from the following user options:");
-		System.out.println( "\tEnter '1' to Update your First Name." );
-		System.out.println( "\tEnter '2' to Update your Last Name." );
-		System.out.println( "\tEnter '3' to Update your Address.");
-		System.out.println( "\tEnter '4' to Update your Phone Number." );
-		System.out.println( "\tEnter '5' to Update your Email." );
-		System.out.println( "\tEnter '6' to Update your Password." );
-		System.out.println( "\tEnter '7' when Finished Updating." );
-		
-		String userInput = "";
-		System.out.print( "\nOption Selection : " );
-		do {
-			userInput = input.nextLine();
-		}while( !userInput.equals( "1" ) && !userInput.equals( "2" ) && !userInput.equals( "3" ) && 
-				!userInput.equals( "4" ) && !userInput.equals( "5" ) && !userInput.equals( "6" ) &&
-				!userInput.equals( "7" ) );
-		
-		return userInput;
 	}
-	/* Displays the view for an employee to search for a customer's profile*/
+
 	public static void displayCustomerProfile() {
 		System.out.println( "******************************************************************************************************************************" );
 		System.out.println( "|   888     888 d8b                              .d8888b.                    888                                             |" );
@@ -76,7 +54,6 @@ public class EmployeeView {
 		System.out.println( "|                                        888        888     \"Y88P\"  888    888 888  \"Y8888                                   |" );
 		System.out.println( "|                                                                                                                            |" );                                                                                                                        
 		System.out.println( "******************************************************************************************************************************\n" ); 
-
 	}
 	
 	public static void displayViewProfile() {
