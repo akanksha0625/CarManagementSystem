@@ -9,8 +9,8 @@ public class ReceptionistScheduleMaintenanceController {
 		ReceptionistView.displayScheduleMaintenance1(); //Display page header
 		
 		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to  Find Service Date");
-		System.out.println("\tEnter '2' to	Go Back");
+		System.out.println("\tEnter '1' to Find Service Date");
+		System.out.println("\tEnter '2' to Go Back");
 		
 		String userInput = "";
 		do {

@@ -12,8 +12,8 @@ public class ReceptionistRescheduleServiceController {
 		System.out.println("GET USER EMAIL AND OUTPUT UPCOMING SERVICES");
 		
 		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to  Pick a Service");
-		System.out.println("\tEnter '2' to	Go Back");
+		System.out.println("\tEnter '1' to Pick a Service");
+		System.out.println("\tEnter '2' to Go Back");
 		
 		String userInput = "";
 		do {
@@ -33,8 +33,8 @@ public class ReceptionistRescheduleServiceController {
 			System.out.println("OFFER SERVICE DATES");
 			
 			System.out.println("Please select from the following user options:");
-			System.out.println("\tEnter '1' to  Reschedule Date");
-			System.out.println("\tEnter '2' to	Go Back");
+			System.out.println("\tEnter '1' to Reschedule Date");
+			System.out.println("\tEnter '2' to Go Back");
 			
 			do {
 				System.out.print("\nOption Selection : ");

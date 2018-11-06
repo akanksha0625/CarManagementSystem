@@ -12,9 +12,9 @@ public class ReceptionistScheduleServiceController {
 		System.out.println("GATHER USER INPUT");
 		
 		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to  Schedule Maintenance");
-		System.out.println("\tEnter '2' to	Schedule Repair");
-		System.out.println("\tEnter '3' to	Go Back");
+		System.out.println("\tEnter '1' to Schedule Maintenance");
+		System.out.println("\tEnter '2' to Schedule Repair");
+		System.out.println("\tEnter '3' to Go Back");
 		
 		String userInput = "";
 		do {
@@ -22,7 +22,9 @@ public class ReceptionistScheduleServiceController {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3"));
 		
-		scheduleService(userInput, input);
+		if(!userInput.equals("3")){
+			scheduleService(userInput, input);
+		}
 	}
 	public static void scheduleService(String response, Scanner input) {
 			if(response.equals("1")) {

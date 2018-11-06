@@ -16,8 +16,8 @@ public class CustomerUpdateProfileController {
 			System.out.println("\tEnter '5' to Update your Email." );
 			System.out.println("\tEnter '6' to Update your Password." );
 
-			System.out.print("\nOption Selection : ");
 			do {
+				System.out.print("\nOption Selection : ");
 				userInput = input.nextLine();
 			}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3") &&
 					!userInput.equals("4") && !userInput.equals("5") && !userInput.equals("6"));

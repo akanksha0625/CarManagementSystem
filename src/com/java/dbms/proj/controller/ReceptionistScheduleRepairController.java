@@ -9,14 +9,14 @@ public class ReceptionistScheduleRepairController {
 		ReceptionistView.displayScheduleRepair1(); //Display page header
 		
 		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to  Engine Knock");
-		System.out.println("\tEnter '2' to	Car drifts in a particular direction");
-		System.out.println("\tEnter '3' to  Battery does not hold charge");
-		System.out.println("\tEnter '4' to	Black/Unclean exhaust");
-		System.out.println("\tEnter '5' to  A/C-Heater not working");
-		System.out.println("\tEnter '6' to	Headlamps/Taillamps not working");
-		System.out.println("\tEnter '7' to  Check engine light");
-		System.out.println("\tEnter '8' to	Go Back");
+		System.out.println("\tEnter '1' to Engine Knock");
+		System.out.println("\tEnter '2' to Car drifts in a particular direction");
+		System.out.println("\tEnter '3' to Battery does not hold charge");
+		System.out.println("\tEnter '4' to Black/Unclean exhaust");
+		System.out.println("\tEnter '5' to A/C-Heater not working");
+		System.out.println("\tEnter '6' to Headlamps/Taillamps not working");
+		System.out.println("\tEnter '7' to Check engine light");
+		System.out.println("\tEnter '8' to Go Back");
 		
 		String userInput = "";
 		do {
@@ -37,8 +37,8 @@ public class ReceptionistScheduleRepairController {
 			System.out.println("DISPLAY INFORMATION FOR THE SERVICE");
 			
 			System.out.println("Please select from the following user options:");
-			System.out.println("\tEnter '1' to  Repair on date");
-			System.out.println("\tEnter '2' to	Go Back");
+			System.out.println("\tEnter '1' to Repair on date");
+			System.out.println("\tEnter '2' to Go Back");
 			
 			do {
 				System.out.print("\nOption Selection : ");

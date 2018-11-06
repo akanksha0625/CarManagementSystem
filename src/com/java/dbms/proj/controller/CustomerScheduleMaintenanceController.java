@@ -7,8 +7,8 @@ public class CustomerScheduleMaintenanceController {
 		com.java.dbms.proj.views.CustomerView.displayScheduleMaintenance1(); //Display page header
 		
 		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to  Find Service Date");
-		System.out.println("\tEnter '2' to	Go Back");
+		System.out.println("\tEnter '1' to Find Service Date");
+		System.out.println("\tEnter '2' to Go Back");
 		
 		String userInput = "";
 		do {
@@ -25,8 +25,8 @@ public class CustomerScheduleMaintenanceController {
 			System.out.println("DISPLAY SERVICE DATES");
 			
 			System.out.println("Please select from the following user options:");
-			System.out.println("\tEnter '1' to  Schedule on Date");
-			System.out.println("\tEnter '2' to	Go Back");
+			System.out.println("\tEnter '1' to Schedule on Date");
+			System.out.println("\tEnter '2' to Go Back");
 			
 			do {
 				System.out.print("\nOption Selection : ");

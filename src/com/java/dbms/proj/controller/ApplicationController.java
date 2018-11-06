@@ -55,9 +55,11 @@ public class ApplicationController {
 		}else if(role.equalsIgnoreCase("mechanic")){
 			/*Redirect to the employee profile page*/
 			mechanic();
-		}else{
+		}else if(role.equalsIgnoreCase("customer")){
 			/*Redirect to the customer landing page*/
 			customer();
+		} else {
+			home();
 		}
 	}
 	

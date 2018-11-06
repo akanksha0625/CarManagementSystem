@@ -15,11 +15,11 @@ public class CustomerView {
 		System.out.println("| 888P     Y888  \"Y8888  888  \"Y8888P \"Y88P\"  888  888  888  \"Y8888        \"Y8888P\"   \"Y88888  88888P'  \"Y888 \"Y88P\"  888  888  888  \"Y8888  888     |"); 
 		System.out.println("******************************************************************************************************************************************************\n");
 		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to  Profile");
-		System.out.println("\tEnter '2' to  Register Car");
-		System.out.println("\tEnter '3' to  Services");
-		System.out.println("\tEnter '4' to	Invoices");
-		System.out.println("\tEnter '5' to  Logout");
+		System.out.println("\tEnter '1' to Profile");
+		System.out.println("\tEnter '2' to Register Car");
+		System.out.println("\tEnter '3' to Services");
+		System.out.println("\tEnter '4' to Invoices");
+		System.out.println("\tEnter '5' to Logout");
 
 		String userInput = "";
 		do {

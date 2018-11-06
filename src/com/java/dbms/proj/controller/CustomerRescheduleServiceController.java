@@ -10,8 +10,8 @@ public class CustomerRescheduleServiceController {
 		System.out.println("DISPLAY DETAILS OF UPCOMING SERVICES");
 		
 		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to  Pick a service");
-		System.out.println("\tEnter '2' to	Go back");
+		System.out.println("\tEnter '1' to Pick a service");
+		System.out.println("\tEnter '2' to Go back");
 		
 		String userInput = "";
 		do {
@@ -29,8 +29,8 @@ public class CustomerRescheduleServiceController {
 			System.out.println("DISPLAY DATES");
 			
 			System.out.println("Please select from the following user options:");
-			System.out.println("\tEnter '1' to  Reschedule date");
-			System.out.println("\tEnter '2' to	Go back");
+			System.out.println("\tEnter '1' to Reschedule date");
+			System.out.println("\tEnter '2' to Go back");
 			
 			userInput = "";
 			do {
