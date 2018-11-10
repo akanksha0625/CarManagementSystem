@@ -3,6 +3,7 @@ import java.sql.*;
 
 import java.util.Scanner;
 
+import com.java.dbms.proj.common.DBFacade;
 import com.java.dbms.proj.common.UserAccess;
 import com.java.dbms.proj.controller.ApplicationController;
 import com.java.dbms.proj.views.*;
@@ -25,7 +26,9 @@ public class Main {
 	 * 		Commandline arguments
 	 * @return status of exit.
 	 */
-    public static void main( String[] args ) {
+    public static void main( String[] args ) throws ClassNotFoundException, SQLException {
+    	DBFacade.createConnection();
+    	
 //		/* Print welcome screen for the user. */
 //    	Home.displaypage();
 //       	try {

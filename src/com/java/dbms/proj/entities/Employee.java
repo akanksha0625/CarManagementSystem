@@ -1,11 +1,23 @@
 package com.java.dbms.proj.entities;
 
+import java.util.Date;
+
 public class Employee {
 	int eid;
 	String first;
 	String last;
 	String email;
-	int phone;
+	String phone;
+	Date startDate;
+	public Date getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 	String role;
 	String userName;
 	
@@ -33,12 +45,6 @@ public class Employee {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public int getPhone() {
-		return phone;
-	}
-	public void setPhone(int phone) {
-		this.phone = phone;
-	}
 	public String getRole() {
 		return role;
 	}
@@ -51,5 +57,6 @@ public class Employee {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+
 
 }

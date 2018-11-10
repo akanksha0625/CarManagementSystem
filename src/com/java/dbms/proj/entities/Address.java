@@ -6,6 +6,14 @@ public class Address {
 	String street;
 	String city;
 	String state;
+	String zip;
+	
+	public String getZip() {
+		return zip;
+	}
+	public void setZip(String zip) {
+		this.zip = zip;
+	}
 	public int getADD_ID() {
 		return ADD_ID;
 	}
@@ -30,6 +38,4 @@ public class Address {
 	public void setState(String state) {
 		this.state = state;
 	}
-	
-
 }

@@ -17,7 +17,7 @@ public class LoginController {
 
 		int attempts = 0;
 		int back = 0;
-		Statement statement = DBFacade.createConnection().createStatement();
+		Statement statement = DBFacade.getConnection().createStatement();
 		ResultSet resultSet;
 
 		/*

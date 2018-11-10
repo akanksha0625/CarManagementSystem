@@ -7,16 +7,14 @@ public class Customer {
 	int Phone;
 	String Email;
 	String Username;
-	Address address;
+	Address address = new Address();
 	public int getCID() {
 		return CID;
 	}
 	public Address getAddress() {
 		return address;
 	}
-	public void setAddress(Address address) {
-		this.address = address;
-	}
+	
 	public void setCID(int cID) {
 		CID = cID;
 	}
