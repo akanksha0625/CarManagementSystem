@@ -28,7 +28,6 @@ public class Main {
 	 */
     public static void main( String[] args ) throws ClassNotFoundException, SQLException {
     	DBFacade.createConnection();
-    	
 //		/* Print welcome screen for the user. */
 //    	Home.displaypage();
 //       	try {

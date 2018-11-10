@@ -1,11 +1,12 @@
 package com.java.dbms.proj.controller;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 import com.java.dbms.proj.views.ManagerView;
 
 public class ManagerViewOrdersController {
-	public static void viewOrders(String response, Scanner input) {
+	public static void viewOrders(String response, Scanner input)  throws ClassNotFoundException, SQLException{
 		if( response.equals( "1" ) ) {
 			/*Redirect to view order history page*/
 			ManagerOrderHistoryController.orderHistory(input);
@@ -17,7 +18,7 @@ public class ManagerViewOrdersController {
 		}
 	}
 	
-	public static void orderLanding(Scanner input) {
+	public static void orderLanding(Scanner input)  throws ClassNotFoundException, SQLException{
 		ManagerView.displayOrders(); //Display page header
 		
 		System.out.println( "Please select from the following user options:" );

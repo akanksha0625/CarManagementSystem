@@ -1,13 +1,33 @@
 package com.java.dbms.proj.controller;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 
+import com.java.dbms.proj.common.DBFacade;
 import com.java.dbms.proj.views.ManagerView;
 
 public class ManagerNotificationsController {
-	public static void notifications(Scanner input) {
+	public static void notifications(Scanner input)  throws ClassNotFoundException, SQLException{
 		ManagerView.displayNotifications(); //Display page header
+		Statement statement = DBFacade.getConnection().createStatement();
+		ResultSet resultSet;
 		
+		try {
+			/* Find userName and userPassword match from 'LOGIN' table */
+			resultSet = statement.executeQuery("SELECT * FROM NOTIFICATION");
+			
+			/* If query returned a value */
+			if (resultSet.next()) {
+					
+					System.out.println();
+					System.out.println();			
+				}
+			}  catch (SQLException e) {
+				System.out.println("Could'nt get the Inventory details. " + e);
+				e.printStackTrace();
+			}
 		//TODO display notifications
 		System.out.println("DISPLAY NOTIFICATIONS\n");
 		

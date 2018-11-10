@@ -10,7 +10,7 @@ public class ApplicationController {
 	static Scanner input = new Scanner( System.in );
 	
 	/*Flow association with the homepage. --> entry point of application flow*/
-	public static void home() {
+	public static void home() throws ClassNotFoundException, SQLException  {
 		response = Home.displayHome( input );
 		if( response.equals( "1" ) ) {
 			/*Redirect to login page*/
@@ -38,7 +38,7 @@ public class ApplicationController {
 	}
 		
 	/*Flow associated with the login page --> second step of application, determines which user flow to pick up*/
-	private static void login() {
+	private static void login() throws ClassNotFoundException, SQLException {
 		String role = "";
 		try {
 			role = LoginController.userLogin(input);
@@ -65,7 +65,7 @@ public class ApplicationController {
 	
 //---------------------------------------------------------------------------------------------Manager	
 	/*Flow associated with the manager*/
-	private static void manager() {
+	private static void manager()  throws ClassNotFoundException, SQLException{
 		response = ManagerView.displayLanding( input );
 		if( response.equals( "1" ) ) {
 			/*Redirect to manager profile*/
@@ -119,13 +119,13 @@ public class ApplicationController {
 
 //---------------------------------------------------------------------------------------------Employee	
 	/*Handles the flow of the mechanic*/
-	private static void mechanic() {
+	private static void mechanic() throws ClassNotFoundException, SQLException {
 		EmployeeProfileController.profileLanding(input);
 	} 
 	
 //---------------------------------------------------------------------------------------------Receptionist
 	/*Handles the flow of the receptionist*/
-	private static void receptionist() {
+	private static void receptionist() throws ClassNotFoundException, SQLException  {
 		response = ReceptionistView.displayLanding(input);
 		if(response.equals("1")) {
 			/*Redirect to display employee profile page*/
@@ -172,7 +172,7 @@ public class ApplicationController {
 
 	//---------------------------------------------------------------------------------------------Customer	
 	/*Handles the flow of the customer*/
-	private static void customer() {
+	private static void customer() throws ClassNotFoundException, SQLException {
 		response = CustomerView.displayLanding(input);
 		if(response.equals("1")) {
 			/*Redirect to display customer profile page*/

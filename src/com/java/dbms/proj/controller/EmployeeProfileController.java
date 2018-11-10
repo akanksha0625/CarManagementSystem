@@ -1,11 +1,12 @@
 package com.java.dbms.proj.controller;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 import com.java.dbms.proj.views.EmployeeView;
 
 public class EmployeeProfileController {
-	public static void employeeProfile(String response, Scanner input) {
+	public static void employeeProfile(String response, Scanner input) throws ClassNotFoundException, SQLException {
 		if( response.equals( "1" ) ) {
 			/*Redirect to Employee View Profile*/
 			EmployeeViewProfileController.viewProfile( input );
@@ -17,7 +18,7 @@ public class EmployeeProfileController {
 		}	
 	}
 	
-	public static void profileLanding(Scanner input) {
+	public static void profileLanding(Scanner input) throws ClassNotFoundException, SQLException {
 		EmployeeView.displayProfileLanding();
 		
 		System.out.println( "Please select from the following user options:" );

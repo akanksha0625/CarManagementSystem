@@ -1,11 +1,37 @@
 package com.java.dbms.proj.controller;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 
+import com.java.dbms.proj.common.DBFacade;
+
 public class ManagerInventoryController {
-	public static void displayInventory( Scanner input ) {
+	public static void displayInventory( Scanner input )  throws ClassNotFoundException, SQLException {
 		com.java.dbms.proj.views.ManagerView.displayInventory(); //Display page header
+		Statement statement = DBFacade.getConnection().createStatement();
+		ResultSet resultSet;
 		
+		try {
+			/* Find userName and userPassword match from 'LOGIN' table */
+			resultSet = statement.executeQuery("SELECT * FROM ACME_INVENTORY");
+			
+			/* If query returned a value */
+			if (resultSet.next()) {
+					System.out.println("Part ID : "+ resultSet.getString("PART_ID"));
+					System.out.println("Part Name : "+ resultSet.getString("PART_NAME"));
+					System.out.println("Quantity : "+ resultSet.getString("CURRENT_QUANTITY"));
+					System.out.println("Unit Price : "+ resultSet.getString("UNIT_PRICE"));
+					System.out.println("Minimum Quantity Threshold : "+ resultSet.getString("MIN_QUANTITY"));
+					System.out.println("Minimum Order Threshold : "+ resultSet.getString("MIN_ORDER_THRESHOLD"));
+					System.out.println();
+					System.out.println();			
+				}
+			}  catch (SQLException e) {
+				System.out.println("Could'nt get the Inventory details. " + e);
+				e.printStackTrace();
+			}
 		//TODO dump the details in
 		System.out.println("GET INVENTORY DETAILS\n" );
 		
