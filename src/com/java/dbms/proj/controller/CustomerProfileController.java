@@ -1,11 +1,12 @@
 package com.java.dbms.proj.controller;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 import com.java.dbms.proj.views.CustomerView;
 
 public class CustomerProfileController {
-	public static void profileLanding(Scanner input) {
+	public static void profileLanding(Scanner input) throws SQLException {
 		String userInput = "";
 		do {
 			CustomerView.displayProfile(); //Display page header

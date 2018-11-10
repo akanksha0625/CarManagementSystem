@@ -1,15 +1,27 @@
 package com.java.dbms.proj.controller;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 
+import com.java.dbms.proj.common.DBFacade;
+import com.java.dbms.proj.entities.Address;
+import com.java.dbms.proj.entities.Customer;
+import com.java.dbms.proj.entities.Employee;
 import com.java.dbms.proj.views.*;
  
 public class ApplicationController {
 	/* Response string and Scanner to process user option selections. */
 	static String response = "";
 	static Scanner input = new Scanner( System.in );
+	static Customer customer = new Customer();
+	static Employee employee = new Employee();
+	
+	static Statement statement=null;
+	static ResultSet resultSet;
 	
 	/*Flow association with the homepage. --> entry point of application flow*/
+
 	public static void home() throws ClassNotFoundException, SQLException  {
 		response = Home.displayHome( input );
 		if( response.equals( "1" ) ) {
@@ -38,6 +50,7 @@ public class ApplicationController {
 	}
 		
 	/*Flow associated with the login page --> second step of application, determines which user flow to pick up*/
+
 	private static void login() throws ClassNotFoundException, SQLException {
 		String role = "";
 		try {
@@ -65,6 +78,7 @@ public class ApplicationController {
 	
 //---------------------------------------------------------------------------------------------Manager	
 	/*Flow associated with the manager*/
+
 	private static void manager()  throws ClassNotFoundException, SQLException{
 		response = ManagerView.displayLanding( input );
 		if( response.equals( "1" ) ) {
@@ -125,7 +139,9 @@ public class ApplicationController {
 	
 //---------------------------------------------------------------------------------------------Receptionist
 	/*Handles the flow of the receptionist*/
+
 	private static void receptionist() throws ClassNotFoundException, SQLException  {
+
 		response = ReceptionistView.displayLanding(input);
 		if(response.equals("1")) {
 			/*Redirect to display employee profile page*/
@@ -170,9 +186,65 @@ public class ApplicationController {
 		}	
 	}
 
+	private static void setCustomerDetails() throws SQLException {
+		statement = DBFacade.getConnection().createStatement();
+		
+		resultSet = statement.executeQuery("SELECT CID, FIRSTNAME, LASTNAME, PHONE, EMAIL, SC_ID FROM CUSTOMER " 
+		+ "WHERE username = '" + LoginController.userLogin.getUserName() + "'");
+		
+		if (resultSet.next()) {
+			
+			if (resultSet.getString("CID") != null && resultSet.getString("CID") !="" )
+				customer.setCustomerId(resultSet.getString("CID"));
+			
+			if (resultSet.getString("FIRSTNAME") != null && resultSet.getString("FIRSTNAME") != "")
+				customer.setFirstName(resultSet.getString("FIRSTNAME"));
+			
+			if (resultSet.getString("LASTNAME") != null && resultSet.getString("LASTNAME") != "")
+				customer.setLastName(resultSet.getString("LASTNAME"));
+			
+			if (resultSet.getString("PHONE") != null && resultSet.getString("PHONE") != "")
+				customer.setPhoneNumber(resultSet.getString("PHONE"));
+			
+			if (resultSet.getString("EMAIL") != null && resultSet.getString("EMAIL") != "")
+				customer.setEmail(resultSet.getString("EMAIL"));
+			
+			if (resultSet.getString("SC_ID") != null && resultSet.getString("SC_ID") != "")
+				customer.setServiceCenterId(resultSet.getString("SC_ID"));
+			
+			}
+
+		Address customerAddress=new Address();
+		resultSet = statement.executeQuery("SELECT * FROM CUSTOMER_ADDRESS" 
+				+ "WHERE username = '" + LoginController.userLogin.getUserName() + "'");
+		
+		if(resultSet.next()) {
+			if (resultSet.getString("ADD_ID") != null && resultSet.getString("ADD_ID") != "")
+				customer.setServiceCenterId(resultSet.getString("ADD_ID"));
+			
+			if (resultSet.getString("Street") != null && resultSet.getString("Street") != "")
+				customer.setServiceCenterId(resultSet.getString("Street"));
+			
+			if (resultSet.getString("City") != null && resultSet.getString("City") != "")
+				customer.setServiceCenterId(resultSet.getString("City"));
+			
+			if (resultSet.getString("STATE") != null && resultSet.getString("STATE") != "")
+				customer.setServiceCenterId(resultSet.getString("STATE"));
+			
+			if (resultSet.getString("ZIP") != null && resultSet.getString("ZIP") != "")
+				customer.setServiceCenterId(resultSet.getString("ZIP"));
+		}
+		
+		customer.setAddress(customerAddress);
+	}
+	
 	//---------------------------------------------------------------------------------------------Customer	
 	/*Handles the flow of the customer*/
 	private static void customer() throws ClassNotFoundException, SQLException {
+
+		
+		setCustomerDetails();
+
 		response = CustomerView.displayLanding(input);
 		if(response.equals("1")) {
 			/*Redirect to display customer profile page*/

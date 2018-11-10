@@ -26,8 +26,10 @@ public class Main {
 	 * 		Commandline arguments
 	 * @return status of exit.
 	 */
+
     public static void main( String[] args ) throws ClassNotFoundException, SQLException {
     	DBFacade.createConnection();
+
 //		/* Print welcome screen for the user. */
 //    	Home.displaypage();
 //       	try {
@@ -39,6 +41,8 @@ public class Main {
 //		}
     	
     	com.java.dbms.proj.controller.ApplicationController.home();
+    	
+		
     	//com.java.dbms.proj.common.HeadersTest.testHeaders();
 	}
     

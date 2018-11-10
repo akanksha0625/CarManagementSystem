@@ -41,11 +41,12 @@ public class SignUpController {
 		String phone = input.nextLine();
 		
 		System.out.print( "User First Name : ");
+
 		String first = input.nextLine();
 		
 		System.out.print( "User Last Name : ");
 		String last = input.nextLine();
-		
+
 		System.out.print( "User City : ");
 		String city = input.nextLine();
 		

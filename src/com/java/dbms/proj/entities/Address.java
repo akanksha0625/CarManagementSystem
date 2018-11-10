@@ -6,13 +6,12 @@ public class Address {
 	String street;
 	String city;
 	String state;
-	String zip;
-	
-	public String getZip() {
-		return zip;
+	String zipCode;
+	public String getZipCode() {
+		return zipCode;
 	}
-	public void setZip(String zip) {
-		this.zip = zip;
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
 	}
 	public int getADD_ID() {
 		return ADD_ID;

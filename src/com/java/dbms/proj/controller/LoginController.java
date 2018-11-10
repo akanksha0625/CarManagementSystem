@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
+
+import com.java.dbms.proj.common.ClearConsole;
 import com.java.dbms.proj.common.DBFacade;
 import com.java.dbms.proj.entities.UserLogin;
 import com.java.dbms.proj.views.Login;
@@ -13,7 +15,8 @@ public class LoginController {
 	static UserLogin userLogin = new UserLogin();
 
 	public static String userLogin(Scanner input) throws ClassNotFoundException, SQLException {
-		com.java.dbms.proj.views.Login.displayLogin(); // Call page header
+		ClearConsole.clearConsole();
+		Login.displayLogin(); // Call page header
 
 		int attempts = 0;
 		int back = 0;
