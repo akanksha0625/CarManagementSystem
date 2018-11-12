@@ -183,9 +183,13 @@ public class SignUpController {
 		
 		/* Insert into the Customer Address Table */
 		try {
-			//TODO fix auto increment
+			resultSet = statement.executeQuery("SELECT customerAddress_seq.nextval from dual");
+			int index = 0;
+			if (resultSet.next()) {
+				index = resultSet.getInt("NEXTVAL");
+			}
 			int tuples = statement.executeUpdate( "INSERT INTO CUSTOMER_ADDRESS " +
-						    					"VALUES ('0', '" + address + "', '" +
+						    					"VALUES ('" + index + "', '" + address + "', '" +
 													     	  city + "', '" +
 						    					              state + "', '" +
 													     	  customerID + "', '" +
