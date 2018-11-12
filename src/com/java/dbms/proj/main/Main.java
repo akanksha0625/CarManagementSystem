@@ -1,7 +1,8 @@
 package com.java.dbms.proj.main;
-import java.sql.*;
-import com.java.dbms.proj.common.DBFacade;
-import com.java.dbms.proj.controller.ApplicationController;
+import java.sql.SQLException;
+
+import com.java.dbms.proj.common.*;
+import com.java.dbms.proj.controller.*;
 public class Main {
 /*
  * CSC 540 - Database Project 1

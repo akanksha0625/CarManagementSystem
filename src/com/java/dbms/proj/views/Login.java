@@ -1,7 +1,5 @@
 package com.java.dbms.proj.views;
 
-import java.util.Scanner;
-
 public class Login {
 	
 	public static void displayLogin() {

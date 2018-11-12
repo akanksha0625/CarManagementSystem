@@ -2,7 +2,7 @@ package com.java.dbms.proj.entities;
 
 public class Customer {
 	
-	String customerId;
+	int customerId;
 	String firstName;
 	String lastName;
 	String phoneNumber;
@@ -11,11 +11,11 @@ public class Customer {
 	String serviceCenterId;
 	Address address;
 	
-	public String getCustomerId() {
+	public int getCustomerId() {
 		return customerId;
 	}
-	public void setCustomerId(String customerId) {
-		this.customerId = customerId;
+	public void setCustomerId(int i) {
+		this.customerId = i;
 
 	}
 	public String getFirstName() {
@@ -56,11 +56,8 @@ public class Customer {
 	}
 	public Address getAddress() {
 		return address;
-	}
+	}	
 	public void setAddress(Address address) {
 		this.address = address;
 	}
-	
-
-
 }

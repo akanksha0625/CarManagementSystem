@@ -243,7 +243,7 @@ public class ApplicationController {
 		if (resultSet.next()) {
 			
 			if (resultSet.getString("CID") != null && resultSet.getString("CID") !="" )
-				customer.setCustomerId(resultSet.getString("CID"));
+				customer.setCustomerId(resultSet.getInt("CID"));
 			
 			if (resultSet.getString("FIRSTNAME") != null && resultSet.getString("FIRSTNAME") != "")
 				customer.setFirstName(resultSet.getString("FIRSTNAME"));

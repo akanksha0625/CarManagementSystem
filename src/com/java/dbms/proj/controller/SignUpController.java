@@ -26,7 +26,7 @@ public class SignUpController {
 		boolean isNum = false;
 		boolean passwordMatch = true;
 		
-		ArrayList<String> serviceCenters = serviceCenters = new ArrayList<String>();
+		ArrayList<String> serviceCenters = new ArrayList<String>();
 		
 		/* Display page header */
 		com.java.dbms.proj.views.CustomerView.displaySignUp();

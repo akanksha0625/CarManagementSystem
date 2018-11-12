@@ -45,7 +45,6 @@ public class LoginController {
 			} while (!userInput.equals("1") && !userInput.equals("2"));
 
 			if (userInput.equals("1")) {
-				System.out.println("INSIDE");
 				try {
 					/* Find userName and userPassword match from 'LOGIN' table */
 					resultSet = statement

@@ -37,4 +37,7 @@ public class Address {
 	public void setState(String state) {
 		this.state = state;
 	}
+	public String addressToString() {
+		return this.getStreet() + ", " + this.getCity() + ", " + this.getState() + " " + this.getZipCode() ;
+	}
 }

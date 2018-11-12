@@ -14,7 +14,7 @@ public class Vehicle {
 		return datePurchsed;
 	}
 
-	public void setDatePurchsed(Date datePurchsed) {
+	public void setDatePurchased(Date datePurchsed) {
 		this.datePurchsed = datePurchsed;
 	}
 
@@ -64,5 +64,15 @@ public class Vehicle {
 
 	public void setLicense(String license) {
 		this.license = license;
+	}
+	
+	public String toString() {
+		return "\n\tLicense           :\t" + this.getLicense() +
+			   "\n\tYear              :\t" + this.getYear() +
+			   "\n\tDate Purchased    :\t" + this.getDatePurchsed().toString() +
+			   "\n\tLast Service Date :\t" + this.getLastServiceDate().toString() +
+			   "\n\tLast Service Type :\t" + this.getLastServiceType() +
+			   "\n\tCurrent Mileage   :\t" + this.getCurrentMileage() +
+			   "\n\tVehicle ID        :\t" + this.getVid() + "\n";
 	}
 }

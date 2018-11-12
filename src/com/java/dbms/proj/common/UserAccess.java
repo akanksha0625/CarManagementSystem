@@ -1,8 +1,6 @@
 package com.java.dbms.proj.common;
 import java.sql.*;
 
-import java.util.Scanner;
-
 /**
  * Class logs in a user from the command line.
  * Login is based on a successful 'userName' and

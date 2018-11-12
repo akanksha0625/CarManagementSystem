@@ -1,10 +1,10 @@
 package com.java.dbms.proj.common;
 
-import java.util.Scanner;
+//import java.util.Scanner;
 
 public class HeadersTest {
     public static void testHeaders() {
-    	Scanner test = new Scanner(System.in);
+    	//Scanner test = new Scanner(System.in);
 //    	ManagerView.dsiplayAddEmployee(test);
 //    	ManagerView.displayPayroll(test);
 //    	ManagerView.displayOrders(test);
