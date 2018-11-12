@@ -9,6 +9,7 @@ import com.java.dbms.proj.entities.Address;
 import com.java.dbms.proj.entities.Customer;
 import com.java.dbms.proj.entities.Employee;
 import com.java.dbms.proj.entities.HourlyEmployee;
+import com.java.dbms.proj.entities.MonthlyEmployee;
 import com.java.dbms.proj.views.*;
  
 public class ApplicationController {
@@ -18,8 +19,7 @@ public class ApplicationController {
 	static Customer customer;
 
 	static Employee employee;
-	
-	static Statement statement=null;
+	static Statement statement = null;
 	static ResultSet resultSet;
 	
 	/*Flow association with the homepage. --> entry point of application flow*/
@@ -30,12 +30,7 @@ public class ApplicationController {
 			/*Redirect to login page*/
 			login();
 		}else if( response.equals( "2" ) ) {
-			/*Redirect to Customer SignUp page*/
-			try {
-				response = SignUpController.signUp(input);
-			} catch (SQLException | ClassNotFoundException e) {
-				e.printStackTrace();
-			}
+			response = SignUpController.signUp(input);
 			if(response.equals("1")) {
 				login();
 			} else {
@@ -82,7 +77,7 @@ public class ApplicationController {
 	/*Flow associated with the manager*/
 
 	private static void manager()  throws ClassNotFoundException, SQLException{
-		employee = new Employee();
+		employee = new MonthlyEmployee();
 		setEmployeeDetails();
 		
 		response = ManagerView.displayLanding( input );
@@ -150,7 +145,7 @@ public class ApplicationController {
 		/*Handles the flow of the receptionist*/	
 
 	private static void receptionist() throws ClassNotFoundException, SQLException  {
-		employee = new Employee(); 
+		employee = new MonthlyEmployee(); 
 		setEmployeeDetails();
 		response = ReceptionistView.displayLanding(input);
 		if(response.equals("1")) {
@@ -242,6 +237,8 @@ public class ApplicationController {
 		
 		if (resultSet.next()) {
 			
+			customer.setUsername( LoginController.userLogin.getUserName() );
+			
 			if (resultSet.getString("CID") != null && resultSet.getString("CID") !="" )
 				customer.setCustomerId(resultSet.getInt("CID"));
 			
@@ -293,6 +290,8 @@ public class ApplicationController {
 		
 		if (resultSet.next()) {
 			
+			employee.setUserName( LoginController.userLogin.getUserName() );
+			
 			if (resultSet.getString("EID") != null && resultSet.getString("EID") !="" )
 				employee.setEmpId(resultSet.getInt("EID"));
 			
@@ -338,6 +337,25 @@ public class ApplicationController {
 		}
 		
 		employee.setAddress(employeeAddress);
+		
+		if( employee.getRole().equalsIgnoreCase("manager") || employee.getRole().equalsIgnoreCase("receptionist") ) {
+			resultSet = statement.executeQuery("SELECT MONTHLY_RATE FROM MONTHLY_EMPLOYEE WHERE EID = '" + 
+												employee.getEmpId() + "'");
+			if(resultSet.next()) {
+				((MonthlyEmployee)employee).setMonthlyRate(resultSet.getDouble("MONTHLY_RATE"));
+			}
+		} else if( employee.getRole().equalsIgnoreCase("mechanic") ) {
+			resultSet = statement.executeQuery("SELECT HOURLY_RATE FROM HOURLY_EMPLOYEE WHERE EID = '" + 
+					employee.getEmpId() + "'");
+			if(resultSet.next()) {
+			((HourlyEmployee)employee).setHourlyRate(resultSet.getDouble("HOURLY_RATE"));
+			}
+		}
+		
+		resultSet = statement.executeQuery("SELECT * FROM SERVICE_CENTER where SC_ID = '"+ employee.getServiceCenterId() +"'");
+		if(resultSet.next()) {
+			employee.setServiceCenterName(resultSet.getString("SC_NAME"));
+		}
 	}
 	
 }

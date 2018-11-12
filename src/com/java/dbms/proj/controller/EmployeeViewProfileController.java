@@ -1,56 +1,43 @@
 package com.java.dbms.proj.controller;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Scanner;
 
-import com.java.dbms.proj.common.DBFacade;
+import com.java.dbms.proj.entities.HourlyEmployee;
+import com.java.dbms.proj.entities.MonthlyEmployee;
 
 public class EmployeeViewProfileController {
 	
-	public static void viewProfile( Scanner input )  throws ClassNotFoundException, SQLException{
+	public static void viewProfile ( Scanner input ) {
 		
 		com.java.dbms.proj.views.EmployeeView.displayViewProfile(); //Display page header
-		Statement statement = DBFacade.getConnection().createStatement();
-		ResultSet resultSet;
 		
-		try {
-			/* Find userName and userPassword match from 'LOGIN' table */
-			resultSet = statement.executeQuery("SELECT E.EID, SC.SC_NAME, E.FIRSTNAME, E.LASTNAME, EA.STREET, EA.CITY, EA.STATE, E.EMAIL, E.PHONE, E.ROLE, E.START_DATE FROM SERVICE_CENTER SC INNER JOIN EMPLOYEE E ON E.SC_ID = SC.SC_ID "
-					+ "															LEFT JOIN EMPLOYEE_ADDRESS EA ON EA.EID = E.EID");
-			
-			/* If query returned a value */
-			if (resultSet.next()) {
-					System.out.println("Employee ID : "+ resultSet.getString("EID"));
-					System.out.println("Address : "+ resultSet.getString("STREET") + ", "+ resultSet.getString("CITY") + ", "+ resultSet.getString("STATE"));
-					System.out.println("Name : "+ resultSet.getString("FIRSTNAME") + " "+ resultSet.getString("LASTNAME"));
-					System.out.println("Email : "+ resultSet.getString("EMAIL"));
-					System.out.println("Phone Number : "+ resultSet.getString("PHONE"));
-					System.out.println("Service Center : "+ resultSet.getString("SC_NAME"));
-					System.out.println("Role : "+ resultSet.getString("ROLE"));
-					System.out.println("Start Date : "+ resultSet.getString("START_DATE"));
-					System.out.println();
-					System.out.println();
-					
-
-				}
-			}  catch (SQLException e) {
-				System.out.println("Could'nt get the Employee details. " + e);
-				e.printStackTrace();
-			}
+		System.out.println ( "\n\tEMPLOYEE PROFILE DETAILS" );
+		System.out.println ( "\t------------------------\n" );
 		
-		//TODO call the controller to drop employee info into this view
-		System.out.println("INSERT EMPLOYEE PROFILE DETAILS\n");
+		System.out.println ( "\tEmployee ID    :\t" + ApplicationController.employee.getEmpId() );
+		System.out.println ( "\tUsername       :\t" + ApplicationController.employee.getUserName() );
+		System.out.println ( "\tName           :\t" + ApplicationController.employee.getFirstName() + " " +
+											      ApplicationController.employee.getLastName() );
+		System.out.println ( "\tAddress        :\t" + ApplicationController.employee.getAddress().addressToString() );
+		System.out.println ( "\tEmail          :\t" + ApplicationController.employee.getEmail() );
+		System.out.println ( "\tPhone Number   :\t" + ApplicationController.employee.getPhoneNumber() );
+		System.out.println ( "\tService Center :\t" + ApplicationController.employee.getServiceCenterName() );
+		System.out.println ( "\tRole           :\t" + ApplicationController.employee.getRole() );
+		System.out.println ( "\tStart Date     :\t" + ApplicationController.employee.getStartDate().toString() );
+		if ( ApplicationController.employee.getRole().equalsIgnoreCase("mechanic")) {
+			System.out.println ( "\tCompensation   :\t$" + ( ( HourlyEmployee )ApplicationController.employee ).getHourlyRate() );
+			System.out.println ( "\tPay Frequency  :\t Hourly");
+		} else {
+			System.out.println ( "\tCompensation   :\t$" + ( ( MonthlyEmployee )ApplicationController.employee ).getMonthlyRate() );
+			System.out.println ( "\tPay Frequency  :\tMonthly" );
+		}
 		
-		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to Go Back." );
+		System.out.println ( "\nPlease select from the following user options:" );
+		System.out.println ( "\tEnter '1' to Go Back." );
 
 		String userInput = "";
 		do {
-			System.out.print("\nOption Selection : ");
+			System.out.print ( "\nOption Selection : " );
 			userInput = input.nextLine();
-		}while(!userInput.equals("1"));
+		} while ( !userInput.equals( "1" ) );
 	}
-
 }

@@ -10,7 +10,14 @@ public class Employee {
 	String userName;
 	String serviceCenterId;
 	Address address;
+	String serviceCenterName;
 	
+	public String getServiceCenterName() {
+		return serviceCenterName;
+	}
+	public void setServiceCenterName(String serviceCenterName) {
+		this.serviceCenterName = serviceCenterName;
+	}
 	public Address getAddress() {
 		return address;
 	}

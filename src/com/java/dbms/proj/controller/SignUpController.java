@@ -10,52 +10,53 @@ import com.java.dbms.proj.common.DBFacade;
 
 public class SignUpController {
 	
-	public static String signUp( Scanner input ) throws ClassNotFoundException, SQLException {
-		/* Necessary Variables for SQL Transactions */
-		Statement statement = DBFacade.getConnection().createStatement();
+	public static String signUp( Scanner input ) {
 		ResultSet resultSet;
+		Statement statement;
 		
-		/* Necessary Variables for Customer Tuple Creation */
+		try {
+			statement = DBFacade.getConnection().createStatement();
+		} catch (SQLException e) {
+			System.out.println("Unable to acquire a database connection : " + e.getMessage() );
+			return "2";
+		}
+		
 		String customerID = "";
 		String userName = "";
 		String userPassword = "";
 		String userInput = "";
-		int serviceCenterSelection = 0;
 		
-		/* Variables for loop checking. */
+		int serviceCenterSelection = 0;
 		boolean isNum = false;
 		boolean passwordMatch = true;
 		
 		ArrayList<String> serviceCenters = new ArrayList<String>();
 		
-		/* Display page header */
-		com.java.dbms.proj.views.CustomerView.displaySignUp();
+		com.java.dbms.proj.views.CustomerView.displaySignUp(); // Display header for this page.
 		
-		/* Request a valid user response. */
-		System.out.println("Please provide some information so that we can get you set up in the system.");
+		System.out.println ("Please provide some information so that we can get you set up in the system.");
 		
-		System.out.print( "User Email : ");
+		System.out.print ( "User Email : ");
 		String email = input.nextLine();
 		
-		System.out.print( "User Phone Contact : ");
+		System.out.print ( "User Phone Contact : ");
 		String phone = input.nextLine();
 		
-		System.out.print( "User First Name : ");
+		System.out.print ( "User First Name : ");
 
 		String first = input.nextLine();
 		
-		System.out.print( "User Last Name : ");
+		System.out.print ( "User Last Name : ");
 		String last = input.nextLine();
 
-		System.out.print( "User City : ");
+		System.out.print ( "User City : ");
 		String city = input.nextLine();
 		
 		String state = "";
-		/* Check restriction of State Abreviation */
 		do {
-			System.out.print( "User State Abbreviation (ex: NC) : ");
+			System.out.print ( "User State Abbreviation (ex: NC) : ");
 			state = input.nextLine();
-		}while( state.length() > 2 || state.isEmpty() );
+		} while ( state.length() > 2 || state.isEmpty() );
 		
 		System.out.print( "User Street Address : ");
 		String address = input.nextLine();
@@ -63,8 +64,7 @@ public class SignUpController {
 		System.out.print( "User Zip Code : ");
 		String zip =  input.nextLine();
 		
-		/* Have customer select his/her preferred service center */
-		System.out.println("Select the Service Center service center would you like to be registered with?");
+		System.out.println ( "Select the Service Center service center would you like to be registered with?" );
 		
 		try {
 			resultSet = statement.executeQuery( "SELECT * FROM SERVICE_CENTER" );
@@ -72,33 +72,32 @@ public class SignUpController {
 			int choice = 1; // display default numbering
 			while( resultSet.next() ) {
 				/* Display service centers to chose from */
-				System.out.println( "\t" + choice++ + ". " + resultSet.getString("SC_NAME") );
-				serviceCenters.add(resultSet.getString("SC_ID"));
+				System.out.println( "\t" + choice++ + ". " + resultSet.getString( "SC_NAME" ) );
+				serviceCenters.add( resultSet.getString( "SC_ID" ) );
 			}
 			
 			do {
-				System.out.print("Option Selection : ");
+				System.out.print ( "Option Selection : ");
 				userInput = input.next();
 				try { 
-		            serviceCenterSelection = Integer.parseInt(userInput); 
+		            serviceCenterSelection = Integer.parseInt( userInput ); 
 		            isNum = true; 
 		        } catch ( NumberFormatException e ){ /*intentionally left blank*/ } 
-			}while( !isNum || ( serviceCenterSelection < 1 ) || ( serviceCenterSelection > ( choice - 1 ) ) );
+			} while ( !isNum || ( serviceCenterSelection < 1 ) || ( serviceCenterSelection > ( choice - 1 ) ) );
 		} catch (SQLException e) {
-			System.out.println( "System Query Error : " + e );
-			e.printStackTrace();
+			System.out.println( "Unable to access Service Center table : " + e.getMessage() );
 		}
 		
 		/* Customer has entered all necessary details */
-		System.out.println("\nThank you for your account information.\n");
-		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to Sign Up.");
-		System.out.println("\tEnter '2' to Go Back.");
+		System.out.println ( "\nThank you for your account information.\n" );
+		System.out.println ( "Please select from the following user options:" );
+		System.out.println ( "\tEnter '1' to Sign Up." );
+		System.out.println ( "\tEnter '2' to Go Back." );
 		
 		input.nextLine(); // flusht the input stream
 	
 		do {
-			System.out.print("\nOption Selection : ");
+			System.out.print( "\nOption Selection : " );
 			userInput = input.nextLine();
 		}while( !userInput.equals( "1" ) && !userInput.equals( "2" ) );
 			
@@ -107,97 +106,82 @@ public class SignUpController {
 		
 		do {
 			/* Assign a unique userName */
-			System.out.print("Please enter a preferred user name: " );
+			System.out.print ( "Please enter a preferred user name: " );
 			userName = input.nextLine();
 			try {
-				resultSet = statement.executeQuery( "SELECT USERNAME " +
-							    					"FROM Login " +
-							    					"WHERE username = '" + userName + "'" );
-				if( resultSet.next() ) {
-					System.out.println( "Sorry, that user name already exists." );
+				resultSet = statement.executeQuery( "SELECT USERNAME FROM Login WHERE username = '" + userName + "'" );
+				if ( resultSet.next() ) {
+					System.out.println ( "Sorry, that user name already exists." );
 					userName = "";
 				}
-			} catch ( SQLException e ) { System.out.println( "System Query Error : " + e ); }	
-		}while( userName.equals("") );
+			} catch ( SQLException e ) { 
+				System.out.println( "Unable to access User Login Table : " + e.getMessage() ); 
+			}	
+		} while ( userName.equals("") );
 		
 		do {
 			/* Assign user password */
-			System.out.print("Please enter a login password: ");
+			System.out.print ( "Please enter a login password: " );
 			userPassword = input.nextLine();
-			System.out.print("Please confirm your password: ");
+			System.out.print ( "Please confirm your password: " );
 			userInput = input.nextLine();
-			if(!userPassword.equals(userInput)){
-				System.out.println("\n***************************");
-				System.out.println("| Password does not match |");
-				System.out.println("***************************\n");
+			if ( !userPassword.equals( userInput ) ) {
+				System.out.println( "\n***************************" );
+				System.out.println( "| Password does not match |" );
+				System.out.println( "***************************\n" );
 				passwordMatch = false;
 			} else {
 				passwordMatch = true;
 			}
-		}while(passwordMatch==false);
+		} while ( !passwordMatch );
 		
-		/* Insert Tuple into Login Table */
 		try {
-			int tuples = statement.executeUpdate( "INSERT INTO LOGIN " +
-						    					"VALUES ('" + userName + "', '" +
-													          userPassword + "', 'CUSTOMER', 'ACTIVE')");
-			if( tuples != 1 )
-				System.out.println("Unable to load user into the Login Table.");
-		} catch (SQLException e) {
-			System.out.println( "System Query Error : " + e );
+			int tuples = statement.executeUpdate( "INSERT INTO LOGIN VALUES ('" + userName + "', '" +
+													          userPassword + "', 'CUSTOMER', 'ACTIVE')" );
+			if ( tuples != 1 )
+				System.out.println ( "Unable to load user into the Login Table." );
+		} catch ( SQLException e ) {
+			System.out.println( "Unabel to access User Login Table : " + e.getMessage() );
 			e.printStackTrace();
 		}
 
 		/* Insert into Customer Table */
 		try {
-			resultSet = statement.executeQuery("SELECT customers_seq.nextval from dual");
+			resultSet = statement.executeQuery( "SELECT customers_seq.nextval from dual" );
 			int index = 0;
-			if (resultSet.next()) {
-				index = resultSet.getInt("NEXTVAL");
+			if ( resultSet.next() ) {
+				index = resultSet.getInt( "NEXTVAL" );
 			}
-			int tuples = statement.executeUpdate( "INSERT INTO CUSTOMER " +
-						    					"VALUES ('" + index +"', '" + first + "', '" +
-													     	  last + "', '" +
-						    					              phone + "', '" +
-													     	  email + "', '" +
-													     	 serviceCenters.get(serviceCenterSelection - 1) + "', '" + 
-													     	  userName + "')");
-			if( tuples != 1 )
-				System.out.println("Unable to load user into the Login Table.");
-		} catch (SQLException e) {
-			System.out.println( "System Query Error : " + e );
-			e.printStackTrace();
+			int tuples = statement.executeUpdate( "INSERT INTO CUSTOMER VALUES ('" + index +"', '" + first + "', '" +
+												     	  last + "', '" + phone + "', '" + email + "', '" +
+												     	  serviceCenters.get(serviceCenterSelection - 1) + "', '" + userName + "')");
+			if ( tuples != 1 )
+				System.out.println( "Unable to load user into the Login Table." );
+		} catch ( SQLException e ) {
+			System.out.println( "Unable to access Customer table : " + e.getMessage() );
 		}
 		
-		/* Get the Customer ID to be inserted into the Customer Address Table */
 		try {
-			resultSet = statement.executeQuery( "SELECT CID " +
-						    					"FROM CUSTOMER " +
-						    					"WHERE username = '" + userName + "'" );
+			resultSet = statement.executeQuery( "SELECT CID FROM CUSTOMER WHERE username = '" + userName + "'" );
 			resultSet.next();
-			customerID = resultSet.getString("CID");
-		} catch (SQLException e) {
-			System.out.println( "System Query Error : " + e );
+			customerID = resultSet.getString( "CID" );
+		} catch ( SQLException e ) {
+			System.out.println( "Unable to access the Customer table : " + e.getMessage() );
 			e.printStackTrace();
 		}
 		
-		/* Insert into the Customer Address Table */
 		try {
-			resultSet = statement.executeQuery("SELECT customerAddress_seq.nextval from dual");
+			resultSet = statement.executeQuery( "SELECT customerAddress_seq.nextval from dual" );
 			int index = 0;
-			if (resultSet.next()) {
-				index = resultSet.getInt("NEXTVAL");
+			if ( resultSet.next() ) {
+				index = resultSet.getInt( "NEXTVAL" );
 			}
-			int tuples = statement.executeUpdate( "INSERT INTO CUSTOMER_ADDRESS " +
-						    					"VALUES ('" + index + "', '" + address + "', '" +
-													     	  city + "', '" +
-						    					              state + "', '" +
-													     	  customerID + "', '" +
-						    					              zip + "')");
+			int tuples = statement.executeUpdate( "INSERT INTO CUSTOMER_ADDRESS VALUES ('" + index + "', '" + address + "', '" +
+												     	  city + "', '" + state + "', '" + customerID + "', '" + zip + "')");
 			if( tuples != 1 )
-				System.out.println("Unable to load user into the Login Table.");
-		} catch (SQLException e) {
-			System.out.println( "System Query Error : " + e );
+				System.out.println( "Unable to load user into the Login Table." );
+		} catch ( SQLException e ) {
+			System.out.println( "Unable to access the Customer Address table : " + e.getMessage() );
 			e.printStackTrace();
 		}
 		
