@@ -12,14 +12,25 @@ public class ManagerOrderHistoryController {
 		com.java.dbms.proj.views.ManagerView.displayOrderHistory(); //Display page header
 		Statement statement = DBFacade.getConnection().createStatement();
 		ResultSet resultSet;
+		float totalPrice=0;
 		
 		try {
-			/* Find userName and userPassword match from 'LOGIN' table */
-			resultSet = statement.executeQuery("SELECT * FROM PURCHASE_ORDER");
-			
+			/* Get all order details */
+			resultSet = statement.executeQuery("(SELECT PO.ORDER_STATUS, PO.ORDER_ID, PO.ORDER_DATE, P.PART_NAME, SC.SC_NAME AS PURCHASER_NAME, SI.UNIT_COST, PO.PART_QUANTITY, SI.SUPPLIER_NAME AS SUPPLIER_NAME FROM PURCHASE_ORDER PO INNER JOIN SERVICE_CENTER SC ON SC.SC_ID = PO.SC_ID INNER JOIN PARTS P ON PO.PART_ID = P.PART_ID INNER JOIN SUPPLIER_INVENTORY SI ON SI.SUPPLIER_ID = PO.SOURCE_ID WHERE PO.SOURCE_TYPE = 'SUPPLIER') UNION (SELECT PO.ORDER_STATUS, PO.ORDER_ID, PO.ORDER_DATE, P.PART_NAME, SC.SC_NAME AS PURCHASER_NAME, AI.UNIT_COST, PO.PART_QUANTITY, SC2.SC_NAME AS SUPPLIER_NAME FROM PURCHASE_ORDER PO INNER JOIN SERVICE_CENTER SC ON SC.SC_ID = PO.SC_ID INNER JOIN PARTS P ON PO.PART_ID = P.PART_ID INNER JOIN ACME_INVENTORY AI ON AI.SC_ID = PO.SOURCE_ID INNER JOIN SERVICE_CENTER SC2 ON SC2.SC_ID = AI.SC_ID WHERE PO.SOURCE_TYPE = 'ACME' AND AI.PART_ID = PO.SC_ID)");	
 			/* If query returned a value */
 			if (resultSet.next()) {
-					
+					totalPrice = Float.parseFloat(resultSet.getString("PART_QUANTITY"))* Float.parseFloat(resultSet.getString("UNIT_PRICE"));
+					System.out.println("Order_Id : "+ resultSet.getString("ORDER_ID"));
+					System.out.println("Date : "+ resultSet.getString("ORDER_DATE"));
+					System.out.println("Part Name : "+ resultSet.getString("PART_NAME"));
+					System.out.println("Supplier Name : "+ resultSet.getString("SUPPLIER_NAME"));
+					System.out.println("Purchase Name : "+ resultSet.getString("PURCHASER_NAME"));
+					System.out.println("Quantity : "+ resultSet.getString("PART_QUANTITY"));
+					System.out.println("Unit Price : "+ resultSet.getString("UNIT_PRICE"));
+					System.out.println("Total Cost : "+ totalPrice);
+					System.out.println("Order Status : "+ resultSet.getString("ORDER_STATUS"));
+					System.out.println();
+					System.out.println();	
 					System.out.println();
 					System.out.println();			
 				}
