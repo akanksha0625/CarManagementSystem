@@ -8,14 +8,16 @@ import com.java.dbms.proj.common.DBFacade;
 import com.java.dbms.proj.entities.Address;
 import com.java.dbms.proj.entities.Customer;
 import com.java.dbms.proj.entities.Employee;
+import com.java.dbms.proj.entities.HourlyEmployee;
 import com.java.dbms.proj.views.*;
  
 public class ApplicationController {
 	/* Response string and Scanner to process user option selections. */
 	static String response = "";
 	static Scanner input = new Scanner( System.in );
-	static Customer customer = new Customer();
-	static Employee employee = new Employee();
+	static Customer customer;
+
+	static Employee employee;
 	
 	static Statement statement=null;
 	static ResultSet resultSet;
@@ -80,6 +82,9 @@ public class ApplicationController {
 	/*Flow associated with the manager*/
 
 	private static void manager()  throws ClassNotFoundException, SQLException{
+		employee = new Employee();
+		setEmployeeDetails();
+		
 		response = ManagerView.displayLanding( input );
 		if( response.equals( "1" ) ) {
 			/*Redirect to manager profile*/
@@ -134,14 +139,19 @@ public class ApplicationController {
 //---------------------------------------------------------------------------------------------Employee	
 	/*Handles the flow of the mechanic*/
 	private static void mechanic() throws ClassNotFoundException, SQLException {
+		employee = new HourlyEmployee();
+		setEmployeeDetails();
 		EmployeeProfileController.profileLanding(input);
 	} 
 	
-//---------------------------------------------------------------------------------------------Receptionist
-	/*Handles the flow of the receptionist*/
+
+	
+	//---------------------------------------------------------------------------------------------Receptionist
+		/*Handles the flow of the receptionist*/	
 
 	private static void receptionist() throws ClassNotFoundException, SQLException  {
-
+		employee = new Employee(); 
+		setEmployeeDetails();
 		response = ReceptionistView.displayLanding(input);
 		if(response.equals("1")) {
 			/*Redirect to display employee profile page*/
@@ -185,61 +195,11 @@ public class ApplicationController {
 			home();
 		}	
 	}
-
-	private static void setCustomerDetails() throws SQLException {
-		statement = DBFacade.getConnection().createStatement();
-		
-		resultSet = statement.executeQuery("SELECT CID, FIRSTNAME, LASTNAME, PHONE, EMAIL, SC_ID FROM CUSTOMER " 
-		+ "WHERE username = '" + LoginController.userLogin.getUserName() + "'");
-		
-		if (resultSet.next()) {
-			
-			if (resultSet.getString("CID") != null && resultSet.getString("CID") !="" )
-				customer.setCustomerId(resultSet.getString("CID"));
-			
-			if (resultSet.getString("FIRSTNAME") != null && resultSet.getString("FIRSTNAME") != "")
-				customer.setFirstName(resultSet.getString("FIRSTNAME"));
-			
-			if (resultSet.getString("LASTNAME") != null && resultSet.getString("LASTNAME") != "")
-				customer.setLastName(resultSet.getString("LASTNAME"));
-			
-			if (resultSet.getString("PHONE") != null && resultSet.getString("PHONE") != "")
-				customer.setPhoneNumber(resultSet.getString("PHONE"));
-			
-			if (resultSet.getString("EMAIL") != null && resultSet.getString("EMAIL") != "")
-				customer.setEmail(resultSet.getString("EMAIL"));
-			
-			if (resultSet.getString("SC_ID") != null && resultSet.getString("SC_ID") != "")
-				customer.setServiceCenterId(resultSet.getString("SC_ID"));
-			
-			}
-
-		Address customerAddress=new Address();
-		resultSet = statement.executeQuery("SELECT * FROM CUSTOMER_ADDRESS" 
-				+ "WHERE username = '" + LoginController.userLogin.getUserName() + "'");
-		
-		if(resultSet.next()) {
-			if (resultSet.getString("ADD_ID") != null && resultSet.getString("ADD_ID") != "")
-				customer.setServiceCenterId(resultSet.getString("ADD_ID"));
-			
-			if (resultSet.getString("Street") != null && resultSet.getString("Street") != "")
-				customer.setServiceCenterId(resultSet.getString("Street"));
-			
-			if (resultSet.getString("City") != null && resultSet.getString("City") != "")
-				customer.setServiceCenterId(resultSet.getString("City"));
-			
-			if (resultSet.getString("STATE") != null && resultSet.getString("STATE") != "")
-				customer.setServiceCenterId(resultSet.getString("STATE"));
-			
-			if (resultSet.getString("ZIP") != null && resultSet.getString("ZIP") != "")
-				customer.setServiceCenterId(resultSet.getString("ZIP"));
-		}
-		
-		customer.setAddress(customerAddress);
-	}
 	
 	//---------------------------------------------------------------------------------------------Customer	
-	/*Handles the flow of the customer*/
+		/*Handles the flow of the customer*/
+	
+	
 	private static void customer() throws ClassNotFoundException, SQLException {
 
 		
@@ -268,5 +228,116 @@ public class ApplicationController {
 			home();
 		}	
 	}
+	
+/* Set details of the logged in user after fetching from database */	
+	
+// Set customer details
+	
+	private static void setCustomerDetails() throws SQLException {
+		statement = DBFacade.getConnection().createStatement();
+		customer=new Customer();
+		
+		resultSet = statement.executeQuery("SELECT CID, FIRSTNAME, LASTNAME, PHONE, EMAIL, SC_ID FROM CUSTOMER " 
+		+ "WHERE username = '" + LoginController.userLogin.getUserName() + "'");
+		
+		if (resultSet.next()) {
+			
+			if (resultSet.getString("CID") != null && resultSet.getString("CID") !="" )
+				customer.setCustomerId(resultSet.getString("CID"));
+			
+			if (resultSet.getString("FIRSTNAME") != null && resultSet.getString("FIRSTNAME") != "")
+				customer.setFirstName(resultSet.getString("FIRSTNAME"));
+			
+			if (resultSet.getString("LASTNAME") != null && resultSet.getString("LASTNAME") != "")
+				customer.setLastName(resultSet.getString("LASTNAME"));
+			
+			if (resultSet.getString("PHONE") != null && resultSet.getString("PHONE") != "")
+				customer.setPhoneNumber(resultSet.getString("PHONE"));
+			
+			if (resultSet.getString("EMAIL") != null && resultSet.getString("EMAIL") != "")
+				customer.setEmail(resultSet.getString("EMAIL"));
+			
+			if (resultSet.getString("SC_ID") != null && resultSet.getString("SC_ID") != "")
+				customer.setServiceCenterId(resultSet.getString("SC_ID"));
+			
+			}
 
+		Address customerAddress=new Address();
+		resultSet = statement.executeQuery("SELECT * FROM CUSTOMER_ADDRESS where CID = '"+ customer.getCustomerId() +"'");
+		
+		if(resultSet.next()) {
+					
+			if (resultSet.getString("Street") != null && resultSet.getString("Street") != "")
+				customerAddress.setStreet(resultSet.getString("Street"));
+			
+			if (resultSet.getString("City") != null && resultSet.getString("City") != "")
+				customerAddress.setCity(resultSet.getString("City"));
+			
+			if (resultSet.getString("STATE") != null && resultSet.getString("STATE") != "")
+				customerAddress.setState(resultSet.getString("STATE"));
+			
+			if (resultSet.getString("ZIP") != null && resultSet.getString("ZIP") != "")
+				customerAddress.setZipCode(resultSet.getString("ZIP"));
+		}
+		
+		customer.setAddress(customerAddress);
+	}
+	
+	//Set employee details
+	
+	private static void setEmployeeDetails() throws SQLException {
+		statement = DBFacade.getConnection().createStatement();
+		
+		resultSet = statement.executeQuery("SELECT * FROM EMPLOYEE " 
+		+ "WHERE username = '" + LoginController.userLogin.getUserName() + "'");	
+		
+		if (resultSet.next()) {
+			
+			if (resultSet.getString("EID") != null && resultSet.getString("EID") !="" )
+				employee.setEmpId(resultSet.getInt("EID"));
+			
+			if (resultSet.getString("FIRSTNAME") != null && resultSet.getString("FIRSTNAME") != "")
+				employee.setFirstName(resultSet.getString("FIRSTNAME"));
+			
+			if (resultSet.getString("LASTNAME") != null && resultSet.getString("LASTNAME") != "")
+				employee.setLastName(resultSet.getString("LASTNAME"));
+			
+			if (resultSet.getString("PHONE") != null && resultSet.getString("PHONE") != "")
+				employee.setPhoneNumber(resultSet.getString("PHONE"));
+			
+			if (resultSet.getString("EMAIL") != null && resultSet.getString("EMAIL") != "")
+				employee.setEmail(resultSet.getString("EMAIL"));
+			
+			if (resultSet.getString("SC_ID") != null && resultSet.getString("SC_ID") != "")
+				employee.setServiceCenterId(resultSet.getString("SC_ID"));
+			
+			if (resultSet.getString("ROLE") != null && resultSet.getString("ROLE") != "")
+				employee.setRole(resultSet.getString("ROLE"));
+			
+			if (resultSet.getString("START_DATE") != null && resultSet.getString("START_DATE") != "")
+				employee.setStartDate(resultSet.getString("START_DATE"));
+			
+			}
+		
+		Address employeeAddress=new Address();
+		resultSet = statement.executeQuery("SELECT * FROM EMPLOYEE_ADDRESS where EID = '"+ employee.getEmpId() +"'");
+		
+		if(resultSet.next()) {
+					
+			if (resultSet.getString("Street") != null && resultSet.getString("Street") != "")
+				employeeAddress.setStreet(resultSet.getString("Street"));
+			
+			if (resultSet.getString("City") != null && resultSet.getString("City") != "")
+				employeeAddress.setCity(resultSet.getString("City"));
+			
+			if (resultSet.getString("STATE") != null && resultSet.getString("STATE") != "")
+				employeeAddress.setState(resultSet.getString("STATE"));
+			
+			if (resultSet.getString("ZIP") != null && resultSet.getString("ZIP") != "")
+				employeeAddress.setZipCode(resultSet.getString("ZIP"));
+		}
+		
+		employee.setAddress(employeeAddress);
+	}
+	
 }

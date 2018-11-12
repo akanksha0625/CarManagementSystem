@@ -1,44 +1,56 @@
 package com.java.dbms.proj.entities;
-
-import java.util.Date;
-
 public class Employee {
-	int eid;
-	String first;
-	String last;
+	int empId;
+	String firstName;
+	String lastName;
 	String email;
-	String phone;
-	Date startDate;
-	public Date getStartDate() {
-		return startDate;
-	}
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+	String phoneNumber;
+	String startDate;
 	String role;
 	String userName;
+	String serviceCenterId;
+	Address address;
 	
-	public int getEid() {
-		return eid;
+	public Address getAddress() {
+		return address;
 	}
-	public void setEid(int eid) {
-		this.eid = eid;
+	public void setAddress(Address address) {
+		this.address = address;
 	}
-	public String getFirst() {
-		return first;
+	public int getEmpId() {
+		return empId;
 	}
-	public void setFirst(String first) {
-		this.first = first;
+	public void setEmpId(int empId) {
+		this.empId = empId;
 	}
-	public String getLast() {
-		return last;
+	public String getFirstName() {
+		return firstName;
 	}
-	public void setLast(String last) {
-		this.last = last;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+	public String getStartDate() {
+		return startDate;
+	}
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+	public void setPhone(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -57,6 +69,11 @@ public class Employee {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-
+	public String getServiceCenterId() {
+		return serviceCenterId;
+	}
+	public void setServiceCenterId(String serviceCenterId) {
+		this.serviceCenterId = serviceCenterId;
+	}
 
 }
