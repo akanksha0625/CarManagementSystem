@@ -1,4 +1,7 @@
 package com.java.dbms.proj.entities;
+
+import java.util.Date;
+
 public class Employee {
 	int empId;
 	String firstName;
@@ -51,8 +54,8 @@ public class Employee {
 	public String getStartDate() {
 		return startDate;
 	}
-	public void setStartDate(String startDate) {
-		this.startDate = startDate;
+	public void setStartDate(String start) {
+		this.startDate = start;
 	}
 	public void setPhone(String phoneNumber) {
 		this.phoneNumber = phoneNumber;

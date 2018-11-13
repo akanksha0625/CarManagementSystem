@@ -3,6 +3,11 @@ package com.java.dbms.proj.entities;
 public class Part {
 	int partID;
 	String partName;
+	
+	public Part( String partName, int partID ){
+		this.setPartID(partID);
+		this.setPartName(partName);
+	}
 	public int getPartID() {
 		return partID;
 	}
