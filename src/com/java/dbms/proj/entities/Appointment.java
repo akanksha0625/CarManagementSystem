@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Appointment {
 	int appointmentID;
-	Date appointmentDate;
+	String appointmentDate;
 	String requestedMechanic;
 	String serviceType;
 	String state;
@@ -25,10 +25,10 @@ public class Appointment {
 	public void setAppointmentID(int appointmentID) {
 		this.appointmentID = appointmentID;
 	}
-	public Date getAppointmentDate() {
+	public String getAppointmentDate() {
 		return appointmentDate;
 	}
-	public void setAppointmentDate(Date appointmentDate) {
+	public void setAppointmentDate(String appointmentDate) {
 		this.appointmentDate = appointmentDate;
 	}
 	public String getRequestedMechanic() {

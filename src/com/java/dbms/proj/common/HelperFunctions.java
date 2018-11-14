@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 import com.java.dbms.proj.controller.LoginController;
+import com.java.dbms.proj.entities.Appointment;
 import com.java.dbms.proj.entities.Customer;
 import com.java.dbms.proj.entities.Service;
 import com.java.dbms.proj.entities.Vehicle;
@@ -95,8 +96,8 @@ public class HelperFunctions {
 		} catch (SQLException e) {
 			System.out.println("Issue Occured while trying to access Customer Cars : " + e.getMessage());
 		}
-		for(int i = 0; i < cars.size(); i++) {
-			System.out.print(cars.get(i).toString());
+		for(int i = 0; i < carList.size(); i++) {
+			System.out.print(carList.get(i).toString());
 		}
 	}
 	
@@ -174,5 +175,29 @@ public class HelperFunctions {
 			}
 		}
 		return false;
+	}
+	
+	public static String checkLastService(String VehicleLicenseNumber) throws SQLException {
+		String lastServiceName = "";
+		statement = DBFacade.getConnection().createStatement();
+		
+		try {
+		resultSet = statement.executeQuery( "SELECT * FROM APPOINTMENT WHERE VEHICLE_LICENSE = '" + VehicleLicenseNumber + "' and STATE ='Complete' ORDER  BY APPOINTMENT_DATE DESC limit 1" );
+		}
+		catch(SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		if ( resultSet.next() ) {
+		Appointment appointment=new Appointment();
+		appointment.setAppointmentDate(resultSet.getString("APPOINTMENT_DATE"));
+		appointment.setServiceType(resultSet.getString("SERVICE_TYPE"));
+		appointment.setServiceID(resultSet.getString("SERVICE_TYPE_ID"));
+		lastServiceName = appointment.getServiceID();
+		}
+		
+		return lastServiceName;
+		
+		
 	}
 }
