@@ -9,7 +9,16 @@ public class Appointment {
 	String serviceType;
 	String state;
 	String serviceID;
+
+	private Vehicle vehicle;
 	
+	
+	public Vehicle getVehicle() {
+		return vehicle;
+	}
+	public void setVehicle(Vehicle vehicle) {
+		this.vehicle = vehicle;
+	}
 	public int getAppointmentID() {
 		return appointmentID;
 	}

@@ -1,10 +1,13 @@
 package com.java.dbms.proj.controller;
 
 import java.sql.SQLException;
+
 import java.sql.Statement;
 import java.util.Scanner;
 
 import com.java.dbms.proj.common.DBFacade;
+import com.java.dbms.proj.common.HelperFunctions;
+import com.java.dbms.proj.controller.ApplicationController;
 import com.java.dbms.proj.entities.Address;
 import com.java.dbms.proj.entities.Customer;
 import com.java.dbms.proj.views.CustomerView;
@@ -14,18 +17,21 @@ public class CustomerUpdateProfileController {
 	static Address custAddress = new Address();
 	static String userInput = "";
 	static Statement statement=null;
+	
 
 	public static void updateProfile(Scanner input) throws SQLException {
 		
 		CustomerView.displayUpdateProfile(); //Display page header
-		while(!userInput.equals("5"))
+		userInput="";
+		do {
 			displayMenu();
+		}while(!userInput.equals("5"));
 }
 	
 	static void displayMenu() throws SQLException {
-		
+		int tuples;
 		userInput=null;
-		System.out.println("Please select from the following user options:");
+		System.out.println("\n\nPlease select from the following user options:");
 		System.out.println("\tEnter '1' to Update your Name.");
 		System.out.println("\tEnter '2' to Update your Address.");
 		System.out.println("\tEnter '3' to Update your Phone Number.");
@@ -44,11 +50,14 @@ public class CustomerUpdateProfileController {
 			
 			System.out.print("User Last Name : ");
 			customer.setLastName(input.nextLine());
-			System.out.println(LoginController.userLogin.getUserName());
-			System.out.println(customer.getFirstName());
-			System.out.println(customer.getLastName() );
-				int tuples= statement.executeUpdate("UPDATE CUSTOMER SET FIRSTNAME = '" + customer.getFirstName() +
+			try {
+				 tuples= statement.executeUpdate("UPDATE CUSTOMER SET FIRSTNAME = '" + customer.getFirstName() +
 						 "' , LASTNAME = '"+ customer.getLastName() + "' WHERE USERNAME= '" + LoginController.userLogin.getUserName() + "'");
+			}
+			catch (SQLException e) {
+				System.out.println( "System Query Error : " + e );
+				e.printStackTrace();
+			}
 			break;
 			//}
 		case "2":
@@ -82,16 +91,30 @@ public class CustomerUpdateProfileController {
 				custAddress.setZipCode(zip);
 
 			customer.setAddress(custAddress);
+			try {
+			 tuples= statement.executeUpdate("UPDATE CUSTOMER_ADDRESS SET CITY = '" + custAddress.getCity() +
+					 "' , STATE = '"+ custAddress.getState() +
+					 "' , STREET = '"+ custAddress.getStreet() +
+					 "' , ZIP = '"+ custAddress.getZipCode() +
+					 "' WHERE CID= '" + customer.getCustomerId() + "'");
+			}
+			catch (SQLException e) {
+				System.out.println( "System Query Error : " + e );
+				e.printStackTrace();
+			}
+		
 			break;
 
 		case "3":
 			System.out.print("User Phone Number : ");
-			customer.setPhoneNumber(userInput);
+			customer.setPhoneNumber(input.nextLine());
+			
+			 tuples= statement.executeUpdate("UPDATE CUSTOMER SET PHONE = '" + customer.getPhoneNumber()
+					 + "' WHERE USERNAME= '" + LoginController.userLogin.getUserName() + "'");
 			break;
 			
 		case "4":
-			System.out.print("User Password : ");
-			// to do
+			HelperFunctions.updatePassword(LoginController.userLogin.getUserName());
 			break;
 			
 		case "5" :
@@ -99,6 +122,6 @@ public class CustomerUpdateProfileController {
 		default:
 			System.out.println("Please select a valid option");
 		}
-	System.out.println("hello");	
+
 	}
 }

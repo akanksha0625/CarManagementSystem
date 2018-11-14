@@ -1,14 +1,14 @@
 package com.java.dbms.proj.controller;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
+import com.java.dbms.proj.common.HelperFunctions;
+
 public class CustomerServiceHistoryController {
-	public static void serviceHistory(Scanner input) {
+	public static void serviceHistory(Scanner input) throws SQLException {
 		com.java.dbms.proj.views.CustomerView.displayServiceHistory(); //Display page header
-		
-		//TODO display customer's service history
-		System.out.println("DISPLAY CUSTOMER SERVICE HISTORY\n");
-		
+		HelperFunctions.displayServiceHistory(ApplicationController.customer);
 		System.out.println("Please select from the following user options:");
 		System.out.println("\tEnter '1' to  Go Back");
 		

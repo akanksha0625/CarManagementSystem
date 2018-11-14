@@ -14,6 +14,13 @@ public class Service {
 	String license;
 	String serviceType;
 	String serviceAbrev;
+	String status;
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
 	public String getServiceAbrev() {
 		return serviceAbrev;
 	}

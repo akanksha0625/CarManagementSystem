@@ -1,9 +1,14 @@
 package com.java.dbms.proj.controller;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
+import com.java.dbms.proj.common.HelperFunctions;
+import com.java.dbms.proj.entities.Appointment;
+import com.java.dbms.proj.entities.Customer;
+
 public class CustomerScheduleMaintenanceController {
-	public static void scheduleMaintenance(Scanner input) {
+	public static void scheduleMaintenance(Scanner input) throws SQLException {
 		com.java.dbms.proj.views.CustomerView.displayScheduleMaintenance1(); //Display page header
 		
 		System.out.println("Please select from the following user options:");
@@ -17,12 +22,22 @@ public class CustomerScheduleMaintenanceController {
 		}while(!userInput.equals("1") && !userInput.equals("2"));
 		
 		if(userInput.equals("1")) {
-			//TODO validate car details and find service dates
-			System.out.println("VALIDATE CAR DETAILS & FIND SERVICE DATE");
+			
+			Customer customer = ApplicationController.customer;
+			Appointment appointment = CustomerScheduleServiceController.appointment;
+			String licensePlateNumber = "";
+			Boolean isValidVehicle=false;
+			if(appointment!=null && appointment.getVehicle()!=null)
+				licensePlateNumber = appointment.getVehicle().getLicense();
+			
+			isValidVehicle = HelperFunctions.validateCarDetails(customer,licensePlateNumber);
+			
+			if(isValidVehicle) {
 			com.java.dbms.proj.views.CustomerView.displayScheduleMaintenance2(); //Display second page header
 			
 			//TODO display service dates
 			System.out.println("DISPLAY SERVICE DATES");
+			}
 			
 			System.out.println("Please select from the following user options:");
 			System.out.println("\tEnter '1' to Schedule on Date");
