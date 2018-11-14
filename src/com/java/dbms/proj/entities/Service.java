@@ -10,7 +10,42 @@ public class Service {
 	String endDate;
 	String startTime;
 	String endTime;
+	String serviceDescription;
+	String license;
+	String serviceType;
+	String serviceAbrev;
+	public String getServiceAbrev() {
+		return serviceAbrev;
+	}
+	public void setServiceAbrev(String serviceAbrev) {
+		this.serviceAbrev = serviceAbrev;
+	}
+	String mechanic;
+	ArrayList<Part> parts;
+	String totalLaborHours;
+	double costPerHour;
+	double totalCost;
+	double diagnosisFee = 0;
+	String diagnosis;
 	
+	public double getDiagnosisFee() {
+		return diagnosisFee;
+	}
+	public void setDiagnosisFee(double diagnosisFee) {
+		this.diagnosisFee = diagnosisFee;
+	}
+	public String getDiagnosis() {
+		return diagnosis;
+	}
+	public void setDiagnosis(String diagnosis) {
+		this.diagnosis = diagnosis;
+	}
+	public String getServiceDescription() {
+		return serviceDescription;
+	}
+	public void setServiceDescription(String serviceDescription) {
+		this.serviceDescription = serviceDescription;
+	}
 	public String getStartTime() {
 		return startTime;
 	}
@@ -23,15 +58,6 @@ public class Service {
 	public void setEndTime(String endTime) {
 		this.endTime = endTime;
 	}
-	String license;
-	String serviceType;
-	String mechanic;
-	ArrayList<Part> parts;
-	String totalLaborHours;
-	double costPerHour;
-	double totalCost;
-	
-	
 	public void addPart( Part part ) {
 		parts.add(part);
 	}

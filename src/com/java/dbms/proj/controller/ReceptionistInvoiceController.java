@@ -27,45 +27,53 @@ public class ReceptionistInvoiceController {
 			System.out.println ( "\nEnter the email of the customer invoice that you would like to search : " );
 			userInput = input.nextLine();
 			
+			/* Find Customer */
 			resultSet = statement.executeQuery( "SELECT * FROM CUSTOMER WHERE EMAIL = '" + userInput + "'" );
 			if ( resultSet.next() ) {
 				service = new Service();
 
+				/* Find Customer Appointment */
 				int customerID = resultSet.getInt("CID");
 				resultSet = statement.executeQuery( "SELECT * FROM APPOINTMENT WHERE CUSTOMER_ID = '" + customerID + "'" );
 				if ( resultSet.next() ) {
 
-					int appointmentID = resultSet.getInt( "APPOINTMENT_ID" );
-					service.setServiceID( resultSet.getString( "SERVICE_ID" ) );
+					service.setServiceID( resultSet.getString( "APPOINTMENT_ID" ) );
 					service.setStartDate( resultSet.getString( "APPOINTMENT_DATE" ) );
 					service.setServiceType( resultSet.getString( "SERVICE_TYPE" ) );			
 					service.setLicense( resultSet.getString( "VEHICLE_LICENSE" ) );
 
-					resultSet = statement.executeQuery( "SELECT * FROM TIME_SLOT WHERE APPOINTMENT_ID = '" + appointmentID + "'" );
+					/* Find Time Slot of Appointment */
+					resultSet = statement.executeQuery( "SELECT * FROM TIME_SLOT WHERE APPOINTMENT_ID = '" + service.getServiceID() + "'" );
 					if(resultSet.next()) {
 						service.setStartTime( resultSet.getString( "START_TIME" ) );
-						service.setEndTime( resultSet.getString( "START_TIME" ) );
+						service.setEndTime( resultSet.getString( "END_TIME" ) );
 						service.setMechanic( resultSet.getString( "MECHANIC" ) );
 						
 						if(service.getServiceType().equalsIgnoreCase("repair")) {
-							resultSet = statement.executeQuery( "SELECT REPAIR_ID FROM REPAIR WHERE APPOINTMENT_ID = '" + appointmentID + "'" );
+							/* Get Repair Details */
+							resultSet = statement.executeQuery( "SELECT REPAIR_ID FROM REPAIR WHERE APPOINTMENT_ID = '" + service.getServiceID() + "'" );
 							if(resultSet.next()) {
-								resultSet = statement.executeQuery( "SELECT * FROM " + resultSet.getString( "REPAIR_ID" ) );
-								while(resultSet.next()) {
-									service.addPart(new Part(resultSet.getString("PART_NAME"), resultSet.getInt("PART_ID") ) );
+								resultSet = statement.executeQuery("SELECT * FROM REPAIR_DETAILS INNER JOIN REPAIR " + 
+														 "ON REPAIR_DETAILS.REPAIR_TYPE = REPAIR.REPAIR_TYPE");
+								if(resultSet.next()) {
+									service.setServiceDescription(resultSet.getString("REPAIR_NAME"));
+									service.setDiagnosis(resultSet.getString("DIAGNOSIS"));
+									service.setServiceAbrev(resultSet.getString("REPAIR_TYPE"));
+									service.setCostPerHour(resultSet.getDouble("HOURLY_RATE"));
 								}
+								//TODO parts????
 							} else {
-								System.out.println("There are no parts associated with this Appointment : " + appointmentID );
+								System.out.println("There are no repair details associated with this Appointment : " + service.getServiceID() );
 							}
 						} else {
-							resultSet = statement.executeQuery( "SELECT TYPE_ID FROM MAINTENANCE WHERE VID = '" + service.getLicense() + "'" );
-							if(resultSet.next()) {
-								resultSet = statement.executeQuery( "SELECT * FROM " + resultSet.getString( "TYPE_ID" ) );
-								while(resultSet.next()) {
-									service.addPart(new Part(resultSet.getString("PART_NAME"), resultSet.getInt("PART_ID") ) );
-								}
-							} else {
-								System.out.println("There are no parts associated with this Appointment : " + appointmentID );
+							/* Get Maintenance Details */
+							resultSet = statement.executeQuery( "SELECT * FROM VEHICLE INNER JOIN REPAIR_DETAILS " + 
+									 						    "ON REPAIR_DETAILS.MAKE = VEHICLE.MAKE && REPAIR_DETAILS.MODEL = VEHICLE.MODEL" );
+								if(resultSet.next()) {
+									service.setServiceDescription(resultSet.getString(service.getServiceType()));
+									//service.setCostPerHour(resultSet.getDouble("HOURLY_RATE"));
+								} else {
+								System.out.println("There are no maintenance details associated with this Appointment : " + service.getServiceID() );
 							}
 						}
 						
@@ -74,13 +82,13 @@ public class ReceptionistInvoiceController {
 						String[] splitStart2 = splitStart1[1].split( " ", 2 );
 						int hourStart = Integer.parseInt(splitStart1[ 0 ]);
 						int minStart = Integer.parseInt(splitStart2[ 0 ]);
-						int xmStart = Integer.parseInt(splitStart2[ 1 ]);
+						String xmStart = splitStart2[ 1 ];
 						
 						String[] splitEnd1 = service.getEndTime().split( ":", 2 );
 						String[] splitEnd2 = splitStart1[1].split( " ", 2 );
 						int hourEnd = Integer.parseInt(splitEnd1[ 0 ]);
 						int minEnd = Integer.parseInt(splitEnd2[ 0 ]);
-						int xmEnd = Integer.parseInt(splitEnd2[ 1 ]);
+						String xmEnd = splitEnd2[ 1 ];
 						
 						int totalMins = (minEnd - minEnd) / 60;
 						int totalHours = (minEnd + minStart) % 60 + (hourEnd - hourStart) ;
@@ -90,7 +98,7 @@ public class ReceptionistInvoiceController {
 						//TODO cost per hour
 						//TODO cost total
 					} else {
-						System.out.println ("There are no Times associated with this Appointment : " + appointmentID );
+						System.out.println ("There are no Times associated with this Appointment : " + service.getServiceID() );
 					}
 						
 				} else {
