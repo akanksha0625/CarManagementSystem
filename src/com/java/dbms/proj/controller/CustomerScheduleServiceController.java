@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import com.java.dbms.proj.entities.Appointment;
-import com.java.dbms.proj.entities.Service;
 import com.java.dbms.proj.entities.Vehicle;
 
 public class CustomerScheduleServiceController {

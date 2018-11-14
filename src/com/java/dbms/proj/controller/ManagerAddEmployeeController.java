@@ -155,7 +155,7 @@ public class ManagerAddEmployeeController {
 		String startDate = "";
 		input.nextLine();
 		while (!startDate.matches("[0-1][0-9]-[0-3][0-9]-\\d\\d\\d\\d")) {
-			System.out.print("\nPlease enter the Employee Start Date (i.e. mm-dd-yyyy) : ");
+			System.out.print("\nPlease enter the Employee Start Date (i.e. dd-mm-yyyy) : ");
 			startDate = input.nextLine();
 		}
 			

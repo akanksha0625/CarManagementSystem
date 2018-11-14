@@ -6,7 +6,6 @@ import java.sql.Statement;
 import java.util.Scanner;
 
 import com.java.dbms.proj.common.DBFacade;
-import com.java.dbms.proj.entities.Part;
 import com.java.dbms.proj.entities.Service;
 
 public class ReceptionistInvoiceController {

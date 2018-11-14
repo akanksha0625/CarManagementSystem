@@ -1,7 +1,5 @@
 package com.java.dbms.proj.entities;
 
-import java.util.Date;
-
 public class Appointment {
 	int appointmentID;
 	String appointmentDate;

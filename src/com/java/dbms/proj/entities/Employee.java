@@ -1,7 +1,5 @@
 package com.java.dbms.proj.entities;
 
-import java.util.Date;
-
 public class Employee {
 	int empId;
 	String firstName;
