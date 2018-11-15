@@ -3,9 +3,13 @@ package com.java.dbms.proj.controller;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.java.dbms.proj.common.DBFacade;
+import com.java.dbms.proj.entities.Maintenance;
+import com.java.dbms.proj.entities.Part;
+import com.java.dbms.proj.entities.Repair;
 import com.java.dbms.proj.entities.Service;
 
 public class ReceptionistInvoiceController {
@@ -17,97 +21,181 @@ public class ReceptionistInvoiceController {
 		Statement statement = null;
 		ResultSet resultSet;
 		String userInput = "";
-		Service service = null;
+		int customerID = -1;
+		String serviceCenterID;
+		int vid = -1;
+		
+		ArrayList<Service> appointments = new ArrayList<Service>();
 		
 		try {
-			
 			statement = DBFacade.getConnection().createStatement();
 			
 			System.out.println ( "\nEnter the email of the customer invoice that you would like to search : " );
 			userInput = input.nextLine();
+		} catch (SQLException e) { 
+			System.out.println( "Error in acquiring the database connection : " + e.getMessage() ); 
+			return;
+		}
 			
-			/* Find Customer */
+		/* Find Customer */
+		try {
 			resultSet = statement.executeQuery( "SELECT * FROM CUSTOMER WHERE EMAIL = '" + userInput + "'" );
 			if ( resultSet.next() ) {
-				service = new Service();
-
 				/* Find Customer Appointment */
-				int customerID = resultSet.getInt("CID");
-				resultSet = statement.executeQuery( "SELECT * FROM APPOINTMENT WHERE CUSTOMER_ID = '" + customerID + "'" );
-				if ( resultSet.next() ) {
-
-					service.setServiceID( resultSet.getString( "APPOINTMENT_ID" ) );
-					service.setStartDate( resultSet.getString( "APPOINTMENT_DATE" ) );
-					service.setServiceType( resultSet.getString( "SERVICE_TYPE" ) );			
-					service.setLicense( resultSet.getString( "VEHICLE_LICENSE" ) );
-
-					/* Find Time Slot of Appointment */
-					resultSet = statement.executeQuery( "SELECT * FROM TIME_SLOT WHERE APPOINTMENT_ID = '" + service.getServiceID() + "'" );
-					if(resultSet.next()) {
-						service.setStartTime( resultSet.getString( "START_TIME" ) );
-						service.setEndTime( resultSet.getString( "END_TIME" ) );
-						service.setMechanic( resultSet.getString( "MECHANIC" ) );
-						
-						if(service.getServiceType().equalsIgnoreCase("repair")) {
-							/* Get Repair Details */
-							resultSet = statement.executeQuery( "SELECT REPAIR_ID FROM REPAIR WHERE APPOINTMENT_ID = '" + service.getServiceID() + "'" );
-							if(resultSet.next()) {
-								resultSet = statement.executeQuery("SELECT * FROM REPAIR_DETAILS INNER JOIN REPAIR " + 
-														 "ON REPAIR_DETAILS.REPAIR_TYPE = REPAIR.REPAIR_TYPE");
-								if(resultSet.next()) {
-									service.setServiceDescription(resultSet.getString("REPAIR_NAME"));
-									service.setDiagnosis(resultSet.getString("DIAGNOSIS"));
-									service.setServiceAbrev(resultSet.getString("REPAIR_TYPE"));
-									service.setCostPerHour(resultSet.getDouble("HOURLY_RATE"));
-								}
-								//TODO parts????
-							} else {
-								System.out.println("There are no repair details associated with this Appointment : " + service.getServiceID() );
-							}
-						} else {
-							/* Get Maintenance Details */
-							resultSet = statement.executeQuery( "SELECT * FROM VEHICLE INNER JOIN REPAIR_DETAILS " + 
-									 						    "ON REPAIR_DETAILS.MAKE = VEHICLE.MAKE && REPAIR_DETAILS.MODEL = VEHICLE.MODEL" );
-								if(resultSet.next()) {
-									service.setServiceDescription(resultSet.getString(service.getServiceType()));
-									//service.setCostPerHour(resultSet.getDouble("HOURLY_RATE"));
-								} else {
-								System.out.println("There are no maintenance details associated with this Appointment : " + service.getServiceID() );
-							}
-						}
-						
-						
-						String[] splitStart1 = service.getStartTime().split( ":", 2 );
-						String[] splitStart2 = splitStart1[1].split( " ", 2 );
-						int hourStart = Integer.parseInt(splitStart1[ 0 ]);
-						int minStart = Integer.parseInt(splitStart2[ 0 ]);
-						String xmStart = splitStart2[ 1 ];
-						
-						String[] splitEnd1 = service.getEndTime().split( ":", 2 );
-						String[] splitEnd2 = splitStart1[1].split( " ", 2 );
-						int hourEnd = Integer.parseInt(splitEnd1[ 0 ]);
-						int minEnd = Integer.parseInt(splitEnd2[ 0 ]);
-						String xmEnd = splitEnd2[ 1 ];
-						
-						int totalMins = (minEnd - minEnd) / 60;
-						int totalHours = (minEnd + minStart) % 60 + (hourEnd - hourStart) ;
-						
-						service.setTotalLaborHours(totalHours + ":" + totalMins);
-						
-						//TODO cost per hour
-						//TODO cost total
-					} else {
-						System.out.println ("There are no Times associated with this Appointment : " + service.getServiceID() );
-					}
-						
-				} else {
-					System.out.println ( "There are no appointments associated with the customer ID : " + customerID );
-				}
+				customerID = resultSet.getInt("CID");
+				serviceCenterID = resultSet.getString("SC_ID");
 			} else {
-				System.out.println ( "There is no Customer associated with the given email." );
+				System.out.println ( "There is no Customer associated with the given email : " + userInput);
+				return;
 			}
-		} catch (SQLException e) { System.out.println( "Error in acquiring the database connection : " + e.getMessage() ); }
-			
+		} catch (SQLException e) {
+			System.out.println("Unable to access the Customer Table : " + e.getMessage() );
+			return;
+		}
+					
+		/* Find all Appointments that coorespond with this customer */
+		try {
+			resultSet = statement.executeQuery( "SELECT * FROM APPOINTMENT WHERE CUSTOMER_ID = '" + customerID + "'" );
+			while ( resultSet.next() ) { //while there is an appointment tuple create the services
+				Service service = null;
+				String serviceType = resultSet.getString("SERVICE_TYPE");
+				if(serviceType.equalsIgnoreCase("repair")) {
+					service = new Repair();
+				}else {
+					service = new Maintenance();
+				}
+				service.setServiceType(serviceType);
+				service.setAppointmentID(resultSet.getString("APPOINTMENT_ID"));
+				service.setCustomerID(customerID);
+				service.setVehicleLicense(resultSet.getString("VEHICLE_LICENSE"));
+				service.setAppointmentDate(resultSet.getString("APPOINTMENT_DATE"));
+				service.setRequestedMechanic(resultSet.getString("REQUESTED_MECHANIC"));
+				service.setServiceStatus(resultSet.getString("STATE"));
+				service.setServiceTypeID(resultSet.getString("SERVICE_TYPE_ID"));
+				
+				/* Find VID */
+				try {
+					resultSet = statement.executeQuery( "SELECT VID FROM VEHICLE WHERE LICENSE = '" + service.getVehicleLicense() + "'" );
+					if ( resultSet.next() ) {
+						/* Find Customer Appointment */
+						vid = resultSet.getInt("VID");
+					} else {
+						System.out.println ( "There is no vehicle associated with the given car scheduled for appointment : " + service.getAppointmentID() );
+						return;
+					}
+				} catch (SQLException e) {
+					System.out.println("Unable to access the Vehicle Table : " + e.getMessage() );
+					return;
+				}
+				
+				if(serviceType.equalsIgnoreCase("repair")) {
+					try {
+						/* get repair details*/
+						resultSet = statement.executeQuery("SELECT * FROM REPAIR WHERE RID = '" + service.getServiceTypeID() + "' ");
+						if(resultSet.next()) {
+							((Repair)service).setDiagnosis(resultSet.getString("DIAGNOSTIC"));
+							((Repair)service).setDiagnosisFee(resultSet.getDouble("DIAGNOSTIC_FEE"));
+							((Repair)service).setRepairID(resultSet.getString("RID"));
+							((Repair)service).setRepairName(resultSet.getString("REPAIR_NAME"));
+						} else {
+							System.out.println("There is no repair service associated with this appointment.");
+						}
+					} catch (SQLException e) {
+						System.out.println("Uable to access the Repair Table : " + e.getMessage());
+						return;
+					}	
+					/*Get parts required*/
+					try {
+						/* get repair details*/
+						resultSet = statement.executeQuery("SELECT * FROM REPAIR_SERVICE_MAPPING, SERVICE_DETAILS" +
+														   " WHERE REPAIR_SERVICE_MAPPING.RID = SERVICE_DETAILS.SERVICE_ID" + 
+														   " AND REPAIR_SERVICE_MAPPING.RID = '" + ((Repair)service).getRepairID() + "'");
+						while(resultSet.next()) {
+							Part part = new Part();
+							part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
+							part.setPartID(resultSet.getInt("PART_ID"));
+							part.setInstallTime(resultSet.getString("TIME_REQUIRED"));
+							part.setChargeType(resultSet.getString("CHARGE_TYPE"));
+							part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
+							
+							
+							try {
+								/*Get number of this part required*/
+								resultSet = statement.executeQuery("SELECT QUANTITY FROM PARTS_QUANTITY WHERE VID = '" + vid + "' ");
+								if(resultSet.next()) {
+									part.setUnitsRequired(resultSet.getInt("QUANTITY"));
+								} else {
+									System.out.println("Unable to acquire the number of parts needed for this service.");
+									return;
+								}
+							}catch(SQLException e) {
+								System.out.println("Unable to access Quantity Table : " + e.getMessage());
+								return;
+							}	
+										
+							try {
+								/*get low/high cost*/
+								resultSet = statement.executeQuery("SELECT CHARGE_VALUE FROM SERVICE_CHARGE WHERE CHARGE_TYPE = '" + part.getChargeType() + "' ");
+								if(resultSet.next()) {
+									part.setInstallCharge(resultSet.getDouble("CHARGE_VALUE"));
+								}
+							}catch(SQLException e) {
+								System.out.println("Unable to access Charge Table : " + e.getMessage());
+								return;
+							}	
+							
+							try {
+								resultSet = statement.executeQuery("SELECT UNIT_PRICE FROM ACME_INVENTORY WHERE SC_ID = '" + serviceCenterID + 
+																   "' AND PART_ID = '" + part.getPartID() + "' ");
+								if(resultSet.next()) {
+									part.setUnitCost(resultSet.getDouble("UNIT_PRICE"));
+								} else {
+									System.out.println("There is not unit cost associated with this part.");
+								}
+							} catch ( SQLException e) {
+								System.out.println("Unable to access the Inventory Table : " + e.getMessage());
+								return;
+							}
+							((Repair)service).getPartsList().add(part);
+						}			
+					} catch (SQLException e) {
+						System.out.println("Uable to access the Repair Details : " + e.getMessage());
+						return;
+					}	
+													
+				}else {
+					/*Maintenance*/
+				}
+						
+				//get time slot details
+				try {
+					resultSet = statement.executeQuery("SELECT * FROM TIME_SLOT WHERE APPOINTMENT_ID = '" + service.getAppointmentID() + "' ");
+					if(resultSet.next()) {
+						service.createTimeSlot(resultSet.getInt("SLOT_ID"),resultSet.getString("START_TIME"), resultSet.getString("END_TIME"));
+						
+						
+						service.setActualMechanic(resultSet.getString("MECHANIC"));
+						resultSet = statement.executeQuery("SELECT * FROM EMPLOYEE WHERE EID = '" + service.getActualMechanic() + "' ");
+						if(resultSet.next()) {
+							service.setActualMechanic(resultSet.getString("FIRSTNAME") + " " + resultSet.getString("LASTNAME"));
+						}else {
+							System.out.println("There is no mechanic associated with this appointment.");
+							return;
+						}
+					}
+				}catch (SQLException e) {
+					System.out.println("Unable to access the TimeSlot table : " + e.getMessage());
+					return;
+				}
+				appointments.add(service);
+				
+				System.out.println("SERVICE DETAILS");
+				System.out.println(service.toString());
+			}
+		} catch (SQLException e) {
+			System.out.println("Unable to access the Customer table : " + e.getMessage());
+			return;
+		}
 		System.out.println("Please select from the following user options:");
 		System.out.println("\tEnter '1' to Go Back");
 		

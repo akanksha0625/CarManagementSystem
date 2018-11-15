@@ -1,22 +1,20 @@
 package com.java.dbms.proj.entities;
 
-public class Repair {
-	private int repairID;
-	private double repairCost;
-	private double diagnosisFee;
-	private double hourlyRate;
+import java.util.ArrayList;
+
+public class Repair extends Service {
+	String diagnosis;
+	double diagnosisFee;
+	String service; 
+	String repairID; // options 1-8
 	
-	public int getRepairID() {
-		return repairID;
+	ArrayList<Part> partsList = new ArrayList<Part>();
+	
+	public String getDiagnosis() {
+		return diagnosis;
 	}
-	public void setRepairID(int repairID) {
-		this.repairID = repairID;
-	}
-	public double getRepairCost() {
-		return repairCost;
-	}
-	public void setRepairCost(double repairCost) {
-		this.repairCost = repairCost;
+	public void setDiagnosis(String diagnosis) {
+		this.diagnosis = diagnosis;
 	}
 	public double getDiagnosisFee() {
 		return diagnosisFee;
@@ -24,11 +22,25 @@ public class Repair {
 	public void setDiagnosisFee(double diagnosisFee) {
 		this.diagnosisFee = diagnosisFee;
 	}
-	public double getHourlyRate() {
-		return hourlyRate;
+	public String getService() {
+		return service;
 	}
-	public void setHourlyRate(double hourlyRate) {
-		this.hourlyRate = hourlyRate;
+	public void setService(String service) {
+		this.service = service;
 	}
-
+	public String getRepairID() {
+		return repairID;
+	}
+	public void setRepairID(String repairID) {
+		this.repairID = repairID;
+	}
+	public String getRepairName() {
+		return super.getServiceName();
+	}
+	public void setRepairName(String repairName) {
+		super.setServiceName(repairName);
+	}
+	public ArrayList<Part> getPartsList() {
+		return partsList;
+	}
 }

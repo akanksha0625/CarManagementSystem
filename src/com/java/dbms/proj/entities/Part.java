@@ -3,10 +3,58 @@ package com.java.dbms.proj.entities;
 public class Part {
 	int partID;
 	String partName;
+	double unitCost;
+	String requiredFor;
+	int unitsRequired;
+	String installTime;
+	String chargeType;
 	
-	public Part( String partName, int partID ){
+	public int getUnitsRequired() {
+		return unitsRequired;
+	}
+	public void setUnitsRequired(int unitsRequired) {
+		this.unitsRequired = unitsRequired;
+	}
+
+	public String getChargeType() {
+		return chargeType;
+	}
+	public void setChargeType(String chargeType) {
+		this.chargeType = chargeType;
+	}
+	double installCharge;
+	
+
+	public String getRequiredFor() {
+		return requiredFor;
+	}
+	public void setRequiredFor(String requiredFor) {
+		this.requiredFor = requiredFor;
+	}
+	public String getInstallTime() {
+		return installTime;
+	}
+	public void setInstallTime(String installTime) {
+		this.installTime = installTime;
+	}
+	public double getInstallCharge() {
+		return installCharge;
+	}
+	public void setInstallCharge(double installCharge) {
+		this.installCharge = installCharge;
+	}
+	public double getUnitCost() {
+		return unitCost;
+	}
+	public void setUnitCost(double unitCost) {
+		this.unitCost = unitCost;
+	}
+	public Part( String partName, int partID){
 		this.setPartID(partID);
 		this.setPartName(partName);
+	}
+	public Part() {
+		this(null,0);
 	}
 	public int getPartID() {
 		return partID;

@@ -1,96 +1,68 @@
 package com.java.dbms.proj.entities;
 
-import java.util.ArrayList;
-
 
 public class Service {
 	
-	String serviceID;
-	String startDate;
-	String endDate;
-	String startTime;
-	String endTime;
-	String serviceDescription;
-	String license;
+	String appointmentID;
+	int customerID;
+	String vehicleLicense;
+	String appointmentDate;
+	String appointmentStartTime;
+	String requestedMechanic;
+	String actualMechanic;
 	String serviceType;
-	String serviceAbrev;
-	String status;
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	public String getServiceAbrev() {
-		return serviceAbrev;
-	}
-	public void setServiceAbrev(String serviceAbrev) {
-		this.serviceAbrev = serviceAbrev;
-	}
-	String mechanic;
-	ArrayList<Part> parts;
-	String totalLaborHours;
-	double costPerHour;
-	double totalCost;
-	double diagnosisFee = 0;
-	String diagnosis;
+	String serviceName;
+	String serviceStatus;
+	TimeSlot timeSlot = new TimeSlot();
+	String serviceTypeID;
 	
-	public double getDiagnosisFee() {
-		return diagnosisFee;
+	public String getServiceName() {
+		return serviceName;
 	}
-	public void setDiagnosisFee(double diagnosisFee) {
-		this.diagnosisFee = diagnosisFee;
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
 	}
-	public String getDiagnosis() {
-		return diagnosis;
+	public String getActualMechanic() {
+		return actualMechanic;
 	}
-	public void setDiagnosis(String diagnosis) {
-		this.diagnosis = diagnosis;
+	public void setActualMechanic(String actualMechanic) {
+		this.actualMechanic = actualMechanic;
+	}	
+	public void createTimeSlot(int slotID, String startTime, String endTime) {
+		timeSlot = new TimeSlot();
+		timeSlot.setStartTime(startTime);
+		timeSlot.setEndTime(endTime);
+		timeSlot.setSlotID(slotID);
 	}
-	public String getServiceDescription() {
-		return serviceDescription;
+	public String getAppointmentID() {
+		return appointmentID;
 	}
-	public void setServiceDescription(String serviceDescription) {
-		this.serviceDescription = serviceDescription;
+	public void setAppointmentID(String appointmentID) {
+		this.appointmentID = appointmentID;
 	}
-	public String getStartTime() {
-		return startTime;
+	public int getCustomerID() {
+		return customerID;
 	}
-	public void setStartTime(String startTime) {
-		this.startTime = startTime;
+	public void setCustomerID(int customerID) {
+		this.customerID = customerID;
 	}
-	public String getEndTime() {
-		return endTime;
+	public String getVehicleLicense() {
+		return vehicleLicense;
 	}
-	public void setEndTime(String endTime) {
-		this.endTime = endTime;
+	public void setVehicleLicense(String vehicleLicense) {
+		this.vehicleLicense = vehicleLicense;
 	}
-	public void addPart( Part part ) {
-		parts.add(part);
+	public String getAppointmentDate() {
+		return appointmentDate;
 	}
-	public String getServiceID() {
-		return serviceID;
+	public void setAppointmentDate(String appointmentDate) {
+		this.appointmentDate = appointmentDate;
 	}
-	public void setServiceID(String serviceID) {
-		this.serviceID = serviceID;
+	public String getRequestedMechanic() {
+		return requestedMechanic;
 	}
-	public String getStartDate() {
-		return startDate;
-	}
-	public void setStartDate(String startDate) {
-		this.startDate = startDate;
-	}
-	public String getEndDate() {
-		return endDate;
-	}
-	public void setEndDate(String endDate) {
-		this.endDate = endDate;
-	}
-	public String getLicense() {
-		return license;
-	}
-	public void setLicense(String license) {
-		this.license = license;
+	public void setRequestedMechanic(String requestedMechanic) {
+		this.requestedMechanic = requestedMechanic;
 	}
 	public String getServiceType() {
 		return serviceType;
@@ -98,35 +70,32 @@ public class Service {
 	public void setServiceType(String serviceType) {
 		this.serviceType = serviceType;
 	}
-	public String getMechanic() {
-		return mechanic;
+	public String getServiceStatus() {
+		return serviceStatus;
 	}
-	public void setMechanic(String mechanic) {
-		this.mechanic = mechanic;
+	public void setServiceStatus(String serviceStatus) {
+		this.serviceStatus = serviceStatus;
 	}
-	public ArrayList<Part> getParts() {
-		return parts;
+	public TimeSlot getTimeSlot() {
+		return timeSlot;
 	}
-	public void setParts(ArrayList<Part> parts) {
-		this.parts = parts;
+
+	public String getServiceTypeID() {
+		return serviceTypeID;
 	}
-	public String getTotalLaborHours() {
-		return totalLaborHours;
+	public void setServiceTypeID(String serviceTypeID) {
+		this.serviceTypeID = serviceTypeID;
 	}
-	public void setTotalLaborHours(String totalHours) {
-		this.totalLaborHours = totalHours;
-	}
-	public double getCostPerHour() {
-		return costPerHour;
-	}
-	public void setCostPerHour(double costPerHour) {
-		this.costPerHour = costPerHour;
-	}
-	public double getTotalCost() {
-		return totalCost;
-	}
-	public void setTotalCost(double totalCost) {
-		this.totalCost = totalCost;
+	
+	public String toString() {
+		return "Service ID        :\t" + this.getAppointmentID() +
+			   "\nService Date|Time :\t" + this.getAppointmentDate() + "|" + this.getTimeSlot().getStartTime() +
+			   "\nVehicle License   :\t" + this.getVehicleLicense() +
+			   "\nService Type      :\t" + this.getServiceType() + " : \"" + this.getServiceName() + "\"" +
+			   "\nMechanic Name     :\t" + this.getActualMechanic() +
+			   "\nParts             :\t PRINT PARTS\\COST" +
+			   "\nTotal Labor Hours :\t PRINT HOURS" +
+			   "\nTotal Service Cost:\t PRINT COST";
 	}
 
 }

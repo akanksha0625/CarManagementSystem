@@ -119,21 +119,20 @@ public class HelperFunctions {
 			System.out.println(e.getMessage());
 		}
 		
-		if ( resultSet.next() ) {
+		while ( resultSet.next() ) {
 			
 			Service service = new Service();
-			service.setServiceID( resultSet.getString( "APPOINTMENT_ID" ) );
-			service.setStartDate( resultSet.getString( "APPOINTMENT_DATE" ) );
+			service.setAppointmentID( resultSet.getString( "APPOINTMENT_ID" ) );
+			service.setAppointmentDate( resultSet.getString( "APPOINTMENT_DATE" ) );
 			service.setServiceType( resultSet.getString( "SERVICE_TYPE" ) );			
-			service.setLicense( resultSet.getString( "VEHICLE_LICENSE" ) );
-			service.setStatus( resultSet.getString( "STATE" ) );
+			service.setVehicleLicense( resultSet.getString( "VEHICLE_LICENSE" ) );
+			service.setServiceStatus( resultSet.getString( "STATE" ) );
 			
 			/* Find Time Slot of Appointment */
-			resultSet = statement.executeQuery( "SELECT * FROM TIME_SLOT WHERE APPOINTMENT_ID = '" + service.getServiceID() + "'" );
+			resultSet = statement.executeQuery( "SELECT * FROM TIME_SLOT WHERE APPOINTMENT_ID = '" + service.getAppointmentID() + "'" );
 			if(resultSet.next()) {
-				service.setStartTime( resultSet.getString( "START_TIME" ) );
-				service.setEndTime( resultSet.getString( "END_TIME" ) );
-				service.setMechanic( resultSet.getString( "MECHANIC" ) );
+				service.createTimeSlot(resultSet.getInt( "SLOT_ID") , resultSet.getString( "START_TIME") , resultSet.getString( "END_TIME" ));
+				service.setActualMechanic( resultSet.getString( "MECHANIC" ) );
 			}
 			serviceList.add(service);
 		}
@@ -154,13 +153,13 @@ public class HelperFunctions {
 			for(int index=0; index<serviceList.size();index++) {
 				Service service = serviceList.get(index);
 	
-			System.out.println("\tService ID        		:\t" + service.getServiceID());
-			System.out.println("\tLicense Plate     		:\t" + service.getLicense());
+			System.out.println("\tService ID        		:\t" + service.getAppointmentID());
+			System.out.println("\tLicense Plate     		:\t" + service.getVehicleLicense());
 			System.out.println("\tService Type      		:\t" + service.getServiceType());
-			System.out.println("\tMechanic Name 			:\t" + service.getMechanic());
-			System.out.println("\tService Start Date/Time   :\t" + service.getStartDate());
-			System.out.println("\tService End Date/Time     :\t" + service.getEndDate());
-			System.out.println("\tService Status	        :\t" + service.getStatus());
+			System.out.println("\tMechanic Name 			:\t" + service.getActualMechanic());
+			System.out.println("\tService Start Date/Time   :\t" + service.getAppointmentDate() + " | " + service.getTimeSlot().getStartTime());
+			System.out.println("\tService End Date/Time     :\t" + service.getAppointmentDate() + " | " + service.getTimeSlot().getEndTime());
+			System.out.println("\tService Status	        :\t" + service.getServiceStatus());
 			}
 		}
 	}

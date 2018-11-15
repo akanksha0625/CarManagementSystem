@@ -1,28 +1,56 @@
 package com.java.dbms.proj.entities;
 
-public class Maintenance {
-	int VID;
-	String Type;
-	String Type_ID;
-	public int getVID() {
-		return VID;
-	}
-	public void setVID(int vID) {
-		VID = vID;
-	}
-	public String getType() {
-		return Type;
-	}
-	public void setType(String type) {
-		Type = type;
-	}
-	public String getType_ID() {
-		return Type_ID;
-	}
-	public void setType_ID(String type_ID) {
-		Type_ID = type_ID;
-	}
-	
-	
+import java.util.ArrayList;
 
+public class Maintenance extends Service {
+	int vechileID;
+	double miles;
+	int months;
+	String maintenanceID;
+
+	public String getMaintenanceName() {
+		return super.getServiceName();
+	}
+
+	public void setMaintenanceName(String maintenanceName) {
+		super.setServiceName(maintenanceName);
+	}
+
+	ArrayList<Part> partsList = new ArrayList<Part>();
+	
+	public int getVechileID() {
+		return vechileID;
+	}
+
+	public void setVechileID(int vechileID) {
+		this.vechileID = vechileID;
+	}
+
+	public double getMiles() {
+		return miles;
+	}
+
+	public void setMiles(double miles) {
+		this.miles = miles;
+	}
+
+	public int getMonths() {
+		return months;
+	}
+
+	public void setMonths(int months) {
+		this.months = months;
+	}
+
+	public String getMaintenanceID() {
+		return maintenanceID;
+	}
+
+	public void setMaintenanceID(String maintenanceID) {
+		this.maintenanceID = maintenanceID;
+	}
+
+	public ArrayList<Part> getPartsList() {
+		return partsList;
+	}
 }
