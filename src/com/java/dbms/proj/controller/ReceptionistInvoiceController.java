@@ -4,7 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import com.java.dbms.proj.common.DBFacade;
 import com.java.dbms.proj.entities.Maintenance;
@@ -25,12 +27,10 @@ public class ReceptionistInvoiceController {
 		String serviceCenterID;
 		int vid = -1;
 		
-		ArrayList<Service> appointments = new ArrayList<Service>();
-		
 		try {
 			statement = DBFacade.getConnection().createStatement();
 			
-			System.out.println ( "\nEnter the email of the customer invoice that you would like to search : " );
+			System.out.print( "\nEnter the email of the customer invoice that you would like to search : " );
 			userInput = input.nextLine();
 		} catch (SQLException e) { 
 			System.out.println( "Error in acquiring the database connection : " + e.getMessage() ); 
@@ -106,24 +106,26 @@ public class ReceptionistInvoiceController {
 					}	
 					/*Get parts required*/
 					try {
-						/* get repair details*/
-						resultSet = statement.executeQuery("SELECT * FROM REPAIR_SERVICE_MAPPING, SERVICE_DETAILS" +
+						resultSet = statement.executeQuery("SELECT DISTINCT SERVICE_NAME, PART_ID, TIME_REQUIRED, CHARGE_TYPE" +
+														   " FROM REPAIR_SERVICE_MAPPING, SERVICE_DETAILS" +
 														   " WHERE REPAIR_SERVICE_MAPPING.RID = SERVICE_DETAILS.SERVICE_ID" + 
-														   " AND REPAIR_SERVICE_MAPPING.RID = '" + ((Repair)service).getRepairID() + "'");
+														   " AND REPAIR_SERVICE_MAPPING.RID = '" + ((Repair)service).getRepairID() + "' ");
 						while(resultSet.next()) {
-							Part part = new Part();
-							part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
-							part.setPartID(resultSet.getInt("PART_ID"));
-							part.setInstallTime(resultSet.getString("TIME_REQUIRED"));
-							part.setChargeType(resultSet.getString("CHARGE_TYPE"));
-							part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
-							
-							
-							try {
+								Part part = new Part();
+								part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
+								part.setPartID(resultSet.getInt("PART_ID"));
+								part.setInstallTime(resultSet.getString("TIME_REQUIRED"));
+								part.setChargeType(resultSet.getString("CHARGE_TYPE"));
+								((Repair)service).getPartsList().add(part);
+						}
+						
+						for(int i = 0; i < ((Repair)service).getPartsList().size(); i++) {
+								try {
 								/*Get number of this part required*/
-								resultSet = statement.executeQuery("SELECT QUANTITY FROM PARTS_QUANTITY WHERE VID = '" + vid + "' ");
+								resultSet = statement.executeQuery("SELECT QUANTITY FROM PARTS_QUANTITY WHERE VID = '" + vid + 
+																   "' AND PART_ID = '" + ((Repair)service).getPartsList().get(i).getPartID() + "' ");
 								if(resultSet.next()) {
-									part.setUnitsRequired(resultSet.getInt("QUANTITY"));
+									((Repair)service).getPartsList().get(i).setUnitsRequired(resultSet.getInt("QUANTITY"));
 								} else {
 									System.out.println("Unable to acquire the number of parts needed for this service.");
 									return;
@@ -131,24 +133,29 @@ public class ReceptionistInvoiceController {
 							}catch(SQLException e) {
 								System.out.println("Unable to access Quantity Table : " + e.getMessage());
 								return;
-							}	
-										
+							}
+						}
+						
+						for(int i = 0; i < ((Repair)service).getPartsList().size(); i++) {				
 							try {
 								/*get low/high cost*/
-								resultSet = statement.executeQuery("SELECT CHARGE_VALUE FROM SERVICE_CHARGE WHERE CHARGE_TYPE = '" + part.getChargeType() + "' ");
+								resultSet = statement.executeQuery("SELECT CHARGE_VALUE FROM SERVICE_CHARGE WHERE CHARGE_TYPE = '" + ((Repair)service).getPartsList().get(i).getChargeType() + "' ");
 								if(resultSet.next()) {
-									part.setInstallCharge(resultSet.getDouble("CHARGE_VALUE"));
+									((Repair)service).getPartsList().get(i).setInstallCharge(resultSet.getDouble("CHARGE_VALUE"));
 								}
 							}catch(SQLException e) {
 								System.out.println("Unable to access Charge Table : " + e.getMessage());
 								return;
-							}	
-							
+							}
+						}
+						
+						for(int i = 0; i < ((Repair)service).getPartsList().size(); i++) {	
 							try {
-								resultSet = statement.executeQuery("SELECT UNIT_PRICE FROM ACME_INVENTORY WHERE SC_ID = '" + serviceCenterID + 
-																   "' AND PART_ID = '" + part.getPartID() + "' ");
+								resultSet = statement.executeQuery("SELECT * FROM ACME_INVENTORY WHERE SC_ID = '" + serviceCenterID + 
+																   "' AND PART_ID = '" + ((Repair)service).getPartsList().get(i).getPartID() + "' ");
 								if(resultSet.next()) {
-									part.setUnitCost(resultSet.getDouble("UNIT_PRICE"));
+									((Repair)service).getPartsList().get(i).setPartName(resultSet.getString("PART_NAME"));
+									((Repair)service).getPartsList().get(i).setUnitCost(resultSet.getDouble("UNIT_PRICE"));
 								} else {
 									System.out.println("There is not unit cost associated with this part.");
 								}
@@ -156,8 +163,7 @@ public class ReceptionistInvoiceController {
 								System.out.println("Unable to access the Inventory Table : " + e.getMessage());
 								return;
 							}
-							((Repair)service).getPartsList().add(part);
-						}			
+						}
 					} catch (SQLException e) {
 						System.out.println("Uable to access the Repair Details : " + e.getMessage());
 						return;
@@ -187,16 +193,19 @@ public class ReceptionistInvoiceController {
 					System.out.println("Unable to access the TimeSlot table : " + e.getMessage());
 					return;
 				}
-				appointments.add(service);
-				
-				System.out.println("SERVICE DETAILS");
+
+				System.out.println("\n-------------------------------------------------------");
+				System.out.println("\nSERVICE DETAILS");
+				System.out.println("-------------------------------------------------------");
 				System.out.println(service.toString());
+				System.out.println(((Repair)service).repairPartsToString());
+				System.out.println("-------------------------------------------------------");
 			}
 		} catch (SQLException e) {
 			System.out.println("Unable to access the Customer table : " + e.getMessage());
 			return;
 		}
-		System.out.println("Please select from the following user options:");
+		System.out.println("\nPlease select from the following user options:");
 		System.out.println("\tEnter '1' to Go Back");
 		
 		userInput = "";

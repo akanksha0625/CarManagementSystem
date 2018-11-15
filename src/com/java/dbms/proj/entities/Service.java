@@ -1,5 +1,6 @@
 package com.java.dbms.proj.entities;
 
+import java.util.ArrayList;
 
 public class Service {
 	
@@ -15,6 +16,7 @@ public class Service {
 	String serviceStatus;
 	TimeSlot timeSlot = new TimeSlot();
 	String serviceTypeID;
+	public ArrayList<Integer> requiredServiceIDs = new ArrayList<Integer>();
 	
 	public String getServiceName() {
 		return serviceName;
@@ -93,9 +95,21 @@ public class Service {
 			   "\nVehicle License   :\t" + this.getVehicleLicense() +
 			   "\nService Type      :\t" + this.getServiceType() + " : \"" + this.getServiceName() + "\"" +
 			   "\nMechanic Name     :\t" + this.getActualMechanic() +
-			   "\nParts             :\t PRINT PARTS\\COST" +
 			   "\nTotal Labor Hours :\t PRINT HOURS" +
-			   "\nTotal Service Cost:\t PRINT COST";
+			   "\nTotal Service Cost:\t PRINT COST" +
+			   "\n\nParts Required for Service " +
+			    "\n-------------------------------------------------------";
+			   
+	}
+	
+	public String partsToString(ArrayList<Part> partsList) {
+		String returnString = "";
+		for(int i = 0; i < partsList.size(); i++) {
+			Part part = partsList.get(i);
+			returnString += "- " + part.getPartName() + " | " + part.getUnitsRequired() + " unit(s) | $" + part.getUnitCost() + " per unit " +
+			" | installation : $" + part.getInstallCharge() + " | required for " + part.getRequiredFor() + "\n";
+		}
+		return returnString;
 	}
 
 }

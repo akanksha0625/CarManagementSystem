@@ -8,7 +8,7 @@ public class Repair extends Service {
 	String service; 
 	String repairID; // options 1-8
 	
-	ArrayList<Part> partsList = new ArrayList<Part>();
+	public ArrayList<Part> partsList = new ArrayList<Part>();
 	
 	public String getDiagnosis() {
 		return diagnosis;
@@ -42,5 +42,9 @@ public class Repair extends Service {
 	}
 	public ArrayList<Part> getPartsList() {
 		return partsList;
+	}
+	
+	public String repairPartsToString() {
+		return super.partsToString(partsList);
 	}
 }
