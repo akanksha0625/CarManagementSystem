@@ -53,4 +53,8 @@ public class Maintenance extends Service {
 	public ArrayList<Part> getPartsList() {
 		return partsList;
 	}
+
+	public String repairPartsToString() {
+		return super.partsToString(partsList);
+	}
 }

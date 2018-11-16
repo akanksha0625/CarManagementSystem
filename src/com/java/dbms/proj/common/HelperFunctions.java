@@ -5,6 +5,7 @@ import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 import com.java.dbms.proj.entities.Appointment;
 import com.java.dbms.proj.entities.Customer;
@@ -89,7 +90,6 @@ public class HelperFunctions {
 		
 		System.out.println("\n\tCUSTOMER REGISTERED CARS & DETAILS");
 		System.out.println(  "\t----------------------------------");
-		ArrayList<String> cars = null;
 		try {
 			carList = HelperFunctions.getCustomerCars(customer.getCustomerId());
 		} catch (SQLException e) {
@@ -197,5 +197,50 @@ public class HelperFunctions {
 		return lastServiceName;
 		
 		
+	}
+	
+  public static boolean compareDatesTimes( String currentDate, String currentTime, String possibleDate, String possibleTime) {
+		SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy, h:mm a");
+		
+		try {
+			Date current = formatter1.parse( currentDate + ", " + currentTime );
+			System.out.println("CURRENT : " + current);
+			Date possible = formatter1.parse( possibleDate + ", " + possibleTime );
+			System.out.println("POSSIBLE : " + possible);
+			
+	        if (current.compareTo(possible) > 0) {
+	           System.out.println("CURRENT is after POSSIBLE");
+	        	return false;
+	        } else if (current.compareTo(possible) < 0) {
+	           System.out.println("CURRENT is before POSSIBLE");
+	        	return true;
+	        } else if (current.compareTo(possible) == 0) {
+	           System.out.println("CURRENT is equal to POSSIBLE");
+            }
+		} catch (ParseException e) {
+			System.out.println("Unable to Parse Date");
+		}		
+		return false;
+	}
+  
+  
+  
+  public static String addTime( String startTime,  double laborHours) {
+	  String[] startSplit = startTime.split(":");
+	  int startHour = Integer.parseInt(startSplit[0]);
+	  int startMin = Integer.parseInt(startSplit[1].split(" ")[0]);
+	  String ampm =startSplit[1].split(" ")[1];
+	  
+	  int endHour = startHour + (int)(laborHours / 1);
+	  int endMin = startMin + (int)((laborHours % 1) * 60);
+		
+	  if(ampm.equalsIgnoreCase("pm"))
+		return endHour + ":" + endMin + " " + ampm;
+	  else {
+		  if(endHour >= 12)
+			  return endHour + ":" + endMin + " pm";
+		  else
+			  return endHour + ":" + endMin + " am";
+	  }
 	}
 }

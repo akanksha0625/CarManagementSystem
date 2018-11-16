@@ -6,7 +6,7 @@ public class Part {
 	double unitCost;
 	String requiredFor;
 	int unitsRequired;
-	String installTime;
+	double installTime;
 	String chargeType;
 	
 	public int getUnitsRequired() {
@@ -31,10 +31,10 @@ public class Part {
 	public void setRequiredFor(String requiredFor) {
 		this.requiredFor = requiredFor;
 	}
-	public String getInstallTime() {
+	public double getInstallTime() {
 		return installTime;
 	}
-	public void setInstallTime(String installTime) {
+	public void setInstallTime(double installTime) {
 		this.installTime = installTime;
 	}
 	public double getInstallCharge() {
