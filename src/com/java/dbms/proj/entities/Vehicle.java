@@ -3,18 +3,31 @@ import java.util.Date;
 
 public class Vehicle {
 	private String license;
-	private Date datePurchsed;
+	private String datePurchsed;
 	private int currentMileage;
-	private Date lastServiceDate;
+	private String lastServiceDate;
 	private String lastServiceType;
+	private String lastServiceName;
+	public String getLastServiceName() {
+		return lastServiceName;
+	}
+
+	public void setLastServiceName(String lastServiceName) {
+		this.lastServiceName = lastServiceName;
+	}
+
+	public void setDatePurchsed(String datePurchsed) {
+		this.datePurchsed = datePurchsed;
+	}
+
 	private int vid;
 	private int year;
 
-	public Date getDatePurchsed() {
+	public String getDatePurchsed() {
 		return datePurchsed;
 	}
 
-	public void setDatePurchased(Date datePurchsed) {
+	public void setDatePurchased(String datePurchsed) {
 		this.datePurchsed = datePurchsed;
 	}
 
@@ -26,12 +39,12 @@ public class Vehicle {
 		this.currentMileage = currentMileage;
 	}
 
-	public Date getLastServiceDate() {
+	public String getLastServiceDate() {
 		return lastServiceDate;
 	}
 
-	public void setLastServiceDate(Date lastServiceDate) {
-		this.lastServiceDate = lastServiceDate;
+	public void setLastServiceDate(String date) {
+		this.lastServiceDate = date;
 	}
 
 	public String getLastServiceType() {

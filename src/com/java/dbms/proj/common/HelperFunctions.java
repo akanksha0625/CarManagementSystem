@@ -6,7 +6,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Scanner;
+
 import com.java.dbms.proj.entities.Appointment;
 import com.java.dbms.proj.entities.Customer;
 import com.java.dbms.proj.entities.Service;
@@ -62,10 +64,11 @@ public class HelperFunctions {
 			Vehicle car = new Vehicle();
 			
 			car.setLicense(resultSet.getString("LICENSE"));
-			car.setDatePurchased(resultSet.getDate("DATE_PURCHASED"));
+			car.setDatePurchased(resultSet.getString("DATE_PURCHASED"));
 			car.setCurrentMileage(resultSet.getInt("CURRENT_MILEAGE"));
-			car.setLastServiceDate(resultSet.getDate("LAST_SERVICE_DATE"));
+			car.setLastServiceDate(resultSet.getString("LAST_SERVICE_DATE"));
 			car.setLastServiceType(resultSet.getString("LAST_SERVICE_TYPE"));
+			car.setLastServiceName(resultSet.getString("LAST_MAINTENANCE_TYPE"));
 			car.setYear(resultSet.getInt("YEAR"));
 			car.setVid(resultSet.getInt("VID"));
 			
@@ -102,7 +105,7 @@ public class HelperFunctions {
 	
 	public static boolean checkDate(String date) {
 		 try {
-	            new SimpleDateFormat("dd-MMM-yyyy").parse(date);
+	            new SimpleDateFormat(ApplicationConstants.DATE_FORMAT).parse(date);
 	            return true;
 	        } catch (ParseException e) {
 	            return false;
@@ -113,7 +116,7 @@ public class HelperFunctions {
 		statement = DBFacade.getConnection().createStatement();
 		ArrayList<Service> serviceList=new ArrayList<Service>();	
 		try {
-		resultSet = statement.executeQuery( "SELECT * FROM APPOINTMENT WHERE CUSTOMER_ID = '" + customer.getCustomerId() + "' and STATE ='Complete'" );
+		resultSet = statement.executeQuery( "SELECT * FROM APPOINTMENT WHERE CUSTOMER_ID = '" + customer.getCustomerId() + "' and STATE ='" + ApplicationConstants.COMPLETE + "'" );
 		}
 		catch(SQLException e) {
 			System.out.println(e.getMessage());
@@ -153,13 +156,13 @@ public class HelperFunctions {
 			for(int index=0; index<serviceList.size();index++) {
 				Service service = serviceList.get(index);
 	
-			System.out.println("\tService ID        		:\t" + service.getAppointmentID());
-			System.out.println("\tLicense Plate     		:\t" + service.getVehicleLicense());
-			System.out.println("\tService Type      		:\t" + service.getServiceType());
-			System.out.println("\tMechanic Name 			:\t" + service.getActualMechanic());
-			System.out.println("\tService Start Date/Time   :\t" + service.getAppointmentDate() + " | " + service.getTimeSlot().getStartTime());
-			System.out.println("\tService End Date/Time     :\t" + service.getAppointmentDate() + " | " + service.getTimeSlot().getEndTime());
-			System.out.println("\tService Status	        :\t" + service.getServiceStatus());
+			System.out.println("\tService ID		:\t" + service.getAppointmentID());
+			System.out.println("\tLicense Plate		:\t" + service.getVehicleLicense());
+			System.out.println("\tService Type		:\t" + service.getServiceType());
+			System.out.println("\tMechanic Name		:\t" + service.getActualMechanic());
+			System.out.println("\tService Start Date/Time	:\t" + service.getAppointmentDate() + " | " + service.getTimeSlot().getStartTime());
+			System.out.println("\tService End Date/Time	:\t" + service.getAppointmentDate() + " | " + service.getTimeSlot().getEndTime());
+			System.out.println("\tService Status		:\t" + service.getServiceStatus());
 			}
 		}
 	}
@@ -175,30 +178,111 @@ public class HelperFunctions {
 		return false;
 	}
 	
-	public static String checkLastService(String VehicleLicenseNumber) throws SQLException {
-		String lastServiceName = "";
+	
+	public static String getServiceToBeScheduled(String vehicleLicenseNumber, int mileage) throws SQLException {
+		String lastServiceName="";
+		String lastServiceType="";
+		String serviceTobeScheduled="";
+		//int mileage=0;
 		statement = DBFacade.getConnection().createStatement();
 		
 		try {
-		resultSet = statement.executeQuery( "SELECT * FROM APPOINTMENT WHERE VEHICLE_LICENSE = '" + VehicleLicenseNumber + "' and STATE ='Complete' ORDER  BY APPOINTMENT_DATE DESC limit 1" );
+			resultSet = statement.executeQuery( "SELECT CURRENT_MILEAGE,LAST_SERVICE_TYPE,LAST_MAINTENANCE_TYPE FROM VEHICLE WHERE  LICENSE = '" + vehicleLicenseNumber + "'" );	
 		}
 		catch(SQLException e) {
 			System.out.println(e.getMessage());
 		}
 		
-		if ( resultSet.next() ) {
-		Appointment appointment=new Appointment();
-		appointment.setAppointmentDate(resultSet.getString("APPOINTMENT_DATE"));
-		appointment.setServiceType(resultSet.getString("SERVICE_TYPE"));
-		appointment.setServiceID(resultSet.getString("SERVICE_TYPE_ID"));
-		lastServiceName = appointment.getServiceID();
+		if ( resultSet.next() ) {	
+			lastServiceName = resultSet.getString("LAST_MAINTENANCE_TYPE");
+			//mileage = resultSet.getInt("CURRENT_MILEAGE");
 		}
 		
-		return lastServiceName;
+		if(lastServiceName == null || lastServiceName.equals("") ) {
+			if( mileage < 10000)
+				serviceTobeScheduled = ApplicationConstants.SERVICEA;
+			else if( mileage < 250000)
+				serviceTobeScheduled = ApplicationConstants.SERVICEB;
+			else
+				serviceTobeScheduled = ApplicationConstants.SERVICEC;
+		}
+		else {
+			
+			if(lastServiceName.equals(ApplicationConstants.SERVICEA))
+				serviceTobeScheduled = ApplicationConstants.SERVICEB;
+			else if(lastServiceName.equals(ApplicationConstants.SERVICEB))
+				serviceTobeScheduled = ApplicationConstants.SERVICEC;
+			else
+				serviceTobeScheduled = ApplicationConstants.SERVICEA;
+		}
 		
-		
+		return serviceTobeScheduled;	
 	}
 	
+	public static int getVechileID(String vehicleLicenseNumber) {
+		int vid = 0;
+		try {
+			resultSet = statement.executeQuery( "SELECT VID FROM VEHICLE WHERE LICENSE = '" + vehicleLicenseNumber + "'" );
+			if ( resultSet.next() ) {
+				/* Find Customer Appointment */
+				 vid = resultSet.getInt("VID");
+			} else {
+				System.out.println ( "There is no vehicle associated with the given car scheduled for appointment : " + vehicleLicenseNumber );
+			}
+		} catch (SQLException e) {
+			System.out.println("Unable to access the Vehicle Table : " + e.getMessage() );
+		}
+		return vid;
+	}
+	
+	public static ArrayList<Integer> getChildServiceList(String serviceName, String serviceType, String licenseNumber) throws SQLException {
+		int vechicleId=0;
+		vechicleId = getVechileID(licenseNumber);
+		ArrayList<Integer> childServiceList = new ArrayList<Integer>();
+		if(vechicleId != 0) {
+			int maintenanceId = 0;
+			if(serviceName == ApplicationConstants.MAINTENANCE)
+				resultSet = statement.executeQuery( "SELECT MAINTENANCE_ID FROM MAINTENANCE WHERE MAINTENANCE_NAME = '" + serviceType + "' and VID='" + vechicleId + "'");
+		
+			if(resultSet.next())
+			{
+				maintenanceId = resultSet.getInt("MAINTENANCE_ID");
+			}
+			
+			if(maintenanceId !=0 )
+			{
+				resultSet = statement.executeQuery( "SELECT SERVICE_ID FROM MAINTENANCE_SERVICE_MAPPING WHERE M_ID = '" + maintenanceId + "'" );
+				
+				while(resultSet.next())
+				{
+					int childServiceId=0;
+					childServiceId = resultSet.getInt("SERVICE_ID");
+					childServiceList.add(childServiceId);
+				}	
+			}	
+			
+		}
+		return childServiceList;
+	}
+
+	
+	public static float calculateServiceDuration(String serviceName, String serviceType, String licenseNumber) throws SQLException{
+		float timeDuration=0;
+		ArrayList<Integer> childServiceList =getChildServiceList(serviceName, serviceType, licenseNumber);
+		for(int i=0;i<childServiceList.size(); i++) {
+			resultSet = statement.executeQuery( "SELECT TIME_REQUIRED,PART_ID FROM SERVICE_DETAILS WHERE SERVICE_ID = '" + childServiceList.get(i) + "'" );
+			
+			while(resultSet.next())
+			{
+				float childServiceTime=0;
+				childServiceTime = Float.parseFloat(resultSet.getString("TIME_REQUIRED"));
+				timeDuration = timeDuration +  childServiceTime;
+			}
+		}
+		return timeDuration;
+	}
+	
+
   public static boolean compareDatesTimes( String currentDate, String currentTime, String possibleDate, String possibleTime) {
 		SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy, h:mm a");
 		
@@ -243,4 +327,97 @@ public class HelperFunctions {
 			  return endHour + ":" + endMin + " am";
 	  }
 	}
+
+	
+	public static HashMap<Integer,Integer> getPartList(String serviceName, String serviceType, String licenseNumber) throws SQLException{
+		ArrayList<Integer> partIDList = new ArrayList<Integer>();
+		ArrayList<Integer> childServiceList = getChildServiceList(serviceName, serviceType, licenseNumber);
+		HashMap<Integer,Integer> requiredPartList = new HashMap<Integer,Integer>();
+		for(int i=0;i<childServiceList.size(); i++) {
+			resultSet = statement.executeQuery( "SELECT PART_ID FROM SERVICE_DETAILS WHERE SERVICE_ID = '" + childServiceList.get(i) + "'" );
+			System.out.println("Inside childServiceList");
+			while(resultSet.next())
+			{
+				int partID=0;
+				partID = Integer.parseInt(resultSet.getString("PART_ID"));
+				System.out.println("Required Part id:"+ partID);
+				partIDList.add(partID);
+			}	
+		}
+		
+		for(int index=0; index<partIDList.size(); index++) {
+			resultSet = statement.executeQuery( "SELECT QUANTITY FROM PARTS_QUANTITY WHERE PART_ID = '" + partIDList.get(index) + "'" );
+			System.out.println("Inside Calculate parts quantity");
+			
+			while(resultSet.next())
+			{
+				int quantity= Integer.parseInt(resultSet.getString("QUANTITY"));
+				requiredPartList.put(partIDList.get(index), quantity);
+				System.out.println("Part id:"+ partIDList.get(index)+":"+quantity);
+			}
+			
+		}
+		
+		return requiredPartList;
+	}
+	
+	//Needs to be changed based on order placement
+	public static boolean checkPartAvailability(String serviceName, String serviceType, String licenseNumber) throws NumberFormatException, SQLException {
+		int numberOfDays=0;
+		boolean partsAvailable = true;
+		HashMap<Integer,Integer> requiredPartList =getPartList(serviceName, serviceType, licenseNumber);
+		for(int index : requiredPartList.keySet()) {
+			
+			resultSet = statement.executeQuery( "SELECT CURRENT_QUANTITY FROM ACME_INVENTORY WHERE PART_ID = '" + index + "'" );
+			
+			while(resultSet.next())
+			{
+				int quantity= Integer.parseInt(resultSet.getString("CURRENT_QUANTITY"));
+				if(quantity < requiredPartList.get(index) ) {
+					System.out.println("Inside Parts not available");
+					partsAvailable=false;
+				}
+			}
+			
+		}
+		return partsAvailable;
+	}
+	
+	public static ArrayList<String> getTimeSlot(String mechanicFirstName, String mechanicLastName, Float duration) throws SQLException {
+		int empId=0;
+		ArrayList<String> timeSlot = new ArrayList<String>();
+		
+		if(mechanicFirstName!=null && mechanicFirstName!="" && mechanicLastName!=null && mechanicLastName!="")
+			resultSet = statement.executeQuery( "SELECT EID FROM EMPLOYEE WHERE FIRSTNAME = '" + mechanicFirstName + "' and LASTNAME = '" + mechanicLastName + "'" );
+		else if(mechanicFirstName!=null && mechanicFirstName!="" && (mechanicLastName==null || mechanicLastName==""))
+			resultSet = statement.executeQuery( "SELECT EID FROM EMPLOYEE WHERE FIRSTNAME = '" + mechanicFirstName + "'");
+		if(resultSet.next())
+		{
+			empId = Integer.parseInt(resultSet.getString("EID"));
+		}
+		//Fetch employee based on only last name information
+		
+		if(empId != 0)
+		{
+			String startTime="";
+			String endTime="";
+			HashMap<String,String> mechanicTimeSlot = new HashMap<String,String>();
+			resultSet = statement.executeQuery( "SELECT START_TIME,END_TIME FROM TIME_SLOT WHERE MECHANIC_ID = '" + empId + "'");
+			if(resultSet.next())
+			{
+				startTime = resultSet.getString("START_TIME");
+				startTime = resultSet.getString("END_TIME");
+				mechanicTimeSlot.put(startTime, endTime);
+			}
+		}
+		
+		
+		
+		return timeSlot;
+		
+	}
+	
+
 }
+ 
+

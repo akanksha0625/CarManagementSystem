@@ -10,18 +10,16 @@ public class CustomerScheduleServiceController {
 	
 	static Appointment appointment=new Appointment();
 	static Vehicle vehicle = new Vehicle();
+	static String inputString="";
 	
-	public static void scheduleService(Scanner input) throws SQLException {
-		com.java.dbms.proj.views.CustomerView.displayScheduleService();
-		
-		String inputString="";
+	public static void displayScheduleService(Scanner input) throws SQLException {		
 		System.out.println("Please enter the below mandatory* details to schedule a service:\n");
 		do {
 			System.out.print("License Plate* :");
 			inputString=input.nextLine();
 			if(inputString == null && inputString!="")
 				System.out.println("Please enter License Plate Number.");
-		}while(inputString!=null && inputString!="");
+		}while(inputString.equals("")|| inputString.equals(null));
 		
 		vehicle.setLicense(inputString);
 		
@@ -30,15 +28,21 @@ public class CustomerScheduleServiceController {
 			inputString=input.nextLine();
 			if(inputString == null && inputString!="")
 				System.out.println("Please enter Current Mileage of the vehicle.");
-		}while(inputString!=null && inputString!="");
+		}while(inputString.equals("")|| inputString.equals(null));
 		
-		vehicle.setCurrentMileage(Integer.parseInt(input.nextLine()));
+		int mileage=Integer.parseInt(inputString);		
+		vehicle.setCurrentMileage(mileage);
 		
-		System.out.print("Mechanic Name: ");
+		System.out.println("Please enter Mechanic Details if you have a preference:");
+		System.out.print("Mechanic First Name:");
 		inputString=input.nextLine();
-		
 		if(inputString != null && inputString != "")
-			appointment.setRequestedMechanic(inputString);
+			appointment.setRequestedMechanicFirstName(inputString);
+		
+		System.out.print("Mechanic Last Name:");
+		inputString=input.nextLine();	
+		if(inputString != null && inputString != "")
+		appointment.setRequestedMechanicLastName(inputString);
 			
 		appointment.setVehicle(vehicle);
 		
@@ -59,4 +63,10 @@ public class CustomerScheduleServiceController {
 			CustomerScheduleRepairController.scheduleRepair(input);
 		}		
 	}
+	
+	public static void scheduleService(Scanner input) throws SQLException {
+		com.java.dbms.proj.views.CustomerView.displayScheduleService();
+		while(!inputString.equals(3))
+		displayScheduleService(input);
+}
 }

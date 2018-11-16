@@ -3,7 +3,20 @@ package com.java.dbms.proj.entities;
 public class Appointment {
 	int appointmentID;
 	String appointmentDate;
-	String requestedMechanic;
+	String requestedMechanicFirstName;
+	String requestedMechanicLastName;
+	public String getRequestedMechanicFirstName() {
+		return requestedMechanicFirstName;
+	}
+	public void setRequestedMechanicFirstName(String requestedMechanicFirstName) {
+		this.requestedMechanicFirstName = requestedMechanicFirstName;
+	}
+	public String getRequestedMechanicLastName() {
+		return requestedMechanicLastName;
+	}
+	public void setRequestedMechanicLastName(String requestedMechanicLastName) {
+		this.requestedMechanicLastName = requestedMechanicLastName;
+	}
 	String serviceType;
 	String state;
 	String serviceID;
@@ -29,12 +42,7 @@ public class Appointment {
 	public void setAppointmentDate(String appointmentDate) {
 		this.appointmentDate = appointmentDate;
 	}
-	public String getRequestedMechanic() {
-		return requestedMechanic;
-	}
-	public void setRequestedMechanic(String requestedMechanic) {
-		this.requestedMechanic = requestedMechanic;
-	}
+	
 	public String getServiceType() {
 		return serviceType;
 	}
