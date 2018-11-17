@@ -560,6 +560,7 @@ public class HelperFunctions {
 			String endTime="";
 			HashMap<String,String> mechanicTimeSlot = new HashMap<String,String>();
 			resultSet = statement.executeQuery( "SELECT START_TIME,END_TIME FROM TIME_SLOT WHERE MECHANIC_ID = '" + empId + "'");
+			
 			if(resultSet.next())
 			{
 				startTime = resultSet.getString("START_TIME");
