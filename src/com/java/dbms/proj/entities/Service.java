@@ -1,16 +1,20 @@
 package com.java.dbms.proj.entities;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.java.dbms.proj.common.HelperFunctions;
 
-public class Service {
+public class Service implements Comparable{
 
 	private String appointmentID;
 	private int customerID;
 	private int mechanicID;
 	private String vehicleLicense;
 	private String appointmentDate;
+	private Date appointmentDateDate;
 	private String appointmentStartTime;
 	private String requestedMechanic;
 	private String actualMechanic;
@@ -30,6 +34,16 @@ public class Service {
 	private String serviceCenterID = "";
 	private double mechanicCost = 0;
 
+	public void convertDate(String date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		String dateInString = HelperFunctions.translateDate(date);	
+		try {
+			this.appointmentDateDate = sdf.parse(dateInString);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+		}
+	}
+	
 	public double getMechanicCost() {
 		return mechanicCost;
 	}
@@ -267,5 +281,15 @@ public class Service {
 
 	public void setMechanicID(int mechanicID) {
 		this.mechanicID = mechanicID;
+	}
+	public Date getAppointmentDateDate() {
+		return this.appointmentDateDate;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		Date compareage=((Service)o).getAppointmentDateDate();
+	        /* For Ascending order*/
+	        return this.appointmentDateDate.compareTo(compareage);
 	}
 }

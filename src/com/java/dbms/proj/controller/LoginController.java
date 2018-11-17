@@ -22,11 +22,12 @@ public class LoginController {
 		int back = 0;
 		Statement statement = DBFacade.getConnection().createStatement();
 		ResultSet resultSet;
+		boolean success = false;
 
 		/*
 		 * Prompt user for userName and password until successful match is discovered.
 		 */
-		while (true && back == 0) {
+		while (!success) {
 			attempts++;
 			System.out.print("Please enter username : ");
 			userLogin.setUserName(input.nextLine());
@@ -50,7 +51,7 @@ public class LoginController {
 					resultSet = statement
 							.executeQuery("SELECT USERNAME, PASSWORD, ROLE " + "FROM LOGIN " + "WHERE username = '"
 									+ userLogin.getUserName() + "' AND password = '" + userLogin.getPassword() + "'");
-					// "' AND state = 'ACTIVE'" );
+
 					/* If query returned a value */
 					if (resultSet.next()) {
 	
@@ -58,13 +59,13 @@ public class LoginController {
 							userLogin.setRole(resultSet.getString("role"));
 						}
 	
-						System.out.println("************************");
+						System.out.println("\n************************");
 						System.out.println("  - Login Successful -  ");
 						System.out.println("************************\n");
-	
+						success = true;
 						return userLogin.getRole();
 					} else {
-						System.out.println("*********************************");
+						System.out.println("\n*********************************");
 						System.out.println("     - Login Unsuccessful -");
 						System.out.println("---------------------------------");
 	
@@ -96,7 +97,6 @@ public class LoginController {
 					break;
 				}
 			}
-			back = 1;
 		}
 		return "fail";
 	}

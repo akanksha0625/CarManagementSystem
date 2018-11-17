@@ -170,12 +170,7 @@ public class SignUpController {
 						if( resultSet.next() )
 							customerID = resultSet.getString( "CID" );
 						
-						resultSet = statement.executeQuery( "SELECT customerAddress_seq.nextval from dual" );
-						int increment = 0;
-						if ( resultSet.next() ) {
-							index = resultSet.getInt( "NEXTVAL" );
-						}
-						statement.executeUpdate( "INSERT INTO CUSTOMER_ADDRESS VALUES ('" + increment + "', '" + address + "', '" +
+						statement.executeUpdate( "INSERT INTO CUSTOMER_ADDRESS VALUES ('" + address + "', '" +
 															     	  city + "', '" + state + "', '" + customerID + "', '" + zip + "')");
 					} catch ( SQLException e ) {
 						System.out.println( "Unable to access the Customer Address table : " + e.getMessage() );
