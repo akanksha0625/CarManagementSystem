@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
 import com.java.dbms.proj.common.DBFacade;
+import com.java.dbms.proj.common.HelperFunctions;
 
 public class ManagerNewOrderController {
 	
@@ -16,32 +17,26 @@ public class ManagerNewOrderController {
 		Statement statement = DBFacade.getConnection().createStatement();
 		ResultSet resultSet, inventoryResult, sequenceResult;
 		String orderDeliverySource = "";
-		int sourceId = 0;
-		String scId = "";
-		
+		String scId = "", sourceId = "";	
 		int minOrderThreshold =0;
 		
-		//TODO ask for part ID and quantity
-		System.out.println("TAKE PART ORDER DETAILS\n");		
-		
 		System.out.println ("Please provide some details of the order to be placed.");
-		
+				
 		System.out.print ( "Part ID : ");
 		int partId = Integer.parseInt(input.nextLine());
 
 		
 		System.out.print ( "Quantity : ");
 		int quantity = Integer.parseInt(input.nextLine());
-		System.out.println(ApplicationController.employee.getServiceCenterId());
 		//check the threshold order qty requirement of that table of that part in the service centers inventory
 		try {
 			resultSet = statement.executeQuery( "SELECT * FROM ACME_INVENTORY WHERE PART_ID = " + partId + " AND SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "'" );
-			System.out.println ( "check for inventory." );
 
 			if (resultSet.next()) {
 				minOrderThreshold = Integer.parseInt(resultSet.getString("MIN_ORDER_THRESHOLD"));
+				// Save the Service center id for the sc placing the order
 				scId = resultSet.getString("SC_ID");
-				
+
 				if(minOrderThreshold > quantity ) {
 					System.out.println ( "Min order quantity too low" );
 				}
@@ -53,42 +48,41 @@ public class ManagerNewOrderController {
 			e.printStackTrace();
 		}
 		try {
-			resultSet = statement.executeQuery( "SELECT * FROM ACME_INVENTORY WHERE PART_ID = " + partId + " AND SC_ID <> '" + ApplicationController.employee.getServiceCenterId() + "' AND (CURRENT_QUANTITY - "+ quantity+" ) >= MIN_QUANTITY " );
-			
+			resultSet = statement.executeQuery( "SELECT * FROM ACME_INVENTORY WHERE PART_ID = " + partId + " AND SC_ID <> '" + ApplicationController.employee.getServiceCenterId() + "' AND MIN_QUANTITY >= (CURRENT_QUANTITY - "+ quantity+" ) ORDER BY (CURRENT_QUANTITY - MIN_QUANTITY) DESC" );
 			if (!resultSet.next()) {
 				//No such inventory exist for this service center. So we place an order in supplier
-				resultSet = statement.executeQuery( "SELECT * FROM SUPPLIER_INVENTORY WHERE PART_ID = " + partId);	
+				resultSet = statement.executeQuery( "SELECT * FROM SUPPLIER_INVENTORY WHERE PART_ID = " + partId + " ORDER BY DELIVERY_WINDOW ASC ");	
+
 				resultSet.next();
 				orderDeliverySource = "SUPPLIER";		
-				sourceId = Integer.parseInt(resultSet.getString("SUPPLIER_ID"));
+				sourceId = resultSet.getString("SUPPLIER_ID");
 			} else {
 				orderDeliverySource = "ACME"; 
-				sourceId = Integer.parseInt(resultSet.getString("SC_ID"));
-
+				sourceId = resultSet.getString("SC_ID");
 			}
 			
 			try {
 				//place the order
-				sequenceResult = statement.executeQuery( "SELECT ACME_INVENTORY_SEQ.nextVal FROM dual");
+				sequenceResult = statement.executeQuery( "SELECT PURCHASEORDER_SEQ.nextVal FROM dual");
+
 				int index = 0;
 				if ( sequenceResult.next() ) {
-					index = resultSet.getInt( "NEXTVAL" );
+					index = sequenceResult.getInt( "NEXTVAL" );
 				}
 				
 				 Date dNow = new Date(0 );
-			     SimpleDateFormat ft =  new SimpleDateFormat ("dd-MM-yyyy");
-
-			      System.out.println("Current Date: " + ft.format(dNow));
+			     SimpleDateFormat ft =  new SimpleDateFormat ("dd-MMM-yyyy");			      
 			      
-			      
-				int tuples = statement.executeUpdate( "INSERT INTO PURCHASE_ORDER VALUES (" + sourceId + ", '" + orderDeliverySource + "',"+ partId + ", "+ ft.format(dNow) + ","+ quantity +", " + index + ", 'PENDING' , " + scId + " )" );
-				if ( tuples != 1 )
+				int tuples = statement.executeUpdate( "INSERT INTO PURCHASE_ORDER VALUES ('" + sourceId + "', '" + orderDeliverySource + "',"+ partId + ", '"+ ft.format(dNow) + "',"+ quantity +", " + index + ", 'PENDING' , '" + scId + "', 'PENDING' )" );
+				if ( tuples != 1 ) {
 					System.out.println ( "Unable to place order Table." );
+				} else {
+					System.out.println ( "\t---------------- Order Placed!!----------------" );
+				}
 			} catch ( SQLException e ) {
-				System.out.println( "Unabel to access User Login Table : " + e.getMessage() );
+				System.out.println( "Unabel to place the order : " + e.getMessage() );
 				e.printStackTrace();
 			}
-			
 			
 		} catch ( SQLException e ) {
 			System.out.println( "Unabel to access Inventory table : " + e.getMessage() );

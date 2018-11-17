@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import com.java.dbms.proj.controller.ApplicationController;
 import com.java.dbms.proj.entities.Appointment;
 import com.java.dbms.proj.entities.Customer;
 import com.java.dbms.proj.entities.PayCheck;
@@ -574,6 +575,57 @@ public class HelperFunctions {
 		return timeSlot;
 		
 	}
+	
+	
+	public static int calculateDeliveryWindowForParts() throws SQLException {
+		int partIds[] = {1,2};
+		String scId = "S0001";
+		
+		Statement statement = DBFacade.getConnection().createStatement();
+		ResultSet inventoryResult;
+
+		int minOrderThreshold =0;
+		int maxDeliveryInDays = 0, deliveryWindow=0;
+		
+		String csv = "" + partIds[0]; 
+		for (int i=1; i< partIds.length;i++) {
+			csv = csv+","+partIds[i];
+		}
+		try {
+			resultSet = statement.executeQuery("SELECT * FROM ACME_INVENTORY WHERE PART_ID IN (" + csv + ") AND SC_ID = '" + scId + "'" );
+
+			while (resultSet.next()) {
+				minOrderThreshold = Integer.parseInt(resultSet.getString("MIN_ORDER_THRESHOLD"));
+				try {
+					inventoryResult = statement.executeQuery( "SELECT * FROM ACME_INVENTORY WHERE PART_ID = " + Integer.parseInt(resultSet.getString("PART_ID")) + " AND SC_ID <> '" + scId + "' AND MIN_QUANTITY >= (CURRENT_QUANTITY - "+ minOrderThreshold+" ) ORDER BY (CURRENT_QUANTITY - MIN_QUANTITY) DESC" );
+					if(inventoryResult.next()) {
+						deliveryWindow = Integer.parseInt(inventoryResult.getString("MIN_ORDER_THRESHOLD"));
+					} else {
+						try {
+							inventoryResult = statement.executeQuery( "SELECT * FROM SUPPLIER_INVENTORY WHERE PART_ID = " + Integer.parseInt(resultSet.getString("PART_ID")) + " ORDER BY DELIVERY_WINDOW ASC ");
+							deliveryWindow = Integer.parseInt(inventoryResult.getString("DELIVERY_WINDOW"));
+						}catch ( SQLException e ) {
+							System.out.println( "Unable to access Supplier Inventory table : " + e.getMessage() );
+							e.printStackTrace();
+						}
+					}
+					
+					if(deliveryWindow > maxDeliveryInDays) {
+						maxDeliveryInDays = deliveryWindow;
+					}
+				}catch ( SQLException e ) {
+					System.out.println( "Unable to access Acme Inventory table for other Service centers : " + e.getMessage() );
+					e.printStackTrace();
+				}
+				
+			}
+		} catch ( SQLException e ) {
+			System.out.println( "Unabel to access Acme Inventory table : " + e.getMessage() );
+			e.printStackTrace();
+		}
+		return maxDeliveryInDays;
+	}
+	
 	
 
 }
