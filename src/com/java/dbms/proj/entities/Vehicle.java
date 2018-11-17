@@ -22,8 +22,29 @@ public class Vehicle {
 
 	private int vid;
 	private int year;
+	public String getMake() {
+		return make;
+	}
 
-	public String getDatePurchsed() {
+	public void setMake(String make) {
+		this.make = make;
+	}
+
+	public String getModel() {
+		return model;
+	}
+
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+	public void setDatePurchsed(Date datePurchsed) {
+		this.datePurchsed = datePurchsed;
+	}
+
+	private String make;
+	private String model;
+	public Date getDatePurchsed() {
 		return datePurchsed;
 	}
 
