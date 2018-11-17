@@ -74,28 +74,7 @@ public class ManagerCarServiceDetailsController {
 				
 			}
 				
-						
-				
-			/*
-			whileMake
-			B. Model
-			C. Year
-			D. Service A:
-			a. Miles
-			b. List of Basic
-			Services
-			(Service ID)
-			E. Service B
-			a. Miles
-			b. List of Basic
-			Services
-			(Service ID)
-			F. Service C
-			a. Miles
-			b. List of Basic
-			Services
-			(Service ID)
-		*/
+	
 			
 			}  catch (SQLException e) {
 				System.out.println("Could'nt get the Employee details. " + e);

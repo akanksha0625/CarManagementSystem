@@ -179,7 +179,7 @@ public class ManagerNewCarController {
 			i++;
 			}
 			
-			System.out.println( "ADD CONTROLLER TO ADD NEW CAR" );
+			System.out.println( "New Car added." );
 		}
 			catch ( SQLException e ) {
 				System.out.println( "Unable to access the MAINTENANCE Table for Service C : " + e.getMessage() );

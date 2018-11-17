@@ -38,13 +38,11 @@ public class Vehicle {
 		this.model = model;
 	}
 
-	public void setDatePurchsed(Date datePurchsed) {
-		this.datePurchsed = datePurchsed;
-	}
+	
 
 	private String make;
 	private String model;
-	public Date getDatePurchsed() {
+	public String getDatePurchsed() {
 		return datePurchsed;
 	}
 
