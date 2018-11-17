@@ -1,5 +1,7 @@
 package com.java.dbms.proj.common;
 
+import com.java.dbms.proj.entities.TimeSlot;
+
 public interface ApplicationConstants {
 
 	String MAINTENANCE = "Maintenance";
@@ -10,4 +12,7 @@ public interface ApplicationConstants {
 	String SERVICEA= "A";
 	String SERVICEB= "B";
 	String SERVICEC= "C";
+	
+	TimeSlot fixedTimeSlot = new TimeSlot();
+	
 }
