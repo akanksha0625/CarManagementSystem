@@ -1,68 +1,72 @@
 package com.java.dbms.proj.common;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
 
 import com.java.dbms.proj.entities.Appointment;
 import com.java.dbms.proj.entities.Customer;
+import com.java.dbms.proj.entities.PayCheck;
 import com.java.dbms.proj.entities.Service;
 import com.java.dbms.proj.entities.Vehicle;
 
 public class HelperFunctions {
 	/* Necessary Variables for SQL Transactions */
-	static ArrayList<Vehicle> carList = new ArrayList<Vehicle>(); 
+	static ArrayList<Vehicle> carList = new ArrayList<Vehicle>();
 	static ArrayList<String> cars = new ArrayList<String>();
 	static Statement statement;
 	static ResultSet resultSet;
-	
-	public static void updatePassword(String userName) throws SQLException{
+
+	public static void updatePassword(String userName) throws SQLException {
 		String userPassword = "";
 		String userInput = "";
 		boolean passwordMatch = true;
-		Scanner input=new Scanner(System.in);
+		Scanner input = new Scanner(System.in);
 		statement = DBFacade.getConnection().createStatement();
 		do {
 			/* Assign user password */
-			System.out.print ( "Please enter a login password: " );
-			userPassword   = input.nextLine();
-			System.out.print ( "Please confirm your password: " );
+			System.out.print("Please enter a login password: ");
+			userPassword = input.nextLine();
+			System.out.print("Please confirm your password: ");
 			userInput = input.nextLine();
-			if ( !userPassword.equals( userInput ) ) {
-				System.out.println( "\n***************************" );
-				System.out.println( "| Password does not match |" );
-				System.out.println( "***************************\n" );
+			if (!userPassword.equals(userInput)) {
+				System.out.println("\n***************************");
+				System.out.println("| Password does not match |");
+				System.out.println("***************************\n");
 				passwordMatch = false;
 			} else {
 				passwordMatch = true;
 			}
-		} while ( !passwordMatch );
-		
+		} while (!passwordMatch);
+
 		try {
-			int tuples = statement.executeUpdate( "UPDATE LOGIN SET PASSWORD = '" +	userPassword + "' where USERNAME = '" + userName + "'") ;
-	if ( tuples != 1 )
-				System.out.println ( "Unable to load user into the Login Table." );
-		} catch ( SQLException e ) {
-			System.out.println( "Unable to access User Login Table : " + e.getMessage() );
+			int tuples = statement.executeUpdate(
+					"UPDATE LOGIN SET PASSWORD = '" + userPassword + "' where USERNAME = '" + userName + "'");
+			if (tuples != 1)
+				System.out.println("Unable to load user into the Login Table.");
+		} catch (SQLException e) {
+			System.out.println("Unable to access User Login Table : " + e.getMessage());
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	public static ArrayList<Vehicle> getCustomerCars( int customerID ) throws SQLException{
+
+	public static ArrayList<Vehicle> getCustomerCars(int customerID) throws SQLException {
 		statement = DBFacade.getConnection().createStatement();
 		boolean matchFound = false;
-				
-		resultSet = statement.executeQuery( "SELECT * FROM VEHICLE WHERE CID = '" + customerID + "'" );
-		while(resultSet.next()) {
+
+		resultSet = statement.executeQuery("SELECT * FROM VEHICLE WHERE CID = '" + customerID + "'");
+		while (resultSet.next()) {
 			matchFound = true;
 			Vehicle car = new Vehicle();
-			
+
 			car.setLicense(resultSet.getString("LICENSE"));
 			car.setDatePurchased(resultSet.getString("DATE_PURCHASED"));
 			car.setCurrentMileage(resultSet.getInt("CURRENT_MILEAGE"));
@@ -71,39 +75,40 @@ public class HelperFunctions {
 			car.setLastServiceName(resultSet.getString("LAST_MAINTENANCE_TYPE"));
 			car.setYear(resultSet.getInt("YEAR"));
 			car.setVid(resultSet.getInt("VID"));
-			
+
 			carList.add(car);
 		}
-		if(!matchFound) { 
+		if (!matchFound) {
 			cars.add("\t\tThere are currently no cars registerd for this customer.\n");
-		} 
+		}
 		return carList;
 	}
-	
+
 	public static void displayCustomerProfile(Customer customer) {
 		System.out.println("\n\tCUSTOMER PROFILE DETAILS");
-		System.out.println(  "\t------------------------\n");
-		
+		System.out.println("\t------------------------\n");
+
 		System.out.println("\tCustomer ID           :\t" + customer.getCustomerId());
 		System.out.println("\tCustomer Name         :\t" + customer.getFirstName() + " " + customer.getLastName());
 		System.out.println("\tCustomer Address      :\t" + customer.getAddress().addressToString());
 		System.out.println("\tCustomer Phone Number :\t" + customer.getPhoneNumber());
 		System.out.println("\tCustomer Email        :\t" + customer.getEmail());
 		System.out.println("\tCustomer Username     :\t" + customer.getUsername());
-		
+
 		System.out.println("\n\tCUSTOMER REGISTERED CARS & DETAILS");
-		System.out.println(  "\t----------------------------------");
+		System.out.println("\t----------------------------------");
 		try {
 			carList = HelperFunctions.getCustomerCars(customer.getCustomerId());
 		} catch (SQLException e) {
 			System.out.println("Issue Occured while trying to access Customer Cars : " + e.getMessage());
 		}
-		for(int i = 0; i < carList.size(); i++) {
+		for (int i = 0; i < carList.size(); i++) {
 			System.out.print(carList.get(i).toString());
 		}
 	}
-	
+
 	public static boolean checkDate(String date) {
+
 		 try {
 	            new SimpleDateFormat(ApplicationConstants.DATE_FORMAT).parse(date);
 	            return true;
@@ -112,49 +117,112 @@ public class HelperFunctions {
 	        }
 	}
 	
+	public static String translateDate(String date) {
+		String split[] = date.split("-");
+		if(split[1].equalsIgnoreCase("jan")) {
+			return split[0] + "-" + 1 + "-" + split[2];
+		}else if(split[1].equalsIgnoreCase("feb")) {
+			return split[0] + "-" + 2 + "-" + split[2];
+		}else if(split[1].equalsIgnoreCase("mar")) {
+			return split[0] + "-" + 3 + "-" + split[2];
+		}else if(split[1].equalsIgnoreCase("apr")) {
+			return split[0] + "-" + 4 + "-" + split[2];
+		}else if(split[1].equalsIgnoreCase("may")) {
+			return split[0] + "-" + 5 + "-" + split[2];
+		}else if(split[1].equalsIgnoreCase("jun")) {
+			return split[0] + "-" + 6 + "-" + split[2];
+		}else if(split[1].equalsIgnoreCase("jul")) {
+			return split[0] + "-" + 7 + "-" + split[2];
+		}else if(split[1].equalsIgnoreCase("aug")) {
+			return split[0] + "-" + 8 + "-" + split[2];
+		}else if(split[1].equalsIgnoreCase("sep")) {
+			return split[0] + "-" + 9 + "-" + split[2];
+		}else if(split[1].equalsIgnoreCase("oct")) {
+			return split[0] + "-" + 10 + "-" + split[2];
+		}else if(split[1].equalsIgnoreCase("nov")) {
+			return split[0] + "-" + 11 + "-" + split[2];
+		}
+			return split[0] + "-" + 12 + "-" + split[2];
+	}
+	
+	public static String translateBack(String date) {
+		String split[] = date.split("-");
+		if (split[1].equalsIgnoreCase("1")) {
+			return split[0] + "-JAN-" + split[2];
+		}else if(split[1].equalsIgnoreCase("2")) {
+			return split[0] + "-FEB-" + split[2];
+		}else if(split[1].equalsIgnoreCase("3")) {
+			return split[0] + "-MAR-" + split[2];
+		}else if(split[1].equalsIgnoreCase("4")) {
+			return split[0] + "-APR-" + split[2];
+		}else if(split[1].equalsIgnoreCase("5")) {
+			return split[0] + "-MAY-" + split[2];
+		}else if(split[1].equalsIgnoreCase("6")) {
+			return split[0] + "-JUN-" + split[2];
+		}else if(split[1].equalsIgnoreCase("7")) {
+			return split[0] + "-JUL-" + split[2];
+		}else if(split[1].equalsIgnoreCase("8")) {
+			return split[0] + "-AUG-" + split[2];
+		}else if(split[1].equalsIgnoreCase("9")) {
+			return split[0] + "-SEP-" + split[2];
+		}else if(split[1].equalsIgnoreCase("10")) {
+			return split[0] + "-OCT-" + split[2];
+		}else if(split[1].equalsIgnoreCase("11")) {
+			return split[0] + "-NOV-" + split[2];
+		}
+			return split[0] + "-DEC-" + split[2];
+
+	}
+
 	public static ArrayList<Service> getServiceHistory(Customer customer) throws SQLException {
 		statement = DBFacade.getConnection().createStatement();
-		ArrayList<Service> serviceList=new ArrayList<Service>();	
+		ArrayList<Service> serviceList = new ArrayList<Service>();
 		try {
+
 		resultSet = statement.executeQuery( "SELECT * FROM APPOINTMENT WHERE CUSTOMER_ID = '" + customer.getCustomerId() + "' and STATE ='" + ApplicationConstants.COMPLETE + "'" );
-		}
-		catch(SQLException e) {
+		
+		} catch (SQLException e) {
+
 			System.out.println(e.getMessage());
 		}
-		
-		while ( resultSet.next() ) {
-			
+
+		while (resultSet.next()) {
+
 			Service service = new Service();
-			service.setAppointmentID( resultSet.getString( "APPOINTMENT_ID" ) );
-			service.setAppointmentDate( resultSet.getString( "APPOINTMENT_DATE" ) );
-			service.setServiceType( resultSet.getString( "SERVICE_TYPE" ) );			
-			service.setVehicleLicense( resultSet.getString( "VEHICLE_LICENSE" ) );
-			service.setServiceStatus( resultSet.getString( "STATE" ) );
-			
+			service.setAppointmentID(resultSet.getString("APPOINTMENT_ID"));
+			service.setAppointmentDate(resultSet.getString("APPOINTMENT_DATE"));
+			service.setServiceType(resultSet.getString("SERVICE_TYPE"));
+			service.setVehicleLicense(resultSet.getString("VEHICLE_LICENSE"));
+			service.setServiceStatus(resultSet.getString("STATE"));
+
 			/* Find Time Slot of Appointment */
-			resultSet = statement.executeQuery( "SELECT * FROM TIME_SLOT WHERE APPOINTMENT_ID = '" + service.getAppointmentID() + "'" );
-			if(resultSet.next()) {
-				service.createTimeSlot(resultSet.getInt( "SLOT_ID") , resultSet.getString( "START_TIME") , resultSet.getString( "END_TIME" ));
-				service.setActualMechanic( resultSet.getString( "MECHANIC" ) );
+			resultSet = statement.executeQuery(
+					"SELECT * FROM TIME_SLOT WHERE APPOINTMENT_ID = '" + service.getAppointmentID() + "'");
+			if (resultSet.next()) {
+				service.createTimeSlot(resultSet.getInt("SLOT_ID"), resultSet.getString("START_TIME"),
+						resultSet.getString("END_TIME"));
+				service.setActualMechanic(resultSet.getString("MECHANIC"));
 			}
 			serviceList.add(service);
 		}
 		return serviceList;
 	}
-			
+
 	public static void displayServiceHistory(Customer customer) throws SQLException {
-		
+
 		ArrayList<Service> serviceList = getServiceHistory(customer);
-		
-		if(serviceList.size() == 0)
-			System.out.println("There is no service history available for " + customer.getFirstName() + " "+ customer.getLastName() + "." );
-		
+
+		if (serviceList.size() == 0)
+			System.out.println("There is no service history available for " + customer.getFirstName() + " "
+					+ customer.getLastName() + ".");
+
 		else {
 			System.out.println("\nDISPLAY CUSTOMER SERVICE HISTORY");
 			System.out.println("\t-------------------------------\n");
-			
-			for(int index=0; index<serviceList.size();index++) {
+
+			for (int index = 0; index < serviceList.size(); index++) {
 				Service service = serviceList.get(index);
+
 	
 			System.out.println("\tService ID		:\t" + service.getAppointmentID());
 			System.out.println("\tLicense Plate		:\t" + service.getVehicleLicense());
@@ -163,20 +231,32 @@ public class HelperFunctions {
 			System.out.println("\tService Start Date/Time	:\t" + service.getAppointmentDate() + " | " + service.getTimeSlot().getStartTime());
 			System.out.println("\tService End Date/Time	:\t" + service.getAppointmentDate() + " | " + service.getTimeSlot().getEndTime());
 			System.out.println("\tService Status		:\t" + service.getServiceStatus());
+
+
+				System.out.println("\tService ID        		:\t" + service.getAppointmentID());
+				System.out.println("\tLicense Plate     		:\t" + service.getVehicleLicense());
+				System.out.println("\tService Type      		:\t" + service.getServiceType());
+				System.out.println("\tMechanic Name 			:\t" + service.getActualMechanic());
+				System.out.println("\tService Start Date/Time   :\t" + service.getAppointmentDate() + " | "
+						+ service.getTimeSlot().getStartTime());
+				System.out.println("\tService End Date/Time     :\t" + service.getAppointmentDate() + " | "
+						+ service.getTimeSlot().getEndTime());
+				System.out.println("\tService Status	        :\t" + service.getServiceStatus());
+
 			}
 		}
 	}
-	
-	
+
 	public static boolean validateCarDetails(Customer customer, String licensePlateNumber) throws SQLException {
 		ArrayList<Vehicle> vehicleList = getCustomerCars(customer.getCustomerId());
-		for(int index=0; index<vehicleList.size(); index++) {
-			if(vehicleList.get(index).getLicense().equals(licensePlateNumber)) {
+		for (int index = 0; index < vehicleList.size(); index++) {
+			if (vehicleList.get(index).getLicense().equals(licensePlateNumber)) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	
 	
 	public static String getServiceToBeScheduled(String vehicleLicenseNumber, int mileage) throws SQLException {
@@ -184,9 +264,11 @@ public class HelperFunctions {
 		String lastServiceType="";
 		String serviceTobeScheduled="";
 		//int mileage=0;
+
 		statement = DBFacade.getConnection().createStatement();
-		
+
 		try {
+
 			resultSet = statement.executeQuery( "SELECT CURRENT_MILEAGE,LAST_SERVICE_TYPE,LAST_MAINTENANCE_TYPE FROM VEHICLE WHERE  LICENSE = '" + vehicleLicenseNumber + "'" );	
 		}
 		catch(SQLException e) {
@@ -281,51 +363,126 @@ public class HelperFunctions {
 		}
 		return timeDuration;
 	}
-	
 
-  public static boolean compareDatesTimes( String currentDate, String currentTime, String possibleDate, String possibleTime) {
+	public static boolean compareDatesTimes(String currentDate, String currentTime, String possibleDate,
+			String possibleTime) {
+
 		SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy, h:mm a");
-		
+
 		try {
-			Date current = formatter1.parse( currentDate + ", " + currentTime );
+			Date current = formatter1.parse(currentDate + ", " + currentTime);
 			System.out.println("CURRENT : " + current);
-			Date possible = formatter1.parse( possibleDate + ", " + possibleTime );
+			Date possible = formatter1.parse(possibleDate + ", " + possibleTime);
 			System.out.println("POSSIBLE : " + possible);
-			
-	        if (current.compareTo(possible) > 0) {
-	           System.out.println("CURRENT is after POSSIBLE");
-	        	return false;
-	        } else if (current.compareTo(possible) < 0) {
-	           System.out.println("CURRENT is before POSSIBLE");
-	        	return true;
-	        } else if (current.compareTo(possible) == 0) {
-	           System.out.println("CURRENT is equal to POSSIBLE");
-            }
+
+			if (current.compareTo(possible) > 0) {
+				System.out.println("CURRENT is after POSSIBLE");
+				return false;
+			} else if (current.compareTo(possible) < 0) {
+				System.out.println("CURRENT is before POSSIBLE");
+				return true;
+			} else if (current.compareTo(possible) == 0) {
+				System.out.println("CURRENT is equal to POSSIBLE");
+			}
 		} catch (ParseException e) {
 			System.out.println("Unable to Parse Date");
-		}		
+		}
 		return false;
 	}
-  
-  
-  
-  public static String addTime( String startTime,  double laborHours) {
-	  String[] startSplit = startTime.split(":");
-	  int startHour = Integer.parseInt(startSplit[0]);
-	  int startMin = Integer.parseInt(startSplit[1].split(" ")[0]);
-	  String ampm =startSplit[1].split(" ")[1];
-	  
-	  int endHour = startHour + (int)(laborHours / 1);
-	  int endMin = startMin + (int)((laborHours % 1) * 60);
+
+	public static String addTime(String startTime, double laborHours) {
+		String[] startSplit = startTime.split(":");
+		int startHour = Integer.parseInt(startSplit[0]);
+		int startMin = Integer.parseInt(startSplit[1].split(" ")[0]);
+		String ampm = startSplit[1].split(" ")[1];
+
+		int endHour = startHour + (int) (laborHours / 1);
+		int endMin = startMin + (int) ((laborHours % 1) * 60);
+
+		if (ampm.equalsIgnoreCase("pm"))
+			return endHour + ":" + endMin + " " + ampm;
+		else {
+			if (endHour >= 12)
+				return endHour + ":" + endMin + " pm";
+			else
+				return endHour + ":" + endMin + " am";
+		}
+	}
+
+	public static int calculateDuration(PayCheck payCheck, String start) {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		String dateInString = start;
+		Date startDate = null;
+		int day = Integer.parseInt(start.split("-")[0]);
 		
-	  if(ampm.equalsIgnoreCase("pm"))
-		return endHour + ":" + endMin + " " + ampm;
-	  else {
-		  if(endHour >= 12)
-			  return endHour + ":" + endMin + " pm";
-		  else
-			  return endHour + ":" + endMin + " am";
-	  }
+		if(Integer.parseInt(java.time.LocalTime.now().toString().split(":")[0]) >= 17 )
+			day++;
+		
+		try {
+			startDate = sdf.parse(dateInString);
+		} catch (ParseException e1) {
+			// TODO Auto-generated catch block
+		}
+		
+		Date endDate = null;
+		try {
+			endDate = sdf.parse(dateInString);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+		}
+
+		Calendar startCal = Calendar.getInstance();
+		startCal.setTime(startDate);
+
+		Calendar endCal = Calendar.getInstance();
+		endCal.setTime(endDate);
+		
+		Calendar current = Calendar.getInstance();
+		
+		if((startCal.get(Calendar.MONTH) == endCal.get(Calendar.MONTH) + 1) && (startCal.get(Calendar.YEAR) == endCal.get(Calendar.YEAR))) {
+			System.out.println("CURRENT MONTH CHECK");
+			endCal.add(Calendar.DAY_OF_MONTH, current.get(Calendar.DAY_OF_MONTH) - 1);
+		}else {
+			endCal.add(Calendar.DAY_OF_MONTH, (endCal.getActualMaximum(Calendar.DAY_OF_MONTH) + 1) - day );
+		}
+
+		String beginning = "1-"
+				+ (startCal.get(Calendar.MONTH) + 1) + "-" 
+				+ startCal.get(Calendar.YEAR);
+		String end = (endCal.getActualMaximum(Calendar.DAY_OF_MONTH)) + "-" + (endCal.get(Calendar.MONTH) + 1) + "-"
+				+ endCal.get(Calendar.YEAR);
+
+		payCheck.setPayPeriod(HelperFunctions.translateBack(beginning) + " to " + HelperFunctions.translateBack(end));
+		
+		if((endCal.get(Calendar.MONTH) + 1) != 12) {
+			
+			payCheck.setDate(HelperFunctions.translateBack("1-"
+					+ (endCal.get(Calendar.MONTH) + 2) + "-" 
+					+ endCal.get(Calendar.YEAR)));
+		} else {
+			payCheck.setDate("01-JAN-" 
+					+ (endCal.get(Calendar.YEAR) + 1));
+		}
+			
+		int workDays = 0;
+
+		if (startCal.getTimeInMillis() > endCal.getTimeInMillis()) {
+			startCal.setTime(endDate);
+			endCal.setTime(startDate);
+		}
+	
+
+		while (startCal.getTimeInMillis() <= endCal.getTimeInMillis()) {
+			if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY
+					&& startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
+
+				workDays++;
+			}
+
+			startCal.add(Calendar.DAY_OF_MONTH, 1);
+		}
+
+		return workDays;
 	}
 
 	
