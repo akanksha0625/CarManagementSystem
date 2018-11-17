@@ -13,12 +13,14 @@ public class ManagerInventoryController {
 		Statement statement = DBFacade.getConnection().createStatement();
 		ResultSet resultSet;
 		
+		//TODO dump the details in
+		System.out.println("GET INVENTORY DETAILS\n" );
 		try {
-			/* Find userName and userPassword match from 'LOGIN' table */
-			resultSet = statement.executeQuery("SELECT * FROM ACME_INVENTORY");
+			/* Get inventory details */
+			resultSet = statement.executeQuery("SELECT * FROM ACME_INVENTORY WHERE SC_ID = '"+ ApplicationController.employee.getServiceCenterId() + 	"'");
 			
 			/* If query returned a value */
-			if (resultSet.next()) {
+			while (resultSet.next()) {
 					System.out.println("Part ID : "+ resultSet.getString("PART_ID"));
 					System.out.println("Part Name : "+ resultSet.getString("PART_NAME"));
 					System.out.println("Quantity : "+ resultSet.getString("CURRENT_QUANTITY"));
@@ -32,8 +34,7 @@ public class ManagerInventoryController {
 				System.out.println("Could'nt get the Inventory details. " + e);
 				e.printStackTrace();
 			}
-		//TODO dump the details in
-		System.out.println("GET INVENTORY DETAILS\n" );
+
 		
 		System.out.println( "Please select from the following user options:" );
 		System.out.println( "\tEnter '1' to Go Back" );
