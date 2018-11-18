@@ -15,7 +15,7 @@ public class ManagerNewCarController {
 	public static void newCar(Scanner input) throws SQLException {
 		ManagerView.displayNewCarModel(); //Display page header
 		//TODO ask for car model details
-		System.out.println("ASK FOR CAR MODEL DETAILS\n");
+		System.out.println("Please enter the following details of the new Car Model.\n");
 		
 		ResultSet resultSet;
 		Statement statement = DBFacade.getConnection().createStatement();
@@ -31,39 +31,39 @@ public class ManagerNewCarController {
 		int mid=0;
 		
 	
-		System.out.println("Please enter Make:");
+		System.out.print("\tPlease enter Make:");
 		make=input.nextLine();
-		System.out.println("Please enter Model:");
+		System.out.print("\n\tPlease enter Model:");
 		model=input.nextLine();
-		System.out.println("Please enter Year:");
+		System.out.print("\n\tPlease enter Year:");
 		year=input.nextLine();
 	
-		System.out.println("Please enter number of miles for Service A:");
+		System.out.print("\n\tPlease enter number of miles for Service A:");
 		amiles=input.nextInt();
-		System.out.println("Please enter number of months for Service A:");
+		System.out.print("\n\tPlease enter number of months for Service A:");
 		amonths=input.nextInt();
-		System.out.println("Please enter list of basic services for Service A seperated with a comma:");
+		System.out.print("\n\tPlease enter list of basic services for Service A seperated with a comma:");
 		servicelista=input.nextLine();
 		servicelista=input.nextLine();
 		
 		String[] valuesa = servicelista.split(",");
 		
 		
-		System.out.println("Please enter number of miles for Service B:");
+		System.out.print("\n\tPlease enter number of miles for Service B:");
 		bmiles=input.nextInt();
-		System.out.println("Please enter number of months for Service B:");
+		System.out.print("\n\tPlease enter number of months for Service B:");
 		bmonths=input.nextInt();
-		System.out.println("Please enter list of basic services for Service B seperated with a comma:");
+		System.out.print("\n\tPlease enter list of basic services for Service B seperated with a comma:");
 		servicelistb=input.nextLine();
 		servicelistb=input.nextLine();	
 		
 		String[] valuesb = servicelistb.split(",");
 		
-		System.out.println("Please enter number of miles for Service C:");
+		System.out.print("\n\tPlease enter number of miles for Service C:");
 		cmiles=input.nextInt();
-		System.out.println("Please enter number of months for Service C:");
+		System.out.print("\n\tPlease enter number of months for Service C:");
 		cmonths=input.nextInt();
-		System.out.println("Please enter list of basic services for Service C seperated with a comma:");
+		System.out.print("\n\tPlease enter list of basic services for Service C seperated with a comma:");
 		servicelistc=input.nextLine();	
 		servicelistc=input.nextLine();	
 		
@@ -81,7 +81,7 @@ public class ManagerNewCarController {
 					System.out.println( "Invalid Vehicle Type : " + e.getMessage() );
 				}
 				
-		System.out.println( "Please select from the following user options:" );
+		System.out.println( "\nPlease select from the following user options:" );
 		System.out.println( "\tEnter '1' to Add Car" );		
 		System.out.println( "\tEnter '2' to Go Back" );
 		
@@ -91,8 +91,7 @@ public class ManagerNewCarController {
 			userInput = input.nextLine();
 		}while( !userInput.equals( "1" ) && !userInput.equals( "2" ) );
 		
-		if( userInput.equals( "1" ) ) {
-			//TODO call addCar controller			
+		if( userInput.equals( "1" ) ) {			
 			 
 			try {
 				

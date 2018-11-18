@@ -20,13 +20,13 @@ public class ManagerNewOrderController {
 		String scId = "", sourceId = "";	
 		int minOrderThreshold =0;
 		
-		System.out.println ("Please provide some details of the order to be placed.");
+		System.out.println ("\nPlease provide some details of the order to be placed.");
 				
-		System.out.print ( "Part ID : ");
+		System.out.print ( "\n\tPart ID : ");
 		int partId = Integer.parseInt(input.nextLine());
 
 		
-		System.out.print ( "Quantity : ");
+		System.out.print ( "\tQuantity : ");
 		int quantity = Integer.parseInt(input.nextLine());
 		//check the threshold order qty requirement of that table of that part in the service centers inventory
 		try {
@@ -41,7 +41,8 @@ public class ManagerNewOrderController {
 					System.out.println ( "Min order quantity too low" );
 				}
 			} else {
-				System.out.println ( "No such inventory exist for this service center." );
+				System.out.println ( "\nNo such inventory exist for this service center.\n" );
+				return;
 			}
 		} catch ( SQLException e ) {
 			System.out.println( "Unabel to access Inventory table : " + e.getMessage() );
@@ -77,7 +78,7 @@ public class ManagerNewOrderController {
 				if ( tuples != 1 ) {
 					System.out.println ( "Unable to place order Table." );
 				} else {
-					System.out.println ( "\t---------------- Order Placed!!----------------" );
+					System.out.println ( "\n\t---------------- Order Placed!!----------------" );
 				}
 			} catch ( SQLException e ) {
 				System.out.println( "Unabel to place the order : " + e.getMessage() );
@@ -92,7 +93,7 @@ public class ManagerNewOrderController {
 		
 		
 		
-		System.out.println( "Please select from the following user options:" );
+		System.out.println( "\nPlease select from the following user options:" );
 		System.out.println( "\tEnter '1' to Place Order" );
 		System.out.println( "\tEnter '2' to Go Back" );
 		
