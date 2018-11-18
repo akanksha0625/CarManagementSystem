@@ -23,7 +23,6 @@ public class ReceptionistInvoiceController {
 		ResultSet resultSet;
 
 		int customerID = -1;
-		int vid = -1;
 		String userInput = "";
 		String serviceType = "";
 
@@ -42,7 +41,8 @@ public class ReceptionistInvoiceController {
 
 		/* Find Customer */
 		try {
-			resultSet = statement.executeQuery("SELECT * FROM CUSTOMER WHERE EMAIL = '" + userInput + "' ");
+			resultSet = statement.executeQuery("SELECT * FROM CUSTOMER WHERE EMAIL = '" + userInput + "' AND SC_ID = '"
+					+ ApplicationController.employee.getServiceCenterId() + "'");
 			if (resultSet.next()) {
 				/* Find Customer Appointment */
 				customerID = resultSet.getInt("CID");
@@ -105,7 +105,7 @@ public class ReceptionistInvoiceController {
 					appointments.get(index).createTimeSlot(resultSet.getInt("SLOT_ID"),
 							resultSet.getString("START_TIME"), resultSet.getString("END_TIME"));
 
-					appointments.get(index).setActualMechanic(resultSet.getString("MECHANIC"));
+					appointments.get(index).setMechanicID(resultSet.getInt("MECHANIC_ID"));
 				} else {
 					System.out.println("There are no Times associated with this appointment : "
 							+ appointments.get(index).getAppointmentID() + "\n");
@@ -117,8 +117,8 @@ public class ReceptionistInvoiceController {
 			}
 
 			try {
-				resultSet = statement.executeQuery("SELECT * FROM HOURLY_EMPLOYEE WHERE EID = '"
-						+ appointments.get(index).getActualMechanic() + "' ");
+				resultSet = statement.executeQuery(
+						"SELECT * FROM HOURLY_EMPLOYEE WHERE EID = '" + appointments.get(index).getMechanicID() + "' ");
 				if (resultSet.next()) {
 					appointments.get(index).setMechanicCost(resultSet.getDouble("HOURLY_RATE"));
 				} else {
@@ -134,9 +134,9 @@ public class ReceptionistInvoiceController {
 
 			try {
 				resultSet = statement.executeQuery(
-						"SELECT * FROM EMPLOYEE WHERE EID = '" + appointments.get(index).getActualMechanic() + "' ");
+						"SELECT * FROM EMPLOYEE WHERE EID = '" + appointments.get(index).getMechanicID() + "' ");
 				if (resultSet.next()) {
-					appointments.get(index).setActualMechanic(
+					appointments.get(index).setMechanicFullName(
 							resultSet.getString("FIRSTNAME") + " " + resultSet.getString("LASTNAME"));
 				} else {
 					System.out.println("There is no mechanic associated with this appointment : "
@@ -153,7 +153,7 @@ public class ReceptionistInvoiceController {
 				resultSet = statement.executeQuery(
 						"SELECT * FROM VEHICLE WHERE LICENSE = '" + appointments.get(index).getVehicleLicense() + "'");
 				if (resultSet.next()) {
-					vid = resultSet.getInt("VID");
+					appointments.get(index).setVid(resultSet.getInt("VID"));
 					appointments.get(index).setFirstAID(resultSet.getString("FIRST_A_APPID"));
 					appointments.get(index).setFirstBID(resultSet.getString("FIRST_B_APPID"));
 					appointments.get(index).setFirstCID(resultSet.getString("FIRST_C_APPID"));
@@ -188,35 +188,47 @@ public class ReceptionistInvoiceController {
 							"Uable to access the Repair Table : " + e.getMessage() + " : Transaction Aborted\n");
 					return;
 				}
-
-				/* Get parts required */
+				ArrayList<String> repairs = new ArrayList<String>();
+				/* Get services required */
 				try {
-					resultSet = statement
-							.executeQuery("SELECT DISTINCT SERVICE_NAME, PART_ID, TIME_REQUIRED, CHARGE_TYPE"
-									+ " FROM REPAIR_SERVICE_MAPPING, SERVICE_DETAILS"
-									+ " WHERE REPAIR_SERVICE_MAPPING.RID = SERVICE_DETAILS.SERVICE_ID"
-									+ " AND REPAIR_SERVICE_MAPPING.RID = '"
-									+ ((Repair) appointments.get(index)).getRepairID() + "' ");
+					resultSet = statement.executeQuery("SELECT REQUIRED_SERVICE_ID FROM REPAIR_SERVICE_MAPPING"
+							+ " WHERE RID = '"
+							+ ((Repair) appointments.get(index)).getServiceTypeID() + "' ");
 					while (resultSet.next()) {
-						Part part = new Part();
-						part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
-						part.setPartID(resultSet.getInt("PART_ID"));
-						part.setInstallTime(resultSet.getDouble("TIME_REQUIRED"));
-						part.setChargeType(resultSet.getString("CHARGE_TYPE"));
-
-						((Repair) appointments.get(index)).getPartsList().add(part);
+						repairs.add(resultSet.getString("REQUIRED_SERVICE_ID"));
 					}
 				} catch (SQLException e) {
-					System.out.println("Unable to access the Required Parts Table : " + e.getMessage()
+					System.out.println("Unable to access the Required Service Table : " + e.getMessage()
 							+ " : Transaction Aborted\n");
 					return;
+				}
+				for(int i = 0; i < repairs.size(); i++) {
+					try {
+						resultSet = statement
+								.executeQuery("SELECT SERVICE_NAME, PART_ID, TIME_REQUIRED, CHARGE_TYPE"
+										+ " FROM SERVICE_DETAILS"
+										+ " WHERE SERVICE_ID = '" + repairs.get(i)+ "'");
+						while (resultSet.next()) {
+							Part part = new Part();
+							part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
+							part.setPartID(resultSet.getInt("PART_ID"));
+							part.setInstallTime(resultSet.getDouble("TIME_REQUIRED"));
+							part.setChargeType(resultSet.getString("CHARGE_TYPE"));
+	
+							((Repair) appointments.get(index)).getPartsList().add(part);
+						}
+					} catch (SQLException e) {
+						System.out.println("Unable to access the Service Details Table : " + e.getMessage()
+								+ " : Transaction Aborted\n");
+						return;
+					}
 				}
 
 				for (int i = 0; i < ((Repair) appointments.get(index)).getPartsList().size(); i++) {
 					try {
 						/* Get number of this part required */
 						resultSet = statement.executeQuery(
-								"SELECT QUANTITY FROM PARTS_QUANTITY WHERE VID = '" + vid + "' AND PART_ID = '"
+								"SELECT QUANTITY FROM PARTS_QUANTITY WHERE VID = '" + ((Repair) appointments.get(index)).getVid() + "' AND PART_ID = '"
 										+ ((Repair) appointments.get(index)).getPartsList().get(i).getPartID() + "' ");
 						if (resultSet.next()) {
 							((Repair) appointments.get(index)).getPartsList().get(i)
@@ -263,7 +275,7 @@ public class ReceptionistInvoiceController {
 							((Repair) appointments.get(index)).getPartsList().get(i)
 									.setPartName(resultSet.getString("PART_NAME"));
 							((Repair) appointments.get(index)).getPartsList().get(i)
-									.setUnitCost(resultSet.getDouble("UNIT_PRICE"));
+									.setUnitCost(resultSet.getDouble("UNIT_COST"));
 						} else {
 							System.out.println("There is not unit cost associated with this part.\n");
 						}
@@ -288,7 +300,9 @@ public class ReceptionistInvoiceController {
 			} else {
 				try {
 					/* get maintenance details */
-					resultSet = statement.executeQuery("SELECT * FROM MAINTENANCE WHERE VID = '" + vid + "' ");
+					System.out.println("Service Name : " + ((Maintenance) appointments.get(index)).getServiceTypeID());
+					resultSet = statement.executeQuery("SELECT * FROM MAINTENANCE WHERE VID = '" + ((Maintenance) appointments.get(index)).getVid() + "' AND MAINTENANCE_NAME = '" 
+							+ ((Maintenance) appointments.get(index)).getServiceTypeID() + "' ");
 					if (resultSet.next()) {
 						((Maintenance) appointments.get(index)).setMiles(resultSet.getInt("MILES"));
 						((Maintenance) appointments.get(index)).setMonths(resultSet.getInt("MONTHS"));
@@ -306,32 +320,46 @@ public class ReceptionistInvoiceController {
 					return;
 				}
 
-				/* Get parts required */
+				ArrayList<String> repairs = new ArrayList<String>();
+				/* Get services required */
 				try {
-					resultSet = statement
-							.executeQuery("SELECT DISTINCT SERVICE_NAME, PART_ID, TIME_REQUIRED, CHARGE_TYPE"
-									+ " FROM MAINTENANCE_SERVICE_MAPPING, SERVICE_DETAILS"
-									+ " WHERE MAINTENANCE_SERVICE_MAPPING.M_ID = SERVICE_DETAILS.SERVICE_ID"
-									+ " AND MAINTENANCE_SERVICE_MAPPING.M_ID = '"
+					resultSet = statement.executeQuery("SELECT SERVICE_ID FROM MAINTENANCE_SERVICE_MAPPING"
+							+ " WHERE M_ID = '"
 									+ ((Maintenance) appointments.get(index)).getMaintenanceID() + "' ");
 					while (resultSet.next()) {
-						Part part = new Part();
-						part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
-						part.setPartID(resultSet.getInt("PART_ID"));
-						part.setInstallTime(resultSet.getDouble("TIME_REQUIRED"));
-						part.setChargeType(resultSet.getString("CHARGE_TYPE"));
-						((Maintenance) appointments.get(index)).getPartsList().add(part);
+						repairs.add(resultSet.getString("SERVICE_ID"));
 					}
 				} catch (SQLException e) {
-					System.out.println("Unable to access the Parts Required Table : " + e.getMessage()
-							+ " : Aborting Transaction\n");
+					System.out.println("Unable to access the Required Maintenance Table : " + e.getMessage()
+							+ " : Transaction Aborted\n");
 					return;
+				}
+				for(int i = 0; i < repairs.size(); i++) {
+					try {
+						resultSet = statement
+								.executeQuery("SELECT SERVICE_NAME, PART_ID, TIME_REQUIRED, CHARGE_TYPE"
+										+ " FROM SERVICE_DETAILS"
+										+ " WHERE SERVICE_ID = '" + repairs.get(i)+ "'");
+						while (resultSet.next()) {
+							Part part = new Part();
+							part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
+							part.setPartID(resultSet.getInt("PART_ID"));
+							part.setInstallTime(resultSet.getDouble("TIME_REQUIRED"));
+							part.setChargeType(resultSet.getString("CHARGE_TYPE"));
+	
+							((Maintenance) appointments.get(index)).getPartsList().add(part);
+						}
+					} catch (SQLException e) {
+						System.out.println("Unable to access the Service Details Table : " + e.getMessage()
+								+ " : Transaction Aborted\n");
+						return;
+					}
 				}
 
 				for (int i = 0; i < ((Maintenance) appointments.get(index)).getPartsList().size(); i++) {
 					try {
 						/* Get number of this part required */
-						resultSet = statement.executeQuery("SELECT QUANTITY FROM PARTS_QUANTITY WHERE VID = '" + vid
+						resultSet = statement.executeQuery("SELECT QUANTITY FROM PARTS_QUANTITY WHERE VID = '" + ((Maintenance) appointments.get(index)).getVid()
 								+ "' AND PART_ID = '"
 								+ ((Maintenance) appointments.get(index)).getPartsList().get(i).getPartID() + "' ");
 						if (resultSet.next()) {
@@ -379,7 +407,7 @@ public class ReceptionistInvoiceController {
 							((Maintenance) appointments.get(index)).getPartsList().get(i)
 									.setPartName(resultSet.getString("PART_NAME"));
 							((Maintenance) appointments.get(index)).getPartsList().get(i)
-									.setUnitCost(resultSet.getDouble("UNIT_PRICE"));
+									.setUnitCost(resultSet.getDouble("UNIT_COST"));
 						} else {
 							System.out.println("There is not unit cost associated with this part.");
 							break;

@@ -203,7 +203,7 @@ public class ApplicationController {
 		response = CustomerView.displayLanding(input);
 		if(response.equals("1")) {
 			/*Redirect to display customer profile page*/
-			CustomerProfileController.profileLanding(input);
+			CustomerProfileController.customerProfile(input);
 			customer();
 		} else if(response.equals("2")) {
 			/*Redirect to display register car profile page.*/

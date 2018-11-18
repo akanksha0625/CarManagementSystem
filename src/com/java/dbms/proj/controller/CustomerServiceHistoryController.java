@@ -9,7 +9,7 @@ public class CustomerServiceHistoryController {
 	public static void serviceHistory(Scanner input) throws SQLException {
 		com.java.dbms.proj.views.CustomerView.displayServiceHistory(); //Display page header
 		HelperFunctions.displayServiceHistory(ApplicationController.customer);
-		System.out.println("Please select from the following user options:");
+		System.out.println("\nPlease select from the following user options:");
 		System.out.println("\tEnter '1' to  Go Back");
 		
 		String userInput = "";

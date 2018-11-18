@@ -75,20 +75,23 @@ public class LoginController {
 	
 						if (!resultSet.next()) {
 							System.out.println(" User Name '" + userLogin.getUserName()
-									+ "' does not exist in the Acme Service System.");
+									+ "' \ndoes not exist in the Acme Service System.");
 						} else {
 							System.out.println(" Incorrect Password --> Please try again.");
 						}
 						System.out.println("*********************************\n");
-	
+						String response = "";
 						if (attempts >= 2) {
 							System.out.println("Having Trouble?");
-							String response = "";
 							do {
 								System.out.println("\t Enter 1 to Exit Login");
 								System.out.println("\t Enter 2 to Attempt Another Login");
+								System.out.print("\nOption Selection : ");
 								response = input.nextLine();
 							} while (!response.equals("1") && !response.equals("2"));
+						}
+						if(response.equals("1")) {
+							break;
 						}
 					}
 				} catch (SQLException e) {

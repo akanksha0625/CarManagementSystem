@@ -9,7 +9,7 @@ public class Part {
 	double installTime;
 	String chargeType;
 	
-	public int getUnitsRequired() {
+	public int getUnitsRequired() { 
 		return unitsRequired;
 	}
 	public void setUnitsRequired(int unitsRequired) {

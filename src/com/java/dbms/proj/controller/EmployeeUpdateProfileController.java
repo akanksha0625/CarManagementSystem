@@ -40,9 +40,9 @@ public class EmployeeUpdateProfileController {
 			if ( !userInput.equals( "6" ) ) {
 		        switch ( userInput ) { 
 			        case "1": 
-			        	System.out.print ( "Enter your First Name : " );
+			        	System.out.print ( "\nEnter your First Name : " );
 			        	String firstName = input.nextLine();
-			        	System.out.print ( "Enter your Last Name : " );
+			        	System.out.print ( "\nEnter your Last Name : " );
 			        	String lastName = input.nextLine();
 			            
 			        	ApplicationController.employee.setFirstName( firstName );
@@ -64,17 +64,17 @@ public class EmployeeUpdateProfileController {
 			            break; 
 			       
 			        case "2": 
-			        	System.out.print ( "Enter your Street : " );
+			        	System.out.print ( "\nEnter your Street : " );
 			        	String street = input.nextLine();
-			        	System.out.print ( "Enter your City : " );
+			        	System.out.print ( "\nEnter your City : " );
 			        	String city = input.nextLine();
 			        	String state = "";
 			    		do {
-			    			System.out.print ( "Enter your State Abbreviation (ex: NC) : " );
+			    			System.out.print ( "\nEnter your State Abbreviation (ex: NC) : " );
 			    			state = input.nextLine();
 			    		} while ( state.length() > 2 || state.isEmpty() );
 			    		
-			    		System.out.print ( "Enter your Zip Code : " );
+			    		System.out.print ( "\nEnter your Zip Code : " );
 			        	String zip = input.nextLine();
 			        	
 			        	ApplicationController.employee.getAddress().setStreet(street);
@@ -83,8 +83,11 @@ public class EmployeeUpdateProfileController {
 			        	ApplicationController.employee.getAddress().setZipCode(zip);
 			            
 			            try {
-							statement.executeUpdate( "UPDATE EMPLOYEE_ADDRESS SET STREET = '" + street +
+							int updated = statement.executeUpdate( "UPDATE EMPLOYEE_ADDRESS SET STREET = '" + street +
 													"' WHERE EID = '" + ApplicationController.employee.getEmpId() + "'" );
+							if(updated == 0) {
+								statement.executeUpdate( "INSERT INTO EMPLOYEE_ADDRESS VALUES('" + street + "', '" + city + "', '" + state + "', '" + ApplicationController.employee.getEmpId() + "', '" + zip + "')"); 
+							}
 			            } catch ( SQLException e ) {
 							System.out.println ( "Unable to update the Employee Street : " + e.getMessage() );
 						}
@@ -112,7 +115,7 @@ public class EmployeeUpdateProfileController {
 			            break; 
 			        
 			        case "3": 
-			        	System.out.print( "Enter your Email Address : " );
+			        	System.out.print( "\nEnter your Email Address : " );
 			        	String email = input.nextLine();
 			            
 			        	ApplicationController.employee.setEmail( email );
@@ -126,7 +129,7 @@ public class EmployeeUpdateProfileController {
 			            break; 
 			        
 			        case "4": 
-			        	System.out.print( "Enter your Phone Number : " );
+			        	System.out.print( "\nEnter your Phone Number : " );
 			        	String phone = input.nextLine();
 			            
 			        	ApplicationController.employee.setEmail( phone );
@@ -144,7 +147,7 @@ public class EmployeeUpdateProfileController {
 			        	String password = "";
 			    		do {
 			    			/* Assign user password */
-			    			System.out.print ( "Please enter a login password: " );
+			    			System.out.print ( "\nPlease enter a login password: " );
 			    			password = input.nextLine();
 			    			System.out.print ( "Please confirm your password: " );
 			    			userInput = input.nextLine();

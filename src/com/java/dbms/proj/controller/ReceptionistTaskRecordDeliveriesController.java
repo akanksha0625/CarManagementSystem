@@ -19,9 +19,9 @@ public class ReceptionistTaskRecordDeliveriesController {
 		String temp;
 		int tuples=0;
 		
-		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to  Enter Order ID");
-		System.out.println("\tEnter '2' to	Go Back");
+		System.out.println("\nPlease select from the following user options:");
+		System.out.println("\tEnter '1' to Enter Order ID");
+		System.out.println("\tEnter '2' to Go Back");
 
 		String userInput = "";
 		do {
@@ -30,10 +30,15 @@ public class ReceptionistTaskRecordDeliveriesController {
 		}while(!userInput.equals("1") && !userInput.equals("2"));
 	
 		if(userInput.equals("1")) {			
-			System.out.print ( "Part ID  CSV (1,2,3): ");
+			System.out.print ( "\nPlease enter a comma separated list of Part IDs to be updated (i.e. 1,2,3) : ");
 			temp = input.nextLine();
 			
-			int[] partIdsArray = Arrays.stream(temp.split(",")).mapToInt(Integer::parseInt).toArray();  
+			try{
+				int[] partIdsArray = Arrays.stream(temp.split(",")).mapToInt(Integer::parseInt).toArray();  
+			}catch(NumberFormatException e) {
+				System.out.println("\nThe list provided contained values that were non numeric. Aborting Transaction.\n");
+				return;
+			}
 			
 			try {
 				resultSet = statement.executeQuery( "SELECT * FROM PURCHASE_ORDER WHERE PART_ID IN (" + temp + ") AND SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "' AND ORDER_STATUS <> 'DELIVERED'" );
@@ -53,8 +58,5 @@ public class ReceptionistTaskRecordDeliveriesController {
 				e.printStackTrace();
 			}
 		}
-		
-		//TODO change status of pending orders to delayed check details and notify manager
-		System.out.println("CHANGING PENDING TO DELAYED & CREATE MANAGER NOTIFICATION");
 	}
 }

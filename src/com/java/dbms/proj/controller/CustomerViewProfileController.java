@@ -15,7 +15,7 @@ public class CustomerViewProfileController {
 		Address custAddress=customer.getAddress();
 			
 		HelperFunctions.displayCustomerProfile(customer);
-		System.out.println("Please select from the following user options:");
+		System.out.println("\nPlease select from the following user options:");
 		System.out.println("\tEnter '1' to Go Back." );
 		
 		String userInput = "";

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.java.dbms.proj.common.DBFacade;
+import com.java.dbms.proj.common.HelperFunctions;
 import com.java.dbms.proj.entities.Maintenance;
 import com.java.dbms.proj.entities.Part;
 import com.java.dbms.proj.entities.Repair;
@@ -18,6 +19,7 @@ public class CustomerInvoiceController {
 		Statement statement = null;
 		ResultSet resultSet;
 		ArrayList<String> serviceIDsList = new ArrayList<String>();
+		ArrayList<String> serviceDate = new ArrayList<String>();
 
 		try {
 			/* get a conection to the database */
@@ -29,16 +31,28 @@ public class CustomerInvoiceController {
 
 		try {
 			resultSet = statement.executeQuery(
-					"SELECT * FROM APPOINTMENT, TIME_SLOT WHERE APPOINTMENT.APPOINTMENT_ID = TIME_SLOT.APPOINTMENT_ID AND APPOINTMENT.CUSTOMER_ID = '"
-							+ ApplicationController.customer.getCustomerId() + "' AND APPOINTMENT.STATE = 'COMPLETE' ");
+					"SELECT * FROM APPOINTMENT WHERE APPOINTMENT.CUSTOMER_ID = '" + ApplicationController.customer.getCustomerId() + "' AND APPOINTMENT.STATE = 'COMPLETE' ");
 			while (resultSet.next()) {
 				serviceIDsList.add(resultSet.getString("APPOINTMENT_ID"));
-				System.out
-						.println("Service ID : " + resultSet.getString("APPOINTMENT_ID") + "\t|\tService Date & Time : "
-								+ resultSet.getString("APPOINTMENT_DATE") + ", " + resultSet.getString("START_TIME"));
+				serviceDate.add(resultSet.getString("APPOINTMENT_DATE"));
 			}
 		} catch (SQLException e) {
 			System.out.println("Unable to access the Appointment Table : " + e.getMessage() +  " : Aborting Transaction\n");
+			return;
+		}
+		
+		for(int i = 0; i < serviceIDsList.size(); i++) {
+			try {
+				resultSet = statement.executeQuery(
+						"SELECT * FROM TIME_SLOT WHERE APPOINTMENT_ID = '" + serviceIDsList.get(i) + "'"); 
+				if(resultSet.next())
+				System.out
+				.println("Service ID : " + serviceIDsList.get(i) + "  |  Service Date & Time : "
+						+ serviceDate.get(i) + ", " + resultSet.getString("START_TIME"));
+			}catch (SQLException e){
+				System.out.println("Unable to access the TIME_SLOT Table : " + e.getMessage() +  " : Aborting Transaction\n");
+				return;
+			}
 		}
 
 		System.out.println("\nPlease select from the following user options:");
@@ -52,16 +66,14 @@ public class CustomerInvoiceController {
 		} while (!userInput.equals("1") && !userInput.equals("2"));
 
 		if (userInput.equals("1")) {
-			com.java.dbms.proj.views.CustomerView.displayInvoiceDetails(); // Display second page header
-
 			do {
 				System.out.print("\nEnter a valid Service ID for which you would like Invoice Details : ");
 				userInput = input.nextLine();
 			}while(!serviceIDsList.contains(userInput));
 			
+			com.java.dbms.proj.views.CustomerView.displayInvoiceDetails(); // Display second page header
 			Service service = null;
 			String serviceType;
-			int vid = 0;
 
 			try {
 				resultSet = statement.executeQuery(
@@ -102,8 +114,7 @@ public class CustomerInvoiceController {
 				if (resultSet.next()) {
 					service.createTimeSlot(resultSet.getInt("SLOT_ID"),
 							resultSet.getString("START_TIME"), resultSet.getString("END_TIME"));
-
-					service.setActualMechanic(resultSet.getString("MECHANIC"));
+					service.setMechanicID(resultSet.getInt("MECHANIC_ID"));
 				} else {
 					System.out.println("There are no Times associated with this appointment : "
 							+ service.getAppointmentID() + "\n");
@@ -115,10 +126,11 @@ public class CustomerInvoiceController {
 			}
 
 			try {
-				resultSet = statement.executeQuery("SELECT * FROM HOURLY_EMPLOYEE WHERE EID = '"
-						+ service.getActualMechanic() + "' ");
+				resultSet = statement.executeQuery("SELECT * FROM HOURLY_EMPLOYEE,EMPLOYEE WHERE EMPLOYEE.EID = HOURLY_EMPLOYEE.EID AND EMPLOYEE.EID = '"
+						+ service.getMechanicID() + "' ");
 				if (resultSet.next()) {
 					service.setMechanicCost(resultSet.getDouble("HOURLY_RATE"));
+					service.setMechanicFullName(resultSet.getString("FIRSTNAME") + " " + resultSet.getString("LASTNAME"));
 				} else {
 					System.out.println("There is no mechanic associated with this appointment : "
 							+ service.getAppointmentID() + "\n");
@@ -130,28 +142,12 @@ public class CustomerInvoiceController {
 				return;
 			}
 
-			try {
-				resultSet = statement.executeQuery(
-						"SELECT * FROM EMPLOYEE WHERE EID = '" + service.getActualMechanic() + "' ");
-				if (resultSet.next()) {
-					service.setActualMechanic(
-							resultSet.getString("FIRSTNAME") + " " + resultSet.getString("LASTNAME"));
-				} else {
-					System.out.println("There is no mechanic associated with this appointment : "
-							+ service.getAppointmentID() + "\n");
-					return;
-				}
-			} catch (SQLException e) {
-				System.out.println("Unable to access Employee Table : " + e.getMessage() + " : Transaction Aborted\n");
-				return;
-			}
-
 			/* Find Vehicle ID */
 			try {
 				resultSet = statement.executeQuery(
 						"SELECT * FROM VEHICLE WHERE LICENSE = '" + service.getVehicleLicense() + "'");
 				if (resultSet.next()) {
-					vid = resultSet.getInt("VID");
+					service.setVid(resultSet.getInt("VID"));
 					service.setFirstAID(resultSet.getString("FIRST_A_APPID"));
 					service.setFirstBID(resultSet.getString("FIRST_B_APPID"));
 					service.setFirstCID(resultSet.getString("FIRST_C_APPID"));
@@ -187,34 +183,47 @@ public class CustomerInvoiceController {
 					return;
 				}
 
-				/* Get parts required */
+				ArrayList<String> repairs = new ArrayList<String>();
+				/* Get services required */
 				try {
-					resultSet = statement
-							.executeQuery("SELECT DISTINCT SERVICE_NAME, PART_ID, TIME_REQUIRED, CHARGE_TYPE"
-									+ " FROM REPAIR_SERVICE_MAPPING, SERVICE_DETAILS"
-									+ " WHERE REPAIR_SERVICE_MAPPING.RID = SERVICE_DETAILS.SERVICE_ID"
-									+ " AND REPAIR_SERVICE_MAPPING.RID = '"
-									+ ((Repair) service).getRepairID() + "' ");
+					resultSet = statement.executeQuery("SELECT REQUIRED_SERVICE_ID FROM REPAIR_SERVICE_MAPPING"
+							+ " WHERE RID = '"
+							+ ((Repair) service).getServiceTypeID() + "' ");
 					while (resultSet.next()) {
-						Part part = new Part();
-						part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
-						part.setPartID(resultSet.getInt("PART_ID"));
-						part.setInstallTime(resultSet.getDouble("TIME_REQUIRED"));
-						part.setChargeType(resultSet.getString("CHARGE_TYPE"));
-
-						((Repair) service).getPartsList().add(part);
+						repairs.add(resultSet.getString("REQUIRED_SERVICE_ID"));
 					}
 				} catch (SQLException e) {
-					System.out.println("Unable to access the Required Parts Table : " + e.getMessage()
+					System.out.println("Unable to access the Required Service Table : " + e.getMessage()
 							+ " : Transaction Aborted\n");
 					return;
+				}
+				for(int i = 0; i < repairs.size(); i++) {
+					try {
+						resultSet = statement
+								.executeQuery("SELECT SERVICE_NAME, PART_ID, TIME_REQUIRED, CHARGE_TYPE"
+										+ " FROM SERVICE_DETAILS"
+										+ " WHERE SERVICE_ID = '" + repairs.get(i)+ "'");
+						while (resultSet.next()) {
+							Part part = new Part();
+							part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
+							part.setPartID(resultSet.getInt("PART_ID"));
+							part.setInstallTime(resultSet.getDouble("TIME_REQUIRED"));
+							part.setChargeType(resultSet.getString("CHARGE_TYPE"));
+	
+							((Repair) service).getPartsList().add(part);
+						}
+					} catch (SQLException e) {
+						System.out.println("Unable to access the Service Details Table : " + e.getMessage()
+								+ " : Transaction Aborted\n");
+						return;
+					}
 				}
 
 				for (int i = 0; i < ((Repair) service).getPartsList().size(); i++) {
 					try {
 						/* Get number of this part required */
 						resultSet = statement.executeQuery(
-								"SELECT QUANTITY FROM PARTS_QUANTITY WHERE VID = '" + vid + "' AND PART_ID = '"
+								"SELECT QUANTITY FROM PARTS_QUANTITY WHERE VID = '" + ((Repair) service).getVid() + "' AND PART_ID = '"
 										+ ((Repair) service).getPartsList().get(i).getPartID() + "' ");
 						if (resultSet.next()) {
 							((Repair) service).getPartsList().get(i)
@@ -222,7 +231,7 @@ public class CustomerInvoiceController {
 						} else {
 							System.out.println("Unable to acquire the number of parts needed for this appointment : "
 									+ service.getAppointmentID() + "\n");
-							return;
+							break;
 						}
 					} catch (SQLException e) {
 						System.out.println(
@@ -243,7 +252,7 @@ public class CustomerInvoiceController {
 									.setInstallCharge(resultSet.getDouble("CHARGE_VALUE"));
 						} else {
 							System.out.println("There is no value associated with this charge type.\n");
-							return;
+							break;
 						}
 					} catch (SQLException e) {
 						System.out.println(
@@ -255,13 +264,13 @@ public class CustomerInvoiceController {
 				for (int i = 0; i < ((Repair) service).getPartsList().size(); i++) {
 					try {
 						resultSet = statement.executeQuery("SELECT * FROM ACME_INVENTORY WHERE SC_ID = '"
-								+ ApplicationController.employee.getServiceCenterId() + "' AND PART_ID = '"
+								+ ApplicationController.customer.getServiceCenterId() + "' AND PART_ID = '"
 								+ ((Repair) service).getPartsList().get(i).getPartID() + "' ");
 						if (resultSet.next()) {
 							((Repair) service).getPartsList().get(i)
 									.setPartName(resultSet.getString("PART_NAME"));
 							((Repair) service).getPartsList().get(i)
-									.setUnitCost(resultSet.getDouble("UNIT_PRICE"));
+									.setUnitCost(resultSet.getDouble("UNIT_COST"));
 						} else {
 							System.out.println("There is not unit cost associated with this part.\n");
 						}
@@ -286,7 +295,7 @@ public class CustomerInvoiceController {
 			} else {
 				try {
 					/* get maintenance details */
-					resultSet = statement.executeQuery("SELECT * FROM MAINTENANCE WHERE VID = '" + vid + "' ");
+					resultSet = statement.executeQuery("SELECT * FROM MAINTENANCE WHERE VID = '" + service.getVid() + "' ");
 					if (resultSet.next()) {
 						((Maintenance) service).setMiles(resultSet.getInt("MILES"));
 						((Maintenance) service).setMonths(resultSet.getInt("MONTHS"));
@@ -304,32 +313,46 @@ public class CustomerInvoiceController {
 					return;
 				}
 
-				/* Get parts required */
+				ArrayList<String> repairs = new ArrayList<String>();
+				/* Get services required */
 				try {
-					resultSet = statement
-							.executeQuery("SELECT DISTINCT SERVICE_NAME, PART_ID, TIME_REQUIRED, CHARGE_TYPE"
-									+ " FROM MAINTENANCE_SERVICE_MAPPING, SERVICE_DETAILS"
-									+ " WHERE MAINTENANCE_SERVICE_MAPPING.M_ID = SERVICE_DETAILS.SERVICE_ID"
-									+ " AND MAINTENANCE_SERVICE_MAPPING.M_ID = '"
+					resultSet = statement.executeQuery("SELECT SERVICE_ID FROM MAINTENANCE_SERVICE_MAPPING"
+							+ " WHERE M_ID = '"
 									+ ((Maintenance) service).getMaintenanceID() + "' ");
 					while (resultSet.next()) {
-						Part part = new Part();
-						part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
-						part.setPartID(resultSet.getInt("PART_ID"));
-						part.setInstallTime(resultSet.getDouble("TIME_REQUIRED"));
-						part.setChargeType(resultSet.getString("CHARGE_TYPE"));
-						((Maintenance) service).getPartsList().add(part);
+						repairs.add(resultSet.getString("SERVICE_ID"));
 					}
 				} catch (SQLException e) {
-					System.out.println("Unable to access the Parts Required Table : " + e.getMessage()
-							+ " : Aborting Transaction\n");
+					System.out.println("Unable to access the Required Maintenance Table : " + e.getMessage()
+							+ " : Transaction Aborted\n");
 					return;
+				}
+				for(int i = 0; i < repairs.size(); i++) {
+					try {
+						resultSet = statement
+								.executeQuery("SELECT SERVICE_NAME, PART_ID, TIME_REQUIRED, CHARGE_TYPE"
+										+ " FROM SERVICE_DETAILS"
+										+ " WHERE SERVICE_ID = '" + repairs.get(i)+ "'");
+						while (resultSet.next()) {
+							Part part = new Part();
+							part.setRequiredFor(resultSet.getString("SERVICE_NAME"));
+							part.setPartID(resultSet.getInt("PART_ID"));
+							part.setInstallTime(resultSet.getDouble("TIME_REQUIRED"));
+							part.setChargeType(resultSet.getString("CHARGE_TYPE"));
+	
+							((Maintenance) service).getPartsList().add(part);
+						}
+					} catch (SQLException e) {
+						System.out.println("Unable to access the Service Details Table : " + e.getMessage()
+								+ " : Transaction Aborted\n");
+						return;
+					}
 				}
 
 				for (int i = 0; i < ((Maintenance) service).getPartsList().size(); i++) {
 					try {
 						/* Get number of this part required */
-						resultSet = statement.executeQuery("SELECT QUANTITY FROM PARTS_QUANTITY WHERE VID = '" + vid
+						resultSet = statement.executeQuery("SELECT QUANTITY FROM PARTS_QUANTITY WHERE VID = '" + ((Maintenance) service).getVid()
 								+ "' AND PART_ID = '"
 								+ ((Maintenance) service).getPartsList().get(i).getPartID() + "' ");
 						if (resultSet.next()) {
@@ -338,7 +361,7 @@ public class CustomerInvoiceController {
 						} else {
 							System.out.println("Unable to acquire the number of parts needed for this : "
 									+ service.getAppointmentID() + "\n");
-							return;
+							break;
 						}
 					} catch (SQLException e) {
 						System.out.println(
@@ -359,7 +382,7 @@ public class CustomerInvoiceController {
 									.setInstallCharge(resultSet.getDouble("CHARGE_VALUE"));
 						} else {
 							System.out.println("There is no value associated with this charge type.\n");
-							return;
+							break;
 						}
 					} catch (SQLException e) {
 						System.out.println(
@@ -377,10 +400,10 @@ public class CustomerInvoiceController {
 							((Maintenance) service).getPartsList().get(i)
 									.setPartName(resultSet.getString("PART_NAME"));
 							((Maintenance) service).getPartsList().get(i)
-									.setUnitCost(resultSet.getDouble("UNIT_PRICE"));
+									.setUnitCost(resultSet.getDouble("UNIT_COST"));
 						} else {
 							System.out.println("There is not unit cost associated with this part.");
-							return;
+							break;
 						}
 					} catch (SQLException e) {
 						System.out.println("Unable to access the Inventory Table : " + e.getMessage()
@@ -388,6 +411,7 @@ public class CustomerInvoiceController {
 						return;
 					}
 				}
+
 
 				/* Calculate Part Cost and Time */
 				for (int j = 0; j < ((Maintenance) service).getPartsList().size(); j++) {
@@ -415,16 +439,17 @@ public class CustomerInvoiceController {
 				System.out.println(((Maintenance) service).repairPartsToString());
 			System.out.println(
 					"\n***************************************************************************************");
-		}
+		
 			
-		System.out.println("Please select from the following user options:");
-		System.out.println("\tEnter '1' to Go back");
-
-		userInput = "";
-		do {
-			System.out.print("\nOption Selection : ");
-			userInput = input.nextLine();
-		} while (!userInput.equals("1"));
+			System.out.println("Please select from the following user options:");
+			System.out.println("\tEnter '1' to Go back");
+	
+			userInput = "";
+			do {
+				System.out.print("\nOption Selection : ");
+				userInput = input.nextLine();
+			} while (!userInput.equals("1"));
+		}
 	}
 }
 

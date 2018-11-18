@@ -31,7 +31,7 @@ public class CustomerUpdateProfileController {
 	static void displayMenu() throws SQLException {
 		int tuples;
 		userInput=null;
-		System.out.println("\n\nPlease select from the following user options:");
+		System.out.println("\nPlease select from the following user options:");
 		System.out.println("\tEnter '1' to Update your Name.");
 		System.out.println("\tEnter '2' to Update your Address.");
 		System.out.println("\tEnter '3' to Update your Phone Number.");
@@ -44,11 +44,10 @@ public class CustomerUpdateProfileController {
 		statement=DBFacade.getConnection().createStatement();
 		switch (userInput) {
 		case "1":
-		//	if(userInput.equals("1")) {
-			System.out.print("User First Name : ");
+			System.out.print("\nUser First Name : ");
 			customer.setFirstName(input.nextLine());
 			
-			System.out.print("User Last Name : ");
+			System.out.print("\nUser Last Name : ");
 			customer.setLastName(input.nextLine());
 			try {
 				 tuples= statement.executeUpdate("UPDATE CUSTOMER SET FIRSTNAME = '" + customer.getFirstName() +
@@ -62,20 +61,20 @@ public class CustomerUpdateProfileController {
 			//}
 		case "2":
 		
-			System.out.print("User City : ");
+			System.out.print("\nUser Street Address : ");
+			String street = input.nextLine();
+			
+			System.out.print("\nUser City : ");
 			String city = input.nextLine();
 
 			String state = "";
 			// Check restriction of State Abreviation 
 			do {
-				System.out.print("User State Abbreviation (ex: NC) : ");
+				System.out.print("\nUser State Abbreviation (ex: NC) : ");
 				state = input.nextLine();
 			} while (state.length() > 2 || state.isEmpty());
 
-			System.out.print("User Street Address : ");
-			String street = input.nextLine();
-
-			System.out.print("User Zip Code : ");
+			System.out.print("\nUser Zip Code : ");
 			String zip = input.nextLine();
 
 			if (city != null && city != "")
@@ -106,7 +105,7 @@ public class CustomerUpdateProfileController {
 			break;
 
 		case "3":
-			System.out.print("User Phone Number : ");
+			System.out.print("\nUser Phone Number : ");
 			customer.setPhoneNumber(input.nextLine());
 			
 			 tuples= statement.executeUpdate("UPDATE CUSTOMER SET PHONE = '" + customer.getPhoneNumber()
@@ -120,7 +119,9 @@ public class CustomerUpdateProfileController {
 		case "5" :
 			break;
 		default:
-			System.out.println("Please select a valid option");
+			System.out.println("\n------------------------------");
+			System.out.println("|  Invalid option selected.  |");
+			System.out.println("------------------------------");
 		}
 
 	}

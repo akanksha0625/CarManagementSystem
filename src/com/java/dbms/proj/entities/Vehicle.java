@@ -1,6 +1,7 @@
 package com.java.dbms.proj.entities;
 import java.util.Date;
 
+
 public class Vehicle {
 	private String license;
 	private String datePurchsed;

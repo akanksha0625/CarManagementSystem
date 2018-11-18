@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.Scanner;
 
 import com.java.dbms.proj.common.DBFacade;
+import com.java.dbms.proj.common.HelperFunctions;
 
 public class ManagerAddEmployeeController {
 	
@@ -117,25 +118,22 @@ public class ManagerAddEmployeeController {
 		
 		System.out.println ( "\nThank you the Employee information.\n" );
 		System.out.println ( "Please select the type of employee you are registering:" );
-		System.out.println ( "\tEnter '1' for Manager." );
-		System.out.println ( "\tEnter '2' for Receptionist." );
-		System.out.println ( "\tEnter '3' for Mechanic." );
+		System.out.println ( "\tEnter '1' for Receptionist." );
+		System.out.println ( "\tEnter '2' for Mechanic." );
 	
 		do {
 			System.out.print( "\nOption Selection : " );
 			userInput = input.nextLine();
-		} while ( !userInput.equals( "1" ) && !userInput.equals( "2" ) && !userInput.equals( "3" ) );
+		} while ( !userInput.equals( "1" ) && !userInput.equals( "2" ) );
 		
 		String role = "";
 		if(userInput.equals("1")) {
-			role = "MANAGER";
-		}else if(userInput.equals("2")) {
 			role = "RECEPTIONIST";
-		}else {
+		}else if(userInput.equals("2")) {
 			role = "MECHANIC";
 		}
 		
-		if(!userInput.equals("3")) {
+		if(!userInput.equals("2")) {
 			System.out.print("\nPlease enter the monthly compensation for this employee (i.e. 8000) : ");
 			while(!input.hasNextDouble()) {
 				System.out.println("Incorrect format");
@@ -154,8 +152,8 @@ public class ManagerAddEmployeeController {
 		}
 		String startDate = "";
 		input.nextLine();
-		while (!startDate.matches("[0-1][0-9]-[0-3][0-9]-\\d\\d\\d\\d")) {
-			System.out.print("\nPlease enter the Employee Start Date (i.e. dd-mm-yyyy) : ");
+		while (!HelperFunctions.checkDate(startDate)) {
+			System.out.print("\nPlease enter the Employee Start Date (i.e. dd-MMM-yyyy) : ");
 			startDate = input.nextLine();
 		}
 			
@@ -178,13 +176,13 @@ public class ManagerAddEmployeeController {
 			
 			/* Insert into Employee Table */
 			try {
-				//TODO need employee increment --> resultSet = statement.executeQuery( "SELECT customers_seq.nextval from dual" );
-				//int index = 0;
-				//if ( resultSet.next() ) {
-				//	index = resultSet.getInt( "NEXTVAL" );
-				//}
+				resultSet = statement.executeQuery( "SELECT EMPLOYEE_ID_SEQ.nextval from dual" );
+				int index = 0;
+				if ( resultSet.next() ) {
+					index = resultSet.getInt( "NEXTVAL" );
+				}
 				
-				statement.executeUpdate( "INSERT INTO EMPLOYEE VALUES ('25', '" + first + "', '" + last + "', '" + 
+				statement.executeUpdate( "INSERT INTO EMPLOYEE VALUES ('" + index + "', '" + first + "', '" + last + "', '" + 
 										 manager_SC_ID + "', '" + email + "', '" + phone + "', '" + role + "', '" + 
 										 userName + "', '" + startDate + "')");
 					
@@ -194,12 +192,7 @@ public class ManagerAddEmployeeController {
 						if( resultSet.next() )
 							employeeID = resultSet.getString( "EID" );
 						
-						//TODO NEED resultSet = statement.executeQuery( "SELECT customerAddress_seq.nextval from dual" );
-						//int increment = 0;
-						//if ( resultSet.next() ) {
-						//	index = resultSet.getInt( "NEXTVAL" );
-						//}
-						statement.executeUpdate( "INSERT INTO EMPLOYEE_ADDRESS VALUES ('25', '" + address + "', '" +
+						statement.executeUpdate( "INSERT INTO EMPLOYEE_ADDRESS VALUES ('" + address + "', '" +
 															     	  city + "', '" + state + "', '" + employeeID + "', '" + zip + "')");
 						try {
 							if(role.equals("MECHANIC")) {

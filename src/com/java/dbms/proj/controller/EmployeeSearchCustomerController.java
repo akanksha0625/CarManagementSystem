@@ -29,12 +29,13 @@ public class EmployeeSearchCustomerController {
 			
 			statement = DBFacade.getConnection().createStatement();
 			
-			System.out.println ( "\nEnter the email of the customer that you would like to search : " );
+			System.out.print ( "\nEnter the email of the customer that you would like to search : " );
 			String userInput = input.nextLine();
+			System.out.println("");
 			
 			try {
 				
-				resultSet = statement.executeQuery( "SELECT * FROM CUSTOMER WHERE EMAIL = '" + userInput + "'" );
+				resultSet = statement.executeQuery( "SELECT * FROM CUSTOMER WHERE EMAIL = '" + userInput + "' AND SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "'" );
 				
 				while ( resultSet.next() ) {
 					matchFound = true;
@@ -64,7 +65,7 @@ public class EmployeeSearchCustomerController {
 					HelperFunctions.displayCustomerProfile( customer );
 					
 				} else {
-					System.out.println( "\tCustomer Does not exist in Database\n" );
+					System.out.println( "\n\tCustomer email \"" + userInput + "\" is not associated with this service center.\n" );
 				}
 				
 			} catch ( SQLException e2 ) { System.out.println( "System Query Error : " + e2.getMessage() ); }
