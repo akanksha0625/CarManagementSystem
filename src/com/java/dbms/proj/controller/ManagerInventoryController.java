@@ -13,8 +13,6 @@ public class ManagerInventoryController {
 		Statement statement = DBFacade.getConnection().createStatement();
 		ResultSet resultSet;
 		
-		//TODO dump the details in
-		System.out.println("GET INVENTORY DETAILS\n" );
 		try {
 			/* Get inventory details */
 			resultSet = statement.executeQuery("SELECT * FROM ACME_INVENTORY WHERE SC_ID = '"+ ApplicationController.employee.getServiceCenterId() + 	"'");
@@ -24,7 +22,7 @@ public class ManagerInventoryController {
 					System.out.println("Part ID : "+ resultSet.getString("PART_ID"));
 					System.out.println("Part Name : "+ resultSet.getString("PART_NAME"));
 					System.out.println("Quantity : "+ resultSet.getString("CURRENT_QUANTITY"));
-					System.out.println("Unit Price : "+ resultSet.getString("UNIT_PRICE"));
+					System.out.println("Unit Price : "+ resultSet.getString("UNIT_COST"));
 					System.out.println("Minimum Quantity Threshold : "+ resultSet.getString("MIN_QUANTITY"));
 					System.out.println("Minimum Order Threshold : "+ resultSet.getString("MIN_ORDER_THRESHOLD"));
 					System.out.println();

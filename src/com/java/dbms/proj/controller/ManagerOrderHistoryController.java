@@ -16,17 +16,17 @@ public class ManagerOrderHistoryController {
 		
 		try {
 			/* Get all order details */
-			resultSet = statement.executeQuery("(SELECT PO.ORDER_STATUS, PO.ORDER_ID, PO.ORDER_DATE, P.PART_NAME, SC.SC_NAME AS PURCHASER_NAME, SI.UNIT_COST, PO.PART_QUANTITY, SI.SUPPLIER_NAME AS SUPPLIER_NAME FROM PURCHASE_ORDER PO INNER JOIN SERVICE_CENTER SC ON SC.SC_ID = PO.SC_ID INNER JOIN PARTS P ON PO.PART_ID = P.PART_ID INNER JOIN SUPPLIER_INVENTORY SI ON SI.SUPPLIER_ID = PO.SOURCE_ID WHERE PO.SOURCE_TYPE = 'SUPPLIER')UNION (SELECT PO.ORDER_STATUS, PO.ORDER_ID, PO.ORDER_DATE, P.PART_NAME, SC.SC_NAME AS PURCHASER_NAME, AI.UNIT_COST, PO.PART_QUANTITY, SC2.SC_NAME AS SUPPLIER_NAME FROM PURCHASE_ORDER PO INNER JOIN SERVICE_CENTER SC ON SC.SC_ID = PO.SC_ID INNER JOIN PARTS P ON PO.PART_ID = P.PART_ID INNER JOIN ACME_INVENTORY AI ON AI.SC_ID = PO.SOURCE_ID INNER JOIN SERVICE_CENTER SC2 ON SC2.SC_ID = AI.SC_ID WHERE PO.SOURCE_TYPE = 'ACME' AND AI.PART_ID = PO.SC_ID)");	
+			resultSet = statement.executeQuery("(SELECT PO.ORDER_STATUS, PO.ORDER_ID, PO.ORDER_DATE, P.PART_NAME, SC.SC_NAME AS PURCHASER_NAME, SI.UNIT_COST, PO.PART_QUANTITY, SI.SUPPLIER_NAME AS SUPPLIER_NAME FROM PURCHASE_ORDER PO INNER JOIN SERVICE_CENTER SC ON SC.SC_ID = PO.SC_ID INNER JOIN PARTS P ON PO.PART_ID = P.PART_ID INNER JOIN SUPPLIER_INVENTORY SI ON SI.SUPPLIER_ID = PO.SOURCE_ID WHERE PO.SOURCE_TYPE = 'SUPPLIER')UNION (SELECT PO.ORDER_STATUS, PO.ORDER_ID, PO.ORDER_DATE, P.PART_NAME, SC.SC_NAME AS PURCHASER_NAME, AI.UNIT_COST, PO.PART_QUANTITY, SC2.SC_NAME AS SUPPLIER_NAME FROM PURCHASE_ORDER PO INNER JOIN SERVICE_CENTER SC ON SC.SC_ID = PO.SC_ID INNER JOIN PARTS P ON PO.PART_ID = P.PART_ID INNER JOIN ACME_INVENTORY AI ON AI.SC_ID = PO.SOURCE_ID INNER JOIN SERVICE_CENTER SC2 ON SC2.SC_ID = AI.SC_ID WHERE PO.SOURCE_TYPE = 'ACME' AND AI.PART_ID = PO.PART_ID)");	
 			/* If query returned a value */
 			while (resultSet.next()) {
-					totalPrice = Float.parseFloat(resultSet.getString("PART_QUANTITY"))* Float.parseFloat(resultSet.getString("UNIT_PRICE"));
+					totalPrice = Float.parseFloat(resultSet.getString("PART_QUANTITY"))* Float.parseFloat(resultSet.getString("UNIT_COST"));
 					System.out.println("Order_Id : "+ resultSet.getString("ORDER_ID"));
 					System.out.println("Date : "+ resultSet.getString("ORDER_DATE"));
 					System.out.println("Part Name : "+ resultSet.getString("PART_NAME"));
 					System.out.println("Supplier Name : "+ resultSet.getString("SUPPLIER_NAME"));
 					System.out.println("Purchase Name : "+ resultSet.getString("PURCHASER_NAME"));
 					System.out.println("Quantity : "+ resultSet.getString("PART_QUANTITY"));
-					System.out.println("Unit Price : "+ resultSet.getString("UNIT_PRICE"));
+					System.out.println("Unit Price : "+ resultSet.getString("UNIT_COST"));
 					System.out.println("Total Cost : "+ totalPrice);
 					System.out.println("Order Status : "+ resultSet.getString("ORDER_STATUS"));
 					System.out.println();
@@ -36,8 +36,6 @@ public class ManagerOrderHistoryController {
 				System.out.println("Could'nt get the Order details. " + e);
 				e.printStackTrace();
 			}
-		//TODO dump order history details into view
-		System.out.println("GET ORDER DETAILS\n");
 		
 		System.out.println( "Please select from the following user options:" );
 		System.out.println( "\tEnter '1' to Go Back" );

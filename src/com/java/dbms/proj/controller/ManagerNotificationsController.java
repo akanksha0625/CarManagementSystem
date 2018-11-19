@@ -13,10 +13,12 @@ public class ManagerNotificationsController {
 		ManagerView.displayNotifications(); //Display page header
 		Statement statement = DBFacade.getConnection().createStatement();
 		ResultSet resultSet, resultSet1;
+		float totalPrice;
+		int orderId;
 		
 		try {
 			/* Display all the notifications for the manager*/
-			resultSet = statement.executeQuery("SELECT * FROM NOTIFICATION");
+			resultSet = statement.executeQuery("SELECT * FROM NOTIFICATION WHERE SC_ID = '"+  ApplicationController.employee.getServiceCenterId() + "' AND SHOW = 1");
 			
 			/* If query returned a value */
 			if (resultSet.next()) {
@@ -29,7 +31,7 @@ public class ManagerNotificationsController {
 				e.printStackTrace();
 			}
 		//TODO display notifications
-		System.out.println("DISPLAY NOTIFICATIONS\n");
+		System.out.println("DISPLAY NOTIFICATIONS Here (Incomplete)\n");
 		
 		System.out.println( "Please select from the following user options:" );
 		System.out.println( "\tEnter '1' to	Order ID" );
@@ -43,63 +45,34 @@ public class ManagerNotificationsController {
 		
 		if(userInput.equals("1")) {
 			System.out.println( "What Order ID would you like to view? : " );
-			String	response = input.nextLine();
+			String response = input.nextLine();
 			//TODO add logic to check for correct order ID
 			
+			orderId = Integer.parseInt(response);
 			try {
-				/* Find the required Purchase Order */
-				resultSet = statement.executeQuery("SELECT PO.ORDER_ID, PO.ORDER_DATE, P.PART_NAME, PO.ORDER_STATUS, PO.PART_QUANTITY, PO.SOURCE_TYPE, PO.SOURCE_ID, PO.SC_ID, SC.SC_NAME AS PURCHASER_NAME FROM PURCHASE_ORDER PO INNER JOIN SERVICE_CENTER SC ON SC.SC_ID = PO.SC_ID INNER JOIN PARTS P ON P.PART_ID = PO.PART_ID WHERE ORDER_ID = "+ response); // RESOLVE SC_ID COLUMN
-				
+				/* Get all order details */
+				resultSet = statement.executeQuery("(SELECT PO.ORDER_STATUS, PO.ORDER_ID, PO.ORDER_DATE, P.PART_NAME, SC.SC_NAME AS PURCHASER_NAME, SI.UNIT_COST, PO.PART_QUANTITY, SI.SUPPLIER_NAME AS SUPPLIER_NAME FROM PURCHASE_ORDER PO INNER JOIN SERVICE_CENTER SC ON SC.SC_ID = PO.SC_ID INNER JOIN PARTS P ON PO.PART_ID = P.PART_ID INNER JOIN SUPPLIER_INVENTORY SI ON SI.SUPPLIER_ID = PO.SOURCE_ID WHERE PO.SOURCE_TYPE = 'SUPPLIER' AND SI.PART_ID = PO.PART_ID AND PO.ORDER_ID = "+ orderId +" ) UNION (SELECT PO.ORDER_STATUS, PO.ORDER_ID, PO.ORDER_DATE, P.PART_NAME, SC.SC_NAME AS PURCHASER_NAME, AI.UNIT_COST, PO.PART_QUANTITY, SC2.SC_NAME AS SUPPLIER_NAME FROM PURCHASE_ORDER PO INNER JOIN SERVICE_CENTER SC ON SC.SC_ID = PO.SC_ID INNER JOIN PARTS P ON PO.PART_ID = P.PART_ID INNER JOIN ACME_INVENTORY AI ON AI.SC_ID = PO.SOURCE_ID INNER JOIN SERVICE_CENTER SC2 ON SC2.SC_ID = AI.SC_ID WHERE PO.SOURCE_TYPE = 'ACME' AND AI.PART_ID = PO.PART_ID AND PO.ORDER_ID = "+ orderId +")");	
 				/* If query returned a value */
-				if (resultSet.next()) {
-					String sourceType, supplierName ="";
-					sourceType = resultSet.getString("SOURCE_TYPE");
-					float unitPrice=0, partQty = 0;
-					
-					if(sourceType.equals("ACME")) {
-							try {
-									resultSet1 = statement.executeQuery("SELECT * FROM ACME_INVENTORY AI INNER JOIN SERVICE_CENTER SC ON SC_ID = AI.SC_ID WHERE PART_ID = "+ resultSet.getString("PART_ID") + " AND AI.SC_ID = "+ resultSet.getString("SOURCE_ID"));
-									resultSet1.next();
-									supplierName = resultSet1.getString("SC_NAME");
-									unitPrice = Float.parseFloat(resultSet1.getString("UNIT_PRICE"));
-									partQty =  Float.parseFloat(resultSet.getString("PART_QUANTITY"));
-	
-							} catch (SQLException e) {
-								System.out.println("Could'nt get the Purchaser details. " + e);
-								e.printStackTrace();
-							}
-					} else {
-							try {
-								resultSet1 = statement.executeQuery("SELECT * FROM SUPPLIER_INVENTORY SI WHERE PART_ID = "+ resultSet.getString("PART_ID") + " AND SUPPLIER_ID = "+ resultSet.getString("SOURCE_ID"));
-								resultSet1.next();
-								supplierName = resultSet1.getString("SUPPLIER_NAME");
-								unitPrice = Float.parseFloat(resultSet1.getString("UNIT_PRICE"));
-								partQty =  Float.parseFloat(resultSet.getString("PART_QUANTITY"));
-	
-						} catch (SQLException e) {
-							System.out.println("Could'nt get the Purchaser details. " + e);
-							e.printStackTrace();
-						}
+				while (resultSet.next()) {
+						totalPrice = Float.parseFloat(resultSet.getString("PART_QUANTITY"))* Float.parseFloat(resultSet.getString("UNIT_COST"));
+						System.out.println("Order_Id : "+ resultSet.getString("ORDER_ID"));
+						System.out.println("Date : "+ resultSet.getString("ORDER_DATE"));
+						System.out.println("Part Name : "+ resultSet.getString("PART_NAME"));
+						System.out.println("Supplier Name : "+ resultSet.getString("SUPPLIER_NAME"));
+						System.out.println("Purchase Name : "+ resultSet.getString("PURCHASER_NAME"));
+						System.out.println("Quantity : "+ resultSet.getString("PART_QUANTITY"));
+						System.out.println("Unit Price : "+ resultSet.getString("UNIT_COST"));
+						System.out.println("Total Cost : "+ totalPrice);
+						System.out.println("Order Status : "+ resultSet.getString("ORDER_STATUS"));
+						System.out.println();
+						System.out.println();	
 					}
-					System.out.println("Order_Id : "+ resultSet.getString("ORDER_ID"));
-					System.out.println("Date : "+ resultSet.getString("ORDER_DATE"));
-					System.out.println("Part Name : "+ resultSet.getString("PART_NAME"));
-					System.out.println("Supplier Name : "+ supplierName);
-					System.out.println("Purchase Name : "+ resultSet.getString("PURCHASER_NAME"));
-					System.out.println("Quantity : "+ partQty);
-					System.out.println("Unit Price : "+ unitPrice);
-					System.out.println("Total Cost : "+ unitPrice * partQty);
-					System.out.println("Order Status : "+ resultSet.getString("ORDER_STATUS"));
-					System.out.println();
-					System.out.println();		
-				}
 				}  catch (SQLException e) {
 					System.out.println("Could'nt get the Order details. " + e);
 					e.printStackTrace();
 				}
+			
 			ManagerView.displayNotificationsDetail(); //Display new page header
-			//display the information about this order ID notification with the details view
-			System.out.println("GET NOTIFICATION DETAILS for orderID : " + response );
 			
 			System.out.println( "Please select from the following user options:" );
 			System.out.println( "\tEnter '1' to	Go Back" );
