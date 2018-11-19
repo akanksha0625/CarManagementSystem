@@ -39,16 +39,29 @@ public class ReceptionistTaskRecordDeliveriesController {
 				System.out.println("\nThe list provided contained values that were non numeric. Aborting Transaction.\n");
 				return;
 			}
-			
+			System.out.print ( "\nAfter input : ");
+
 			try {
 				resultSet = statement.executeQuery( "SELECT * FROM PURCHASE_ORDER WHERE ORDER_ID IN (" + temp + ") AND SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "' AND ORDER_STATUS != 'DELIVERED'" );
 				while(resultSet.next()) {
+					System.out.print ( "\nInside while : ");
 					tuples= statement.executeUpdate("UPDATE ACME_INVENTORY SET CURRENT_QUANTITY = CURRENT_QUANTITY + "+ resultSet.getString("PART_QUANTITY") +" WHERE PART_ID = "+ resultSet.getString("PART_ID") +" AND SC_ID = '"+ resultSet.getString("SC_ID") + "'");
+					System.out.println( "\n After first upadte");
+
+					if(resultSet.getString("SOURCE_TYPE").equals("ACME")) {
+						System.out.print ( "\nInside if to check for acme inv: ");
+						tuples= statement.executeUpdate("UPDATE ACME_INVENTORY SET CURRENT_QUANTITY = CURRENT_QUANTITY - "+ resultSet.getString("PART_QUANTITY") +" WHERE PART_ID = "+ resultSet.getString("PART_ID") +" AND SC_ID = '"+ resultSet.getString("SOURCE_ID") + "'");
+					}
 				}
+				System.out.print ( "\nAfter while loop : ");
+
+
 			}catch (SQLException e) {
 				System.out.println( "Cannot Access Orders. " + e );
 				e.printStackTrace();
 			}
+
+			System.out.print ( "\nAfter the update of inventory : ");
 
 			try {
 				 tuples= statement.executeUpdate("UPDATE PURCHASE_ORDER SET ORDER_STATUS = 'DELIVERED' WHERE ORDER_ID IN (" + temp + ") AND ORDER_STATUS != 'DELIVERED' AND SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "'");

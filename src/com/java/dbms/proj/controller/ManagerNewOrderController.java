@@ -1,6 +1,6 @@
 package com.java.dbms.proj.controller;
-
-import java.sql.Date;
+import java.util.Calendar;
+import java.util.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,7 +18,7 @@ public class ManagerNewOrderController {
 		ResultSet resultSet, inventoryResult, sequenceResult;
 		String orderDeliverySource = "";
 		String scId = "", sourceId = "";	
-		int minOrderThreshold =0;
+		int minOrderThreshold =0, deliveryWindow = 0;
 		
 		System.out.println ("\nPlease provide some details of the order to be placed.");
 				
@@ -54,12 +54,20 @@ public class ManagerNewOrderController {
 				//No such inventory exist for this service center. So we place an order in supplier
 				resultSet = statement.executeQuery( "SELECT * FROM SUPPLIER_INVENTORY WHERE PART_ID = " + partId + " ORDER BY DELIVERY_WINDOW ASC ");	
 
-				resultSet.next();
-				orderDeliverySource = "SUPPLIER";		
-				sourceId = resultSet.getString("SUPPLIER_ID");
+				if(resultSet.next()){
+					orderDeliverySource = "SUPPLIER";		
+					sourceId = resultSet.getString("SUPPLIER_ID");
+					deliveryWindow = Integer.parseInt(resultSet.getString("DELIVERY_WINDOW"));
+				} else {
+					System.out.println( "Unabel to place Order - Supplier Table missing part." );
+
+				}
+				
 			} else {
 				orderDeliverySource = "ACME"; 
 				sourceId = resultSet.getString("SC_ID");
+				deliveryWindow = Integer.parseInt(resultSet.getString("DELIVERY_WINDOW"));
+
 			}
 			
 			try {
@@ -71,14 +79,37 @@ public class ManagerNewOrderController {
 					index = sequenceResult.getInt( "NEXTVAL" );
 				}
 				
-				 Date dNow = new Date(0 );
-			     SimpleDateFormat ft =  new SimpleDateFormat ("dd-MMM-yyyy");			      
-			      
-				int tuples = statement.executeUpdate( "INSERT INTO PURCHASE_ORDER VALUES ('" + sourceId + "', '" + orderDeliverySource + "',"+ partId + ", '"+ ft.format(dNow) + "',"+ quantity +", " + index + ", 'PENDING' , '" + scId + "', 'PENDING' )" );
+				Date date = new Date();
+				Date date2 = new Date();
+
+			    Calendar currentDate = Calendar.getInstance();
+			    currentDate.setTime(date2);
+			    currentDate.add(Calendar.DAY_OF_YEAR,0);
+			    date2 = currentDate.getTime();
+			    
+			    int month = date2.getMonth() + 1;
+				int year = date2.getYear() + 1900;
+				String dateFormatted = date2.getDate()+"-"+ month +"-" + year;
+				dateFormatted = HelperFunctions.translateBack(dateFormatted);
+
+			    Calendar future = Calendar.getInstance();
+			    future.setTime(date); 
+			    future.add(Calendar.DAY_OF_YEAR,deliveryWindow);
+			    date =future.getTime();
+			    
+			    
+			    month = date.getMonth() + 1;
+				year = date.getYear() + 1900;
+				String dateFormatted2 = date.getDate()+"-"+ month +"-" + year;
+				dateFormatted2 = HelperFunctions.translateBack(dateFormatted2);
+			    
+				int tuples = statement.executeUpdate( "INSERT INTO PURCHASE_ORDER VALUES ('" + sourceId + "', '" + orderDeliverySource + "',"+ partId + ", '"+ dateFormatted2 +"',"+ quantity +", " + index + ", 'PENDING' , '" + scId + "', 'PENDING' )" );
 				if ( tuples != 1 ) {
 					System.out.println ( "Unable to place order Table." );
 				} else {
 					System.out.println ( "\n\t---------------- Order Placed!!----------------" );
+					System.out.println ( "\n\t---------------- Order ID: "+ index+ " ------------------" );
+					System.out.println ( "\n\t---------------- Delivery Date: "+ dateFormatted2+  " -------------" );
 				}
 			} catch ( SQLException e ) {
 				System.out.println( "Unabel to place the order : " + e.getMessage() );
