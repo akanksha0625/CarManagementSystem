@@ -2,6 +2,7 @@ package com.java.dbms.proj.controller;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.util.Scanner;
 
 import com.java.dbms.proj.common.DBFacade;
@@ -24,7 +25,7 @@ public class ApplicationController {
 	
 	/*Flow association with the homepage. --> entry point of application flow*/
 
-	public static void home() throws ClassNotFoundException, SQLException  {
+	public static void home() throws ClassNotFoundException, SQLException, ParseException  {
 		response = Home.displayHome( input );
 		if( response.equals( "1" ) ) {
 			/*Redirect to login page*/
@@ -48,7 +49,7 @@ public class ApplicationController {
 		
 	/*Flow associated with the login page --> second step of application, determines which user flow to pick up*/
 
-	private static void login() throws ClassNotFoundException, SQLException {
+	private static void login() throws ClassNotFoundException, SQLException, ParseException {
 		String role = "";
 		try {
 			role = LoginController.userLogin(input);
@@ -76,7 +77,7 @@ public class ApplicationController {
 //---------------------------------------------------------------------------------------------Manager	
 	/*Flow associated with the manager*/
 
-	private static void manager()  throws ClassNotFoundException, SQLException{
+	private static void manager()  throws ClassNotFoundException, SQLException, ParseException{
 		employee = new MonthlyEmployee();
 		setEmployeeDetails();
 		
@@ -144,7 +145,7 @@ public class ApplicationController {
 	//---------------------------------------------------------------------------------------------Receptionist
 		/*Handles the flow of the receptionist*/	
 
-	private static void receptionist() throws ClassNotFoundException, SQLException  {
+	private static void receptionist() throws ClassNotFoundException, SQLException, ParseException  {
 		employee = new MonthlyEmployee(); 
 		setEmployeeDetails();
 		response = ReceptionistView.displayLanding(input);
@@ -195,7 +196,7 @@ public class ApplicationController {
 		/*Handles the flow of the customer*/
 	
 	
-	private static void customer() throws ClassNotFoundException, SQLException {
+	private static void customer() throws ClassNotFoundException, SQLException, ParseException {
 
 		
 		setCustomerDetails();

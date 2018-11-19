@@ -12,6 +12,7 @@ public class Vehicle {
 	public String getLastServiceName() {
 		return lastServiceName;
 	}
+	
 
 	public void setLastServiceName(String lastServiceName) {
 		this.lastServiceName = lastServiceName;

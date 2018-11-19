@@ -5,6 +5,14 @@ public class Appointment {
 	String appointmentDate;
 	String requestedMechanicFirstName;
 	String requestedMechanicLastName;
+
+	String serviceType;
+	String state;
+	String serviceID;
+
+	private Vehicle vehicle;
+	
+	
 	public String getRequestedMechanicFirstName() {
 		return requestedMechanicFirstName;
 	}
@@ -17,12 +25,6 @@ public class Appointment {
 	public void setRequestedMechanicLastName(String requestedMechanicLastName) {
 		this.requestedMechanicLastName = requestedMechanicLastName;
 	}
-	String serviceType;
-	String state;
-	String serviceID;
-
-	private Vehicle vehicle;
-	
 	
 	public Vehicle getVehicle() {
 		return vehicle;

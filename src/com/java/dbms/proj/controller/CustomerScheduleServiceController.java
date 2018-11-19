@@ -1,6 +1,7 @@
 package com.java.dbms.proj.controller;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Scanner;
 
 import com.java.dbms.proj.entities.Appointment;
@@ -12,7 +13,7 @@ public class CustomerScheduleServiceController {
 	static Vehicle vehicle = new Vehicle();
 	static String inputString="";
 	
-	public static void displayScheduleService(Scanner input) throws SQLException {		
+	public static void displayScheduleService(Scanner input) throws SQLException, ParseException {		
 		System.out.println("Please enter the below mandatory* details to schedule a service:\n");
 		do {
 			System.out.print("License Plate* :");
@@ -64,7 +65,7 @@ public class CustomerScheduleServiceController {
 		}		
 	}
 	
-	public static void scheduleService(Scanner input) throws SQLException {
+	public static void scheduleService(Scanner input) throws SQLException, ParseException {
 		com.java.dbms.proj.views.CustomerView.displayScheduleService();
 		while(!inputString.equals(3))
 		displayScheduleService(input);

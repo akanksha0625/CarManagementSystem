@@ -7,15 +7,20 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 import com.java.dbms.proj.controller.ApplicationController;
 import com.java.dbms.proj.entities.Appointment;
 import com.java.dbms.proj.entities.Customer;
+import com.java.dbms.proj.entities.DailyTimeSlot;
+import com.java.dbms.proj.entities.HourlyEmployee;
 import com.java.dbms.proj.entities.PayCheck;
 import com.java.dbms.proj.entities.Service;
+import com.java.dbms.proj.entities.TimeSlot;
 import com.java.dbms.proj.entities.Vehicle;
 
 public class HelperFunctions {
@@ -123,6 +128,7 @@ public class HelperFunctions {
 					&& !month.equals("SEP") && !month.equals("OCT") && !month.equals("NOV") && !month.equals("DEC")) {
 				return false;
 			}
+
 			return true;
 		} catch (ParseException e) {
 			return false;
@@ -247,6 +253,7 @@ public class HelperFunctions {
 			for (int index = 0; index < serviceList.size(); index++) {
 				Service service = serviceList.get(index);
 
+
 				System.out.println("\tService ID                :\t" + service.getAppointmentID());
 				System.out.println("\tLicense Plate             :\t" + service.getVehicleLicense());
 				System.out.println("\tService Type              :\t" + service.getServiceType());
@@ -258,6 +265,7 @@ public class HelperFunctions {
 						+ service.getTimeSlot().getEndTime());
 				System.out.println("\tService Status            :\t" + service.getServiceStatus()
 						+ "\n\t-------------------------------\n");
+
 			}
 		}
 	}
@@ -385,6 +393,7 @@ public class HelperFunctions {
 		SimpleDateFormat formatter1 = new SimpleDateFormat("dd-MM-yyyy, h:mm a");
 
 		try {
+
 			Date current = formatter1.parse(currentDate + ", " + currentTime);
 			System.out.println("CURRENT : " + current);
 			Date possible = formatter1.parse(possibleDate + ", " + possibleTime);
@@ -551,41 +560,6 @@ public class HelperFunctions {
 		}
 		return partsAvailable;
 	}
-
-	public static ArrayList<String> getTimeSlot(String mechanicFirstName, String mechanicLastName, Float duration)
-			throws SQLException {
-		int empId = 0;
-		ArrayList<String> timeSlot = new ArrayList<String>();
-
-		if (mechanicFirstName != null && mechanicFirstName != "" && mechanicLastName != null && mechanicLastName != "")
-			resultSet = statement.executeQuery("SELECT EID FROM EMPLOYEE WHERE FIRSTNAME = '" + mechanicFirstName
-					+ "' and LASTNAME = '" + mechanicLastName + "'");
-		else if (mechanicFirstName != null && mechanicFirstName != ""
-				&& (mechanicLastName == null || mechanicLastName == ""))
-			resultSet = statement
-					.executeQuery("SELECT EID FROM EMPLOYEE WHERE FIRSTNAME = '" + mechanicFirstName + "'");
-		if (resultSet.next()) {
-			empId = Integer.parseInt(resultSet.getString("EID"));
-		}
-		// Fetch employee based on only last name information
-
-		if (empId != 0) {
-			String startTime = "";
-			String endTime = "";
-			HashMap<String, String> mechanicTimeSlot = new HashMap<String, String>();
-			resultSet = statement
-					.executeQuery("SELECT START_TIME,END_TIME FROM TIME_SLOT WHERE MECHANIC_ID = '" + empId + "'");
-
-			if (resultSet.next()) {
-				startTime = resultSet.getString("START_TIME");
-				startTime = resultSet.getString("END_TIME");
-				mechanicTimeSlot.put(startTime, endTime);
-			}
-		}
-
-		return timeSlot;
-
-	}
 	
 	public static int calculateDeliveryWindowForParts() throws SQLException {
 		int partIds[] = {1,2};
@@ -635,5 +609,5 @@ public class HelperFunctions {
 		}
 		return maxDeliveryInDays;
 	}
-
+	
 }

@@ -1,9 +1,19 @@
 package com.java.dbms.proj.entities;
 
+import java.util.Date;
+
 public class TimeSlot {
 	int SlotID;
 	String StartTime;
 	String EndTime;
+	boolean isbooked;
+	
+	public boolean isIsbooked() {
+		return isbooked;
+	}
+	public void setIsbooked(boolean isbooked) {
+		this.isbooked = isbooked;
+	}
 	public int getSlotID() {
 		return SlotID;
 	}

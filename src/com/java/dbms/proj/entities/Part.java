@@ -69,4 +69,5 @@ public class Part {
 	public void setPartName(String partName) {
 		this.partName = partName;
 	}
+
 }

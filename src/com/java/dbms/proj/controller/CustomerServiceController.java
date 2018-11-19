@@ -1,12 +1,13 @@
 package com.java.dbms.proj.controller;
 
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Scanner;
 
 import com.java.dbms.proj.views.CustomerView;
 
 public class CustomerServiceController {
-	public static void serviceLanding(Scanner input) throws SQLException {
+	public static void serviceLanding(Scanner input) throws SQLException, ParseException {
 		CustomerView.displayService(); //Display page header
 		
 		System.out.println("Please select from the following user options:");
@@ -27,7 +28,7 @@ public class CustomerServiceController {
 	}
 
 		
-	public static void scheduleService(String response, Scanner input) throws SQLException {
+	public static void scheduleService(String response, Scanner input) throws SQLException, ParseException {
 			if(response.equals("1")) {
 				CustomerServiceHistoryController.serviceHistory(input);
 			}else if(response.equals("2")) {
