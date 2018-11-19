@@ -484,8 +484,8 @@ public class HelperFunctions {
 		}
 
 		while (startCal.getTimeInMillis() <= endCal.getTimeInMillis()) {
-			if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY
-					&& startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
+			if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
+					&& startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
 
 				workDays++;
 			}

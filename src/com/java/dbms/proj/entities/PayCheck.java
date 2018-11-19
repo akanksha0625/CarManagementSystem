@@ -10,12 +10,15 @@ public class PayCheck {
 	private String employeeName= "";
 	private double compensation = 0;;
 	private String frequency= "";
-	private int units= 0;
+	private double units= 0;
 	private double currentEarnings = 0;
 	private double yearToDateEarnings = 0;
 	private String role = "";
 	private String startDate= "";
-
+	
+	public void addUnits(double units) {
+		this.units += units;
+	}
 	
 	public String getDate() {
 		return date;
@@ -53,7 +56,7 @@ public class PayCheck {
 	public void setFrequency(String frequency) {
 		this.frequency = frequency;
 	}
-	public int getUnits() {
+	public double getUnits() {
 		return units;
 	}
 	public void setUnits(int units) {
@@ -86,10 +89,13 @@ public class PayCheck {
 
 	public String toString() {
 		String unitsAppend = "";
+		double units;
 		if(this.getFrequency().equalsIgnoreCase("hourly")) {
 			unitsAppend = "hours";
+			units = this.getUnits();
 		}else {
 			unitsAppend = "days";
+			units = this.getUnits();
 		}
 		DecimalFormat df = new DecimalFormat("#.00"); 
 		
@@ -100,7 +106,7 @@ public class PayCheck {
 			   "\n\tEmployee Name    :\t" + this.getEmployeeName() +
 			   "\n\tCompensation     :\t$" + df.format(this.getCompensation()) +
 			   "\n\tFrequency        :\t" + this.getFrequency() +
-			   "\n\tUnits            :\t" + this.getUnits() + " " + unitsAppend +
+			   "\n\tUnits            :\t" + units + " " + unitsAppend +
 			   "\n\tCurrent Earnings :\t$" + df.format(this.getCurrentEarnings()) +
 			   "\n\tYTD Earnings     :\t$" + df.format(this.getYearToDateEarnings()) +
 			   "\n*****************************************************************************\n";

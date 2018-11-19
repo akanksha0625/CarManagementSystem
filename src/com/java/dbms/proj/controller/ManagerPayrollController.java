@@ -104,20 +104,19 @@ public class ManagerPayrollController {
 					service.setVehicleLicense(resultSet.getString("VEHICLE_LICENSE"));
 					service.setAppointmentDate(resultSet.getString("APPOINTMENT_DATE"));
 					service.setServiceTypeID(resultSet.getString("SERVICE_TYPE_ID"));
-					service.createTimeSlot(resultSet.getInt("SLOT_ID"),
-							resultSet.getString("START_TIME"), resultSet.getString("END_TIME"));
+					service.createTimeSlot(resultSet.getInt("SLOT_ID"), resultSet.getString("START_TIME"),
+							resultSet.getString("END_TIME"));
 					service.setMechanicID(resultSet.getInt("MECHANIC_ID"));
 					appointments.add(service);
 				}
 			} catch (SQLException e) {
-				System.out
-						.println("Unable to access the Appointment Table : " + e.getMessage() + " : Transaction Aborted\n");
+				System.out.println(
+						"Unable to access the Appointment Table : " + e.getMessage() + " : Transaction Aborted\n");
 				return;
 			}
 
 			if (appointments.size() == 0) {
-				System.out
-						.println("There are no appointments associationed with this mechanic.\n");
+				System.out.println("There are no completed appointments associationed with this mechanic.\n");
 				return;
 			}
 
@@ -140,9 +139,9 @@ public class ManagerPayrollController {
 
 				try {
 					resultSet = statement.executeQuery(
-							"SELECT * FROM EMPLOYEE WHERE EID = '" + appointments.get(index).getActualMechanic() + "' ");
+							"SELECT * FROM EMPLOYEE WHERE EID = '" + appointments.get(index).getMechanicID() + "' ");
 					if (resultSet.next()) {
-						appointments.get(index).setActualMechanic(
+						appointments.get(index).setMechanicFullName(
 								resultSet.getString("FIRSTNAME") + " " + resultSet.getString("LASTNAME"));
 					} else {
 						System.out.println("There is no mechanic associated with this appointment : "
@@ -150,32 +149,34 @@ public class ManagerPayrollController {
 						break;
 					}
 				} catch (SQLException e) {
-					System.out.println("Unable to access Employee Table : " + e.getMessage() + " : Transaction Aborted\n");
+					System.out.println(
+							"Unable to access Employee Table : " + e.getMessage() + " : Transaction Aborted\n");
 					return;
 				}
-				
+
 				/* Find Vehicle ID */
 				try {
-					resultSet = statement.executeQuery(
-							"SELECT * FROM VEHICLE WHERE LICENSE = '" + appointments.get(index).getVehicleLicense() + "'");
+					resultSet = statement.executeQuery("SELECT * FROM VEHICLE WHERE LICENSE = '"
+							+ appointments.get(index).getVehicleLicense() + "'");
 					if (resultSet.next()) {
 						vid = resultSet.getInt("VID");
 					} else {
-						System.out.println("There is no vehicle associated with the given car scheduled for appointment : "
-								+ appointments.get(index).getAppointmentID());
+						System.out.println(
+								"There is no vehicle associated with the given car scheduled for appointment : "
+										+ appointments.get(index).getAppointmentID());
 						break;
 					}
 				} catch (SQLException e) {
-					System.out
-							.println("Unable to access the Vehicle Table : " + e.getMessage() + " : Transaction Aborted\n");
+					System.out.println(
+							"Unable to access the Vehicle Table : " + e.getMessage() + " : Transaction Aborted\n");
 					return;
 				}
 
 				if (appointments.get(index).getServiceType().equalsIgnoreCase("repair")) {
 					try {
 						/* get repair details */
-						resultSet = statement.executeQuery(
-								"SELECT * FROM REPAIR WHERE RID = '" + appointments.get(index).getServiceTypeID() + "' ");
+						resultSet = statement.executeQuery("SELECT * FROM REPAIR WHERE RID = '"
+								+ appointments.get(index).getServiceTypeID() + "' ");
 						if (resultSet.next()) {
 							((Repair) appointments.get(index)).setRepairID(resultSet.getString("RID"));
 						} else {
@@ -211,24 +212,26 @@ public class ManagerPayrollController {
 					/* Calculate Time */
 					for (int j = 0; j < ((Repair) appointments.get(index)).getPartsList().size(); j++) {
 						double unitCost = ((Repair) appointments.get(index)).getPartsList().get(j).getUnitCost();
-						double unitsRequired = ((Repair) appointments.get(index)).getPartsList().get(j).getUnitsRequired();
-						appointments.get(index)
-								.addToTotalHours(((Repair) appointments.get(index)).getPartsList().get(j).getInstallTime());
+						double unitsRequired = ((Repair) appointments.get(index)).getPartsList().get(j)
+								.getUnitsRequired();
+						appointments.get(index).addToTotalHours(
+								((Repair) appointments.get(index)).getPartsList().get(j).getInstallTime());
 					}
 				} else {
 					try {
 						/* get maintenance details */
 						resultSet = statement.executeQuery("SELECT * FROM MAINTENANCE WHERE VID = '" + vid + "' ");
 						if (resultSet.next()) {
-							((Maintenance) appointments.get(index)).setMaintenanceID(resultSet.getString("MAINTENANCE_ID"));
+							((Maintenance) appointments.get(index))
+									.setMaintenanceID(resultSet.getString("MAINTENANCE_ID"));
 						} else {
 							System.out.println("There is no maintenance service associated with this appointment : "
 									+ appointments.get(index).getAppointmentID() + "\n");
 							break;
 						}
 					} catch (SQLException e) {
-						System.out.println(
-								"Uable to access the Maintenance Table : " + e.getMessage() + " : Aborting Transaction\n");
+						System.out.println("Uable to access the Maintenance Table : " + e.getMessage()
+								+ " : Aborting Transaction\n");
 						return;
 					}
 
@@ -257,14 +260,50 @@ public class ManagerPayrollController {
 					}
 				}
 			}
-			
-			for( int i = 0; i < appointments.size(); i++) {
+
+			for (int i = 0; i < appointments.size(); i++) {
 				appointments.get(i).convertDate(appointments.get(i).getAppointmentDate());
 			}
-						
+
 			Collections.sort(appointments);
-			
-	
+
+			int payYear = 0;
+			for (int i = 0; i < appointments.size(); i++) {
+				if (!appointments.get(i).added) {
+					int units = 0;
+					for (int j = i; j < appointments.size(); j++) {
+						if (!appointments.get(j).added
+								&& appointments.get(i).calAppointmentDate
+										.get(Calendar.YEAR) == appointments.get(j).calAppointmentDate.get(Calendar.YEAR)
+								&& appointments.get(i).calAppointmentDate.get(
+										Calendar.MONTH) == appointments.get(j).calAppointmentDate.get(Calendar.MONTH)) {
+							units += appointments.get(j).getTotalHours();
+							appointments.get(j).added = true;
+						}
+					}
+
+					if (appointments.get(i).calAppointmentDate.get(Calendar.YEAR) == payYear) {
+						System.out.println("Adding Service : " + appointments.get(i).calAppointmentDate.get(Calendar.YEAR) + " to " + payYear );
+						yearToDate += appointments.get(i).getTotalHours() * appointments.get(i).getMechanicCost();
+					} else {
+						payYear = appointments.get(i).calAppointmentDate.get(Calendar.YEAR);
+						yearToDate = 0;
+						System.out.println("Adding Service : " + appointments.get(i).calAppointmentDate.get(Calendar.YEAR) + " to " + payYear );
+						yearToDate += appointments.get(i).getTotalHours() * appointments.get(i).getMechanicCost();
+					}
+					
+					int month = appointments.get(i).calAppointmentDate.get(Calendar.MONTH);
+					
+					int year = appointments.get(i).calAppointmentDate.get(Calendar.YEAR);
+					payCheck.setDate(HelperFunctions.translateBack("01-" + month + "-" + year));
+					HelperFunctions.calculateDuration(payCheck, "01-" + month + "-" + year);
+					payCheck.setUnits(units);
+					payCheck.setYearToDateEarnings(yearToDate);
+					payCheck.setCurrentEarnings(payCheck.getCompensation() * units);
+					System.out.println(payCheck.toString());
+				}
+			}
+
 		} else {
 			/* Generate Monthly PayCheck */
 			payCheck.setFrequency("Monthly");

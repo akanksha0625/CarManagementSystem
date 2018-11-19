@@ -5,6 +5,7 @@ import java.text.ParseException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import com.java.dbms.proj.entities.*;
 
@@ -38,6 +39,8 @@ public class Service implements Comparable{
 	private String serviceCenterID = "";
 	private double mechanicCost = 0;
 	private int vid = -1;
+	public Calendar calAppointmentDate = null;
+	public boolean added = false;
 
 	public int getVid() {
 		return vid;
@@ -50,8 +53,11 @@ public class Service implements Comparable{
 	public void convertDate(String date) {
 		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 		String dateInString = HelperFunctions.translateDate(date);	
+		Calendar calendar = Calendar.getInstance();
 		try {
 			this.appointmentDateDate = sdf.parse(dateInString);
+			calendar.setTime(this.appointmentDateDate);
+			this.calAppointmentDate = calendar;
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
 		}
@@ -159,7 +165,7 @@ public class Service implements Comparable{
 	}
 
 	public String getAppointmentDate() {
-		return HelperFunctions.translateBack(appointmentDate);
+		return this.appointmentDate;
 	}
 
 	public void setAppointmentDate(String appointmentDate) {
