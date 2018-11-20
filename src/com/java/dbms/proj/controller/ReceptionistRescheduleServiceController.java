@@ -84,6 +84,7 @@ public class ReceptionistRescheduleServiceController {
 				appointment.setAppointmentID(Integer.parseInt(inputString));
 				if(resultSet.next())
 				{
+					int mechanicId=resultSet.getInt("MECHANIC_ID");
 					String mechanicName=resultSet.getString("REQUESTED_MECHANIC");
 					String name[]=mechanicName.split(" ");
 					

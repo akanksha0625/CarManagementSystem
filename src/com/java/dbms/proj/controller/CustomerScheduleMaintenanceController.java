@@ -63,9 +63,9 @@ public class CustomerScheduleMaintenanceController {
 					
 			
 			
-			boolean partsavailability = HelperFunctions.checkPartAvailability(ApplicationConstants.MAINTENANCE, serviceTobeScheduled, licensePlateNumber);
+			int partsavailability = HelperFunctions.checkPartAvailability(ApplicationConstants.MAINTENANCE, serviceTobeScheduled, licensePlateNumber,customer.getServiceCenterId());
 			System.out.println("Parts availability" +partsavailability );
-			if(partsavailability == true) {
+			if(partsavailability == 0) {
 			float duration= HelperFunctions.calculateServiceDuration(ApplicationConstants.MAINTENANCE, serviceTobeScheduled, licensePlateNumber);
 			System.out.println("DISPLAY SERVICE DATES duration" + duration);
 			numOfSlots = (int) Math.ceil((duration*60/30)); 
@@ -156,7 +156,7 @@ public class CustomerScheduleMaintenanceController {
 			}
 			
 			else {
-				System.out.println("\t The parts required for the service are currently not availabile. Please try scheduling after " + partsavailability + " of days.\t\n Sorry for inconvenience. \n-------------------------------------------------------------------------------------------------------------------------------------");
+				System.out.println("\t The parts required for the service are currently not availabile. Please try scheduling after " + partsavailability + " days.\t\n Sorry for inconvenience. \n-------------------------------------------------------------------------------------------------------------------------------------");
 				
 			}
 		}

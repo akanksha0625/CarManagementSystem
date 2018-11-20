@@ -7,21 +7,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Scanner;
 
-import com.java.dbms.proj.controller.ApplicationController;
-import com.java.dbms.proj.entities.Appointment;
 import com.java.dbms.proj.entities.Customer;
-import com.java.dbms.proj.entities.DailyTimeSlot;
-import com.java.dbms.proj.entities.HourlyEmployee;
 import com.java.dbms.proj.entities.Part;
 import com.java.dbms.proj.entities.PayCheck;
 import com.java.dbms.proj.entities.Service;
-import com.java.dbms.proj.entities.TimeSlot;
 import com.java.dbms.proj.entities.Vehicle;
 
 public class HelperFunctions {
@@ -532,9 +525,9 @@ public class HelperFunctions {
 	}
 
 	// Needs to be changed based on order placement
-	public static boolean checkPartAvailability(String serviceName, String serviceType, String licenseNumber)
+	public static int checkPartAvailability(String serviceName, String serviceType, String licenseNumber, String serviceCenterId)
 			throws NumberFormatException, SQLException {
-		int numberOfDays = 0;
+		int numOfDays  = 0;
 		boolean partsAvailable = true;
 		statement = DBFacade.getConnection().createStatement();
 		HashMap<Integer, Integer> requiredPartList = getPartList(serviceName, serviceType, licenseNumber);
@@ -546,36 +539,36 @@ public class HelperFunctions {
 			while (resultSet.next()) {
 				int quantity = Integer.parseInt(resultSet.getString("CURRENT_QUANTITY"));
 				if (quantity < requiredPartList.get(index)) {
-					System.out.println("Inside Parts not available");
-					partsAvailable = false;
+					partsAvailable = false;			
 				}
 			}
-
 		}
-		return partsAvailable;
+		if(partsAvailable == false)
+		numOfDays = calculateDeliveryWindowForParts(requiredPartList, serviceCenterId);
+		
+		return numOfDays;
 	}
 	
-	public static int calculateDeliveryWindowForParts() throws SQLException {
-		int partIds[] = {1,2};
-		String scId = "S0001";
+	public static int calculateDeliveryWindowForParts(HashMap<Integer,Integer> partIdList, String serviceCenterId) throws SQLException {
 		
 		Statement statement = DBFacade.getConnection().createStatement();
 		ResultSet inventoryResult;
 
 		int minOrderThreshold =0;
 		int maxDeliveryInDays = 0, deliveryWindow=0;
+		partIdList.entrySet().iterator().next().getKey();
 		
-		String csv = "" + partIds[0]; 
-		for (int i=1; i< partIds.length;i++) {
-			csv = csv+","+partIds[i];
+		String csv = ""+ partIdList.entrySet().iterator().next().getKey();
+		for (int i=1; i< partIdList.size();i++) {
+			csv = csv+","+partIdList.entrySet().iterator().next().getKey();
 		}
 		try {
-			resultSet = statement.executeQuery("SELECT * FROM ACME_INVENTORY WHERE PART_ID IN (" + csv + ") AND SC_ID = '" + scId + "'" );
+			resultSet = statement.executeQuery("SELECT * FROM ACME_INVENTORY WHERE PART_ID IN (" + csv + ") AND SC_ID = '" + serviceCenterId + "'" );
 
 			while (resultSet.next()) {
 				minOrderThreshold = Integer.parseInt(resultSet.getString("MIN_ORDER_THRESHOLD"));
 				try {
-					inventoryResult = statement.executeQuery( "SELECT * FROM ACME_INVENTORY WHERE PART_ID = " + Integer.parseInt(resultSet.getString("PART_ID")) + " AND SC_ID <> '" + scId + "' AND MIN_QUANTITY >= (CURRENT_QUANTITY - "+ minOrderThreshold+" ) ORDER BY (CURRENT_QUANTITY - MIN_QUANTITY) DESC" );
+					inventoryResult = statement.executeQuery( "SELECT * FROM ACME_INVENTORY WHERE PART_ID = " + Integer.parseInt(resultSet.getString("PART_ID")) + " AND SC_ID <> '" + serviceCenterId + "' AND MIN_QUANTITY >= (CURRENT_QUANTITY - "+ minOrderThreshold+" ) ORDER BY (CURRENT_QUANTITY - MIN_QUANTITY) DESC" );
 					if(inventoryResult.next()) {
 						deliveryWindow = Integer.parseInt(inventoryResult.getString("MIN_ORDER_THRESHOLD"));
 					} else {
@@ -598,7 +591,7 @@ public class HelperFunctions {
 				
 			}
 		} catch ( SQLException e ) {
-			System.out.println( "Unabel to access Acme Inventory table : " + e.getMessage() );
+			System.out.println( "Unable to access Acme Inventory table : " + e.getMessage() );
 			e.printStackTrace();
 		}
 		return maxDeliveryInDays;

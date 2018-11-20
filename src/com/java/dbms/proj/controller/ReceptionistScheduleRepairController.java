@@ -68,9 +68,9 @@ public class ReceptionistScheduleRepairController {
 			repairService.setPartsList(HelperFunctions.getRepairParts(repairService.getRepairID()));
 			
 			
-			boolean partsavailability = HelperFunctions.checkPartAvailability(ApplicationConstants.REPAIR,repairService.getRepairID(),"");
+			int partsavailability = HelperFunctions.checkPartAvailability(ApplicationConstants.REPAIR,repairService.getRepairID(),"",customer.getServiceCenterId());
 			System.out.println("Parts availability" +partsavailability );
-			if(partsavailability == true) {
+			if(partsavailability == 0) {
 			float duration= HelperFunctions.calculateServiceDuration(ApplicationConstants.REPAIR, repairService.getRepairID(), "");
 			System.out.println("DISPLAY SERVICE DATES duration" + duration);
 			int numOfSlots = (int) Math.ceil((duration*60/30)); 
