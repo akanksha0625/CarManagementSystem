@@ -3,7 +3,7 @@ package com.java.dbms.proj.entities;
 import java.util.Date;
 
 public class PurchaseOrder {
-	int sourceID;
+	String sourceID;
 	String sourceType;
 	int partID;
 	Date orderDate;
@@ -11,10 +11,10 @@ public class PurchaseOrder {
 	int orderID;
 	String state;
 	
-	public int getSourceID() {
+	public String getSourceID() {
 		return sourceID;
 	}
-	public void setSourceID(int sourceID) {
+	public void setSourceID(String sourceID) {
 		this.sourceID = sourceID;
 	}
 	public String getSourceType() {

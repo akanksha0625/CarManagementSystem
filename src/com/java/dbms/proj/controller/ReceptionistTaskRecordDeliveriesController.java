@@ -4,17 +4,24 @@ import java.lang.reflect.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
 
 import com.java.dbms.proj.common.DBFacade;
+import com.java.dbms.proj.common.HelperFunctions;
+import com.java.dbms.proj.entities.Notification;
+import com.java.dbms.proj.entities.PurchaseOrder;
+import com.java.dbms.proj.entities.Service;
 
 public class ReceptionistTaskRecordDeliveriesController {
 	public static void recordDeliveries(Scanner input) throws ClassNotFoundException, SQLException {
 		com.java.dbms.proj.views.ReceptionistView.displayTaskUpdateDeliveries(); //Display page header
 		
 		Statement statement = DBFacade.getConnection().createStatement();
-		ResultSet resultSet, inventoryResult;
+		ResultSet resultSet, inventoryResult, sequenceResult;
 		
 		String temp;
 		int tuples=0;
@@ -39,6 +46,48 @@ public class ReceptionistTaskRecordDeliveriesController {
 				System.out.println("\nThe list provided contained values that were non numeric. Aborting Transaction.\n");
 				return;
 			}
+			
+			ArrayList<PurchaseOrder> purchaseOrder = new ArrayList<PurchaseOrder>();
+
+				try {
+					resultSet = statement.executeQuery( "SELECT * FROM PURCHASE_ORDER WHERE ORDER_ID IN (" + temp + ") AND SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "' AND ORDER_STATUS != 'DELIVERED'" );
+					while(resultSet.next()) {
+						PurchaseOrder order = null;
+						order = new PurchaseOrder();
+						
+						order.setPartID(Integer.parseInt(resultSet.getString("PART_ID")));
+						order.setOrderID(Integer.parseInt(resultSet.getString("ORDER_ID")));
+						order.setSourceType(resultSet.getString("SOURCE_TYPE"));
+						order.setSourceID(resultSet.getString("SOURCE_ID"));
+						order.setPartQuantity(Integer.parseInt(resultSet.getString("PART_QUANTITY")));
+						purchaseOrder.add(order);
+
+					}
+					
+					if (purchaseOrder.size() == 0) {
+						System.out.println("There are no Orders associationed with the given inputs.\n");
+					}
+					
+					for (int index = 0; index < purchaseOrder.size(); index++) {
+						tuples= statement.executeUpdate("UPDATE ACME_INVENTORY SET CURRENT_QUANTITY = CURRENT_QUANTITY + "+ purchaseOrder.get(index).getPartQuantity() +" WHERE PART_ID = "+ purchaseOrder.get(index).getPartID() +" AND SC_ID = '"+ ApplicationController.employee.getServiceCenterId() + "'");
+					}
+					
+					for (int index = 0; index < purchaseOrder.size(); index++) {
+						if(purchaseOrder.get(index).getSourceType().equals("ACME")) {
+							tuples= statement.executeUpdate("UPDATE ACME_INVENTORY SET CURRENT_QUANTITY = CURRENT_QUANTITY - "+ purchaseOrder.get(index).getPartQuantity() +" WHERE PART_ID = "+ purchaseOrder.get(index).getPartID() +" AND SC_ID = '"+ purchaseOrder.get(index).getSourceID() + "'");
+						}
+					}
+					
+					tuples= statement.executeUpdate("UPDATE PURCHASE_ORDER SET ORDER_STATUS = 'DELIVERED' WHERE ORDER_ID IN (" + temp + ") AND ORDER_STATUS != 'DELIVERED' AND SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "'");
+					System.out.println(tuples + " Purchase orders Updated. ");
+					 
+				}catch (SQLException e) {
+					System.out.println( "Cannot Access Orders. " + e );
+					e.printStackTrace();
+				}
+			
+			/*
+			
 			System.out.print ( "\nAfter input : ");
 
 			try {
@@ -70,10 +119,73 @@ public class ReceptionistTaskRecordDeliveriesController {
 				System.out.println( "System Query Error : Cannot Update orders. " + e );
 				e.printStackTrace();
 			}
+			*/
 		}
 	
 		//TODO change status of pending orders to delayed check details and notify manager
 		System.out.println("CHANGING PENDING TO DELAYED & CREATE MANAGER NOTIFICATION");
+		System.out.println("CHANGING NOTIFICATION TABLE SHOW TO FALSE FOR DELIVERED DELIVERIES");
+
+		
+		try {
+
+			resultSet = statement.executeQuery("(SELECT SI.DELIVERY_WINDOW, PO.ORDER_STATUS, PO.ORDER_ID, PO.ORDER_DATE, P.PART_NAME, SC.SC_NAME AS PURCHASER_NAME, SI.UNIT_COST, PO.PART_QUANTITY, SI.SUPPLIER_NAME AS SUPPLIER_NAME FROM PURCHASE_ORDER PO INNER JOIN SERVICE_CENTER SC ON SC.SC_ID = PO.SC_ID INNER JOIN PARTS P ON PO.PART_ID = P.PART_ID INNER JOIN SUPPLIER_INVENTORY SI ON SI.SUPPLIER_ID = PO.SOURCE_ID WHERE PO.SOURCE_TYPE = 'SUPPLIER'AND PO.SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "' AND ORDER_STATUS != 'DELIVERED') UNION (SELECT AI.DELIVERY_WINDOW, PO.ORDER_STATUS, PO.ORDER_ID, PO.ORDER_DATE, P.PART_NAME, SC.SC_NAME AS PURCHASER_NAME, AI.UNIT_COST, PO.PART_QUANTITY, SC2.SC_NAME AS SUPPLIER_NAME FROM PURCHASE_ORDER PO INNER JOIN SERVICE_CENTER SC ON SC.SC_ID = PO.SC_ID INNER JOIN PARTS P ON PO.PART_ID = P.PART_ID INNER JOIN ACME_INVENTORY AI ON AI.SC_ID = PO.SOURCE_ID INNER JOIN SERVICE_CENTER SC2 ON SC2.SC_ID = AI.SC_ID WHERE PO.SOURCE_TYPE = 'ACME' AND AI.PART_ID = PO.PART_ID AND PO.SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "' AND ORDER_STATUS != 'DELIVERED')");	
+			ArrayList<Notification> notification = new ArrayList<Notification>();
+
+			while(resultSet.next()) {
+				Notification order = null;
+				order = new Notification();
+				
+				order.setOrderID(Integer.parseInt(resultSet.getString("ORDER_ID")));
+		//		order.getOrderDate(resultSet.getString("ORDER_DATE"));
+				order.setDeliveryWindow(Integer.parseInt(resultSet.getString("DELIVERY_WINDOW")));
+				notification.add(order);
+
+
+				for (int index = 0; index < notification.size(); index++) {
+					if(true) {
+						tuples= statement.executeUpdate("UPDATE PURCHASE_ORDER SET ORDER_STATUS = 'DELAYED' WHERE ORDER_STATUS != 'DELIVERED' AND ORDER_ID = '" + notification.get(index).getOrderID() + "'");
+					}
+				}
+				
+				Date date = new Date();
+				Calendar currentDate = Calendar.getInstance();
+			    currentDate.setTime(date);
+			    currentDate.add(Calendar.DAY_OF_YEAR,0);
+			    date = currentDate.getTime();
+			    
+				for (int index = 0; index < notification.size(); index++) {
+					if(true) {
+						sequenceResult = statement.executeQuery( "SELECT NOTIFICATION_SEQ.nextVal FROM dual");
+
+						int notificationIndex = 0;
+						if ( sequenceResult.next() ) {
+							notificationIndex = sequenceResult.getInt( "NEXTVAL" );
+						}
+
+						tuples = statement.executeUpdate( "INSERT INTO NOTIFICATION VALUES (" + notificationIndex + ", '" + java.time.LocalDate.now() + "',"+ notification.get(index).getOrderID() + ", '"+ ApplicationController.employee.getServiceCenterId() +"', 1 , '" + java.time.LocalTime.now() + "'" );
+					}
+				}
+
+/*
+				Date date = new Date();
+				Calendar currentDate = Calendar.getInstance();
+			    currentDate.setTime(date);
+			    currentDate.add(Calendar.DAY_OF_YEAR,0);
+			    date = currentDate.getTime();
+			    
+			    int month = date.getMonth() + 1;
+				int year = date.getYear() + 1900;
+				String dateFormatted = date.getDate()+"-"+ month +"-" + year;
+				dateFormatted = HelperFunctions.translateBack(dateFormatted);
+				*/
+			}
+		}catch (SQLException e) {
+			System.out.println( "System Query Error : Cannot Update orders. " + e );
+			e.printStackTrace();
+		}
+		
+		
 		
 	}
 }
