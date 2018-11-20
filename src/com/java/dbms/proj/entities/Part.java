@@ -12,7 +12,7 @@ public class Part {
 	public int getUnitsRequired() { 
 		return unitsRequired;
 	}
-	public void setUnitsRequired(int unitsRequired) {
+	public void setUnitsRequired(int unitsRequired) { 
 		this.unitsRequired = unitsRequired;
 	}
 

@@ -8,89 +8,181 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.java.dbms.proj.common.DBFacade;
+import com.java.dbms.proj.entities.Part;
+import com.java.dbms.proj.entities.ServiceDetails;
 import com.java.dbms.proj.entities.Vehicle;
 
 public class ManagerCarServiceDetailsController {
-	public static void carServicDetails(Scanner input)  throws ClassNotFoundException, SQLException {
-		com.java.dbms.proj.views.ManagerView.displayCarServiceDetails(); //Display page header
+	public static void carServicDetails(Scanner input) throws ClassNotFoundException, SQLException {
+		com.java.dbms.proj.views.ManagerView.displayCarServiceDetails(); // Display page header
 		Statement statement = DBFacade.getConnection().createStatement();
-		ResultSet resultSet,resultSet2,resultSet3;
-		String make,model;
-		
+		ResultSet resultSet;
+
+		ArrayList<ServiceDetails> serviceDetailsList = new ArrayList<ServiceDetails>();
+
 		try {
-			resultSet = statement.executeQuery("SELECT VID FROM MAINTENANCE");
-			while(resultSet.next()) {
-				Vehicle car = new Vehicle();
-				
-				car.setVid(resultSet.getInt("VID"));
-				
-				try {
-					
-					resultSet2 = statement.executeQuery( "SELECT VEHICLE_TYPE.MAKE, VEHICLE_TYPE.MODEL,VEHICLE.YEAR FROM VEHICLE_TYPE INNER JOIN VEHICLE ON VEHICLE.VID=VEHICLE_TYPE.VID WHERE VEHICLE.VID = '" + car.getVid() + "'" );
-					while (resultSet2.next())
-					{
-						car.setMake(resultSet2.getString("MAKE"));
-						car.setModel(resultSet2.getString("MODEL"));
-						car.setYear(resultSet2.getInt("YEAR"));
-						System.out.println("MAKE: " + car.getMake());
-						System.out.println("MODEL: " + car.getModel());
-						System.out.println("YEAR: "+ car.getYear());
-						System.out.println("Service A:");
-						resultSet3 = statement.executeQuery( "select MAINTENANCE.miles,SERVICE_DETAILS.service_name from maintenance inner join maintenance_service_mapping on maintenance.maintenance_id=maintenance_service_mapping.m_id inner join service_details on maintenance_service_mapping.service_id=service_details.service_id where maintenance.vid='" + car.getVid() + "' and maintenance.maintenance_name='A'" );
-						if(resultSet3.next()) {
-							System.out.println("Miles:" + resultSet3.getString("miles"));
-						}
-						while(resultSet3.next()) {
-							System.out.println("List of basic services: \n" + resultSet3.getString("service_name"));
-						}
-						
-						System.out.println("Service B:");
-						resultSet3 = statement.executeQuery( "select MAINTENANCE.miles,SERVICE_DETAILS.service_name from maintenance inner join maintenance_service_mapping on maintenance.maintenance_id=maintenance_service_mapping.m_id inner join service_details on maintenance_service_mapping.service_id=service_details.service_id where maintenance.vid='" + car.getVid() + "' and maintenance.maintenance_name='B'" );
-						if(resultSet3.next()) {
-							System.out.println("Miles:" + resultSet3.getString("miles"));
-						}
-						while(resultSet3.next()) {
-							System.out.println("List of basic services: \n" + resultSet3.getString("service_name"));
-						}
-						
-						System.out.println("Service C:");
-						resultSet3 = statement.executeQuery( "select MAINTENANCE.miles,SERVICE_DETAILS.service_name from maintenance inner join maintenance_service_mapping on maintenance.maintenance_id=maintenance_service_mapping.m_id inner join service_details on maintenance_service_mapping.service_id=service_details.service_id where maintenance.vid='" + car.getVid() + "' and maintenance.maintenance_name='C'" );
-						if(resultSet3.next()) {
-							System.out.println("Miles:" + resultSet3.getString("miles"));
-						}
-						while(resultSet3.next()) {
-							System.out.println("List of basic services: \n" + resultSet3.getString("service_name"));
-						}
-							
-											
-												
-					}					
-					
-				}
-				catch ( SQLException e ) {
-					System.out.println( "Invalid Vehicle Type : " + e.getMessage() );
-				}
-				
-				
+			/* Get all the vechicles */
+			resultSet = statement.executeQuery("SELECT * FROM VEHICLE_TYPE");
+			while (resultSet.next()) {
+				ServiceDetails details = new ServiceDetails();
+				details.setVid(resultSet.getInt("VID"));
+				details.setMake(resultSet.getString("MAKE"));
+				details.setModel(resultSet.getString("MODEL"));
+				details.setYear(resultSet.getString("YEAR"));
+				serviceDetailsList.add(details);
 			}
-				
-	
-			
-			}  catch (SQLException e) {
-				System.out.println("Could'nt get the Employee details. " + e);
-				e.printStackTrace();
+		} catch (SQLException e) {
+			System.out.println("Unable to access the Vehicle Table : " + e.getMessage() + " : Aborting Transaction\n");
+			return;
+		}
+
+		for (int i = 0; i < serviceDetailsList.size(); i++) {
+			/* for each serviceDetail */
+			try {
+				/*Service A Details*/
+				resultSet = statement.executeQuery("SELECT * FROM MAINTENANCE WHERE VID = '"
+						+ serviceDetailsList.get(i).getVid() + "' AND MAINTENANCE_NAME = 'A'");
+				if (resultSet.next()) {
+					serviceDetailsList.get(i).setaMiles(resultSet.getInt("MILES"));
+					serviceDetailsList.get(i).setaMonths(resultSet.getInt("MONTHS"));
+					serviceDetailsList.get(i).setaMaintenanceID(resultSet.getInt("MAINTENANCE_ID"));
+				}
+				/*Service B Details*/
+				resultSet = statement.executeQuery("SELECT * FROM MAINTENANCE WHERE VID = '"
+						+ serviceDetailsList.get(i).getVid() + "' AND MAINTENANCE_NAME = 'B'");
+				if (resultSet.next()) {
+					serviceDetailsList.get(i).setbMiles(resultSet.getInt("MILES"));
+					serviceDetailsList.get(i).setbMonths(resultSet.getInt("MONTHS"));
+					serviceDetailsList.get(i).setbMaintenanceID(resultSet.getInt("MAINTENANCE_ID"));
+				}
+				/*Service C Details*/
+				resultSet = statement.executeQuery("SELECT * FROM MAINTENANCE WHERE VID = '"
+						+ serviceDetailsList.get(i).getVid() + "' AND MAINTENANCE_NAME = 'C'");
+				if (resultSet.next()) {
+					serviceDetailsList.get(i).setcMiles(resultSet.getInt("MILES"));
+					serviceDetailsList.get(i).setcMonths(resultSet.getInt("MONTHS"));
+					serviceDetailsList.get(i).setcMaintenanceID(resultSet.getInt("MAINTENANCE_ID"));
+				}
+			} catch (SQLException e) {
+				System.out.println(
+						"Unable to access the Maintenance Table : " + e.getMessage() + " : Aborting Transaction\n");
+				return;
 			}
-		//TODO dump the details in
-		System.out.println("GET SERVICE DETAILS\n");
-		
-		System.out.println( "Please select from the following user options:" );
-		System.out.println( "\tEnter '1' to Go Back");
-		
+		}
+
+		for (int i = 0; i < serviceDetailsList.size(); i++) {
+			try {
+				resultSet = statement.executeQuery("SELECT * FROM MAINTENANCE_SERVICE_MAPPING WHERE M_ID = '"
+						+ serviceDetailsList.get(i).getaMaintenanceID() + "'");
+				while (resultSet.next()) {
+					serviceDetailsList.get(i).getServiceAIDs().add(resultSet.getInt("SERVICE_ID"));
+				}
+				resultSet = statement.executeQuery("SELECT * FROM MAINTENANCE_SERVICE_MAPPING WHERE M_ID = '"
+						+ serviceDetailsList.get(i).getbMaintenanceID() + "'");
+				while (resultSet.next()) {
+					serviceDetailsList.get(i).getServiceBIDs().add(resultSet.getInt("SERVICE_ID"));
+				}
+				resultSet = statement.executeQuery("SELECT * FROM MAINTENANCE_SERVICE_MAPPING WHERE M_ID = '"
+						+ serviceDetailsList.get(i).getcMaintenanceID() + "'");
+				while (resultSet.next()) {
+					serviceDetailsList.get(i).getServiceCIDs().add(resultSet.getInt("SERVICE_ID"));
+				}
+			} catch (SQLException e) {
+				System.out.println("Unable to access the Maintenance Mapping Table : " + e.getMessage()
+						+ " : Aborting Transaction\n");
+				return;
+			}
+		}
+
+		for (int i = 0; i < serviceDetailsList.size(); i++) {
+			try {
+				for (int j = 0; j < serviceDetailsList.get(i).getServiceAIDs().size(); j++) {
+					resultSet = statement.executeQuery("SELECT * FROM SERVICE_DETAILS WHERE SERVICE_ID = '"
+							+ serviceDetailsList.get(i).getServiceAIDs().get(j) + "'");
+					while (resultSet.next()) {
+						Part part = new Part();
+						part.setPartID(resultSet.getInt("PART_ID"));
+						serviceDetailsList.get(i).getServiceAParts().add(part);
+					}
+				}
+				for (int j = 0; j < serviceDetailsList.get(i).getServiceBIDs().size(); j++) {
+					resultSet = statement.executeQuery("SELECT * FROM SERVICE_DETAILS WHERE SERVICE_ID = '"
+							+ serviceDetailsList.get(i).getServiceBIDs().get(j) + "'");
+					while (resultSet.next()) {
+						Part part = new Part();
+						part.setPartID(resultSet.getInt("PART_ID"));
+						serviceDetailsList.get(i).getServiceBParts().add(part);
+					}
+				}
+				for (int j = 0; j < serviceDetailsList.get(i).getServiceCIDs().size(); j++) {
+					resultSet = statement.executeQuery("SELECT * FROM SERVICE_DETAILS WHERE SERVICE_ID = '"
+							+ serviceDetailsList.get(i).getServiceCIDs().get(j) + "'");
+					while (resultSet.next()) {
+						Part part = new Part();
+						part.setPartID(resultSet.getInt("PART_ID"));
+						serviceDetailsList.get(i).getServiceCParts().add(part);
+					}
+				}
+			} catch (SQLException e) {
+				System.out.println(
+						"Unable to access the Service Details Table : " + e.getMessage() + " : Aborting Transaction\n");
+				return;
+			}
+		}
+
+		for (int i = 0; i < serviceDetailsList.size(); i++) {
+			try {
+				for (int j = 0; j < serviceDetailsList.get(i).getServiceAParts().size(); j++) {
+					resultSet = statement.executeQuery("SELECT * FROM PARTS, PARTS_QUANTITY WHERE PARTS.PART_ID = '"
+							+ serviceDetailsList.get(i).getServiceAParts().get(j).getPartID()
+							+ "' AND PARTS_QUANTITY.VID = '" + serviceDetailsList.get(i).getVid() + "'");
+					while (resultSet.next()) {
+						serviceDetailsList.get(i).getServiceAParts().get(j)
+								.setPartName(resultSet.getString("PART_NAME"));
+						serviceDetailsList.get(i).getServiceAParts().get(j)
+								.setUnitsRequired(resultSet.getInt("QUANTITY"));
+					}
+				}
+				for (int j = 0; j < serviceDetailsList.get(i).getServiceBParts().size(); j++) {
+					resultSet = statement.executeQuery("SELECT * FROM PARTS, PARTS_QUANTITY WHERE PARTS.PART_ID = '"
+							+ serviceDetailsList.get(i).getServiceBParts().get(j).getPartID()
+							+ "' AND PARTS_QUANTITY.VID = '" + serviceDetailsList.get(i).getVid() + "'");
+					while (resultSet.next()) {
+						serviceDetailsList.get(i).getServiceBParts().get(j)
+								.setPartName(resultSet.getString("PART_NAME"));
+						serviceDetailsList.get(i).getServiceBParts().get(j)
+								.setUnitsRequired(resultSet.getInt("QUANTITY"));
+					}
+				}
+				for (int j = 0; j < serviceDetailsList.get(i).getServiceCParts().size(); j++) {
+					resultSet = statement.executeQuery("SELECT * FROM PARTS, PARTS_QUANTITY WHERE PARTS.PART_ID = '"
+							+ serviceDetailsList.get(i).getServiceCParts().get(j).getPartID()
+							+ "' AND PARTS_QUANTITY.VID = '" + serviceDetailsList.get(i).getVid() + "'");
+					while (resultSet.next()) {
+						serviceDetailsList.get(i).getServiceCParts().get(j)
+								.setPartName(resultSet.getString("PART_NAME"));
+						serviceDetailsList.get(i).getServiceCParts().get(j)
+								.setUnitsRequired(resultSet.getInt("QUANTITY"));
+					}
+				}
+			} catch (SQLException e) {
+				System.out.println(
+						"Unable to access the Parts Details Table : " + e.getMessage() + " : Aborting Transaction\n");
+				return;
+			}
+		}
+
+		for (int i = 0; i < serviceDetailsList.size(); i++)
+			System.out.println(serviceDetailsList.get(i).toString());
+
+		System.out.println("Please select from the following user options:");
+		System.out.println("\tEnter '1' to Go Back");
+
 		String userInput = "";
 		do {
-			System.out.print( "\nOption Selection : " );
+			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
-		}while( !userInput.equals( "1" ) );
+		} while (!userInput.equals("1"));
 	}
 
 }

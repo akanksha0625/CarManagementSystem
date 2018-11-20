@@ -41,12 +41,13 @@ public class ManagerNewOrderController {
 					System.out.println ( "Min order quantity too low" );
 				}
 			} else {
-				System.out.println ( "\nNo such inventory exist for this service center.\n" );
+				System.out.println ( "\nNo such inventory exist for this PartID : " + partId +".\n" );
 				return;
 			}
 		} catch ( SQLException e ) {
 			System.out.println( "Unabel to access Inventory table : " + e.getMessage() );
 			e.printStackTrace();
+			return;
 		}
 		try {
 			resultSet = statement.executeQuery( "SELECT * FROM ACME_INVENTORY WHERE PART_ID = " + partId + " AND SC_ID <> '" + ApplicationController.employee.getServiceCenterId() + "' AND MIN_QUANTITY >= (CURRENT_QUANTITY - "+ quantity+" ) ORDER BY (CURRENT_QUANTITY - MIN_QUANTITY) DESC" );
@@ -114,11 +115,13 @@ public class ManagerNewOrderController {
 			} catch ( SQLException e ) {
 				System.out.println( "Unabel to place the order : " + e.getMessage() );
 				e.printStackTrace();
+				return;
 			}
 			
 		} catch ( SQLException e ) {
 			System.out.println( "Unabel to access Inventory table : " + e.getMessage() );
 			e.printStackTrace();
+			return;
 		}
 		
 		
