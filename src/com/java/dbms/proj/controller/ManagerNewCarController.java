@@ -1,9 +1,10 @@
 package com.java.dbms.proj.controller;
 
-
 import java.sql.SQLException;
+
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.java.dbms.proj.common.DBFacade;
@@ -37,6 +38,28 @@ public class ManagerNewCarController {
 		model=input.nextLine();
 		System.out.print("\n\tPlease enter Year:");
 		year=input.nextLine();
+		
+		try {
+			resultSet = statement.executeQuery(
+					"SELECT VID FROM VEHICLE_TYPE WHERE MAKE = '" + make + "' AND MODEL = '" + model + "' AND YEAR = '"+ year +"'");
+			if (resultSet.next()) {
+				vid = resultSet.getInt("VID");
+				resultSet = statement.executeQuery(
+						"SELECT * FROM MAINTENANCE WHERE VID ='" + vid + "'");
+				if (resultSet.next()) {
+							System.out.println("\nSorry, this vehicle already exists in the system.");
+							return;
+					}
+				}
+			 else {
+				System.out.println("\nSorry, we are unable to accommodate this vehicle type : " + make + ", "
+						+ model + " at this time.");
+				return;
+			 	}
+		} catch (SQLException e) {
+			System.out.println("\nInvalid Vehicle Type : " + e.getMessage());
+			return;
+		}
 	
 		System.out.print("\n\tPlease enter number of miles for Service A:");
 		amiles=input.nextInt();
@@ -47,13 +70,17 @@ public class ManagerNewCarController {
 		servicelista=input.nextLine();
 		
 		String[] valuesa = servicelista.split(",");
+		ArrayList<Integer> serviceIda = new ArrayList<Integer>();
+		ArrayList<Integer> serviceIdb = new ArrayList<Integer>();
 		
 		
 		System.out.print("\n\tPlease enter number of miles for Service B:");
 		bmiles=input.nextInt();
 		System.out.print("\n\tPlease enter number of months for Service B:");
 		bmonths=input.nextInt();
-		System.out.print("\n\tPlease enter list of basic services for Service B seperated with a comma:");
+
+		System.out.println("Please enter additional list of services for Service B seperated with a comma:");
+
 		servicelistb=input.nextLine();
 		servicelistb=input.nextLine();	
 		
@@ -63,11 +90,13 @@ public class ManagerNewCarController {
 		cmiles=input.nextInt();
 		System.out.print("\n\tPlease enter number of months for Service C:");
 		cmonths=input.nextInt();
-		System.out.print("\n\tPlease enter list of basic services for Service C seperated with a comma:");
+
+		System.out.println("Please enter additional list of services for Service C seperated with a comma:");
+
 		servicelistc=input.nextLine();	
 		servicelistc=input.nextLine();	
 		
-		String[] valuesc = servicelistb.split(",");
+		String[] valuesc = servicelistc.split(",");
 		
 				try {
 					resultSet = statement.executeQuery( "SELECT VID FROM VEHICLE_TYPE WHERE MAKE = '" + make + "' and MODEL = '" + model + "'" );
@@ -107,13 +136,15 @@ public class ManagerNewCarController {
 				
 			    }
 				
-				while(i<valuesa.length) {
+				while(i <= valuesa.length-1) {
 					resultSet = statement.executeQuery( "SELECT SERVICE_ID FROM SERVICE_DETAILS WHERE SERVICE_NAME = '"+valuesa[i]+"'");
 				
 				
 				if (resultSet.next())
 				{
 					sid=resultSet.getInt("SERVICE_ID");
+					serviceIda.add(sid);
+					
 				}
 				try {
 				statement.executeUpdate( "INSERT INTO MAINTENANCE_SERVICE_MAPPING VALUES ('" + mid + "', '" + sid + "')" );
@@ -122,7 +153,7 @@ public class ManagerNewCarController {
 					System.out.println( "Unable to insert into the MAINTENANCE_SERVICE_MAPPING Table for Service A : " + e.getMessage() );
 				
 			    }
-				i++;
+				i+=1;
 				}
 			}
 			catch ( SQLException e ) {
@@ -138,18 +169,26 @@ public class ManagerNewCarController {
 			
 			statement.executeUpdate( "INSERT INTO MAINTENANCE VALUES ('" + vid + "', '" + bmiles + "', '" + bmonths + "','" + mid + "', '" + "B" + "')" );
 			i=0;
-			while(i<valuesb.length) {
+			while(i<=valuesb.length-1) {
 				resultSet = statement.executeQuery( "SELECT SERVICE_ID FROM SERVICE_DETAILS WHERE SERVICE_NAME = '"+valuesb[i]+"'");
 			
 			
 			if (resultSet.next())
 			{
 				sid=resultSet.getInt("SERVICE_ID");
+				serviceIdb.add(sid);
+				
 			}
 			
 			statement.executeUpdate( "INSERT INTO MAINTENANCE_SERVICE_MAPPING VALUES ('" + mid + "', '" + sid + "')" );
-			i++;
+			i=i+1;
 			}
+			
+			i=0;
+			for(i=0;i<serviceIda.size();i++) {
+				statement.executeUpdate( "INSERT INTO MAINTENANCE_SERVICE_MAPPING VALUES ('" + mid + "', '" + serviceIda.get(i) + "')" );
+			}
+			
 			}
 			catch ( SQLException e ) {
 				System.out.println( "Unable to access the MAINTENANCE Table for Service B : " + e.getMessage() );
@@ -165,7 +204,8 @@ public class ManagerNewCarController {
 			}
 			
 			statement.executeUpdate( "INSERT INTO MAINTENANCE VALUES ('" + vid + "', '" + cmiles + "', '" + cmonths + "','" + mid + "', '" + "C" + "')" );
-			while(i<valuesc.length) {
+			i=0;
+			while(i<=valuesc.length-1) {
 				resultSet = statement.executeQuery( "SELECT SERVICE_ID FROM SERVICE_DETAILS WHERE SERVICE_NAME = '"+valuesc[i]+"'");
 			
 			
@@ -175,8 +215,17 @@ public class ManagerNewCarController {
 			}
 			
 			statement.executeUpdate( "INSERT INTO MAINTENANCE_SERVICE_MAPPING VALUES ('" + mid + "', '" + sid + "')" );
-			i++;
+			i=i+1;
 			}
+			
+			for(i=0;i<serviceIda.size();i++) {
+				statement.executeUpdate( "INSERT INTO MAINTENANCE_SERVICE_MAPPING VALUES ('" + mid + "', '" + serviceIda.get(i) + "')" );
+			}
+			
+			for(i=0;i<serviceIdb.size();i++) {
+				statement.executeUpdate( "INSERT INTO MAINTENANCE_SERVICE_MAPPING VALUES ('" + mid + "', '" + serviceIdb.get(i) + "')" );
+			}
+			
 			
 			System.out.println( "New Car added." );
 		}
