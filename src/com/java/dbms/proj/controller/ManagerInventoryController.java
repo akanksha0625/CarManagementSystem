@@ -21,6 +21,7 @@ public class ManagerInventoryController {
 			while (resultSet.next()) {
 					System.out.println("Part ID : "+ resultSet.getString("PART_ID"));
 					System.out.println("Part Name : "+ resultSet.getString("PART_NAME"));
+					System.out.println("Make : "+ resultSet.getString("MAKE"));
 					System.out.println("Quantity : "+ resultSet.getString("CURRENT_QUANTITY"));
 					System.out.println("Unit Price : "+ resultSet.getString("UNIT_COST"));
 					System.out.println("Minimum Quantity Threshold : "+ resultSet.getString("MIN_QUANTITY"));
