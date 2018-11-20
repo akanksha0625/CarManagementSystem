@@ -17,9 +17,9 @@ public class ApplicationController {
 	/* Response string and Scanner to process user option selections. */
 	static String response = "";
 	static Scanner input = new Scanner( System.in );
-	static Customer customer;
+	public static Customer customer;
 
-	static Employee employee;
+	public static Employee employee;
 	static Statement statement = null;
 	static ResultSet resultSet;
 	

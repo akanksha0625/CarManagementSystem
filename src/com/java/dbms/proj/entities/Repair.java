@@ -7,8 +7,18 @@ public class Repair extends Service {
 	double diagnosisFee;
 	String service; 
 	String repairID; // options 1-8
-	
+	ArrayList<String> subServices =  new ArrayList<String>();
 	public ArrayList<Part> partsList = new ArrayList<Part>();
+	
+	public ArrayList<String> getSubServices() {
+		return subServices;
+	}
+	public void setSubServices(ArrayList<String> subServices) {
+		this.subServices = subServices;
+	}
+	public void setPartsList(ArrayList<Part> partsList) {
+		this.partsList = partsList;
+	}
 	
 	public String getDiagnosis() {
 		return diagnosis;

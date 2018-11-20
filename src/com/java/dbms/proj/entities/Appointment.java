@@ -5,7 +5,13 @@ public class Appointment {
 	String appointmentDate;
 	String requestedMechanicFirstName;
 	String requestedMechanicLastName;
-
+	int mechanicId;
+	public int getMechanicId() {
+		return mechanicId;
+	}
+	public void setMechanicId(int mechanicId) {
+		this.mechanicId = mechanicId;
+	}
 	String serviceType;
 	String state;
 	String serviceID;

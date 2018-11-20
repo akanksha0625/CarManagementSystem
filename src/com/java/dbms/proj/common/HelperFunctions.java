@@ -18,6 +18,7 @@ import com.java.dbms.proj.entities.Appointment;
 import com.java.dbms.proj.entities.Customer;
 import com.java.dbms.proj.entities.DailyTimeSlot;
 import com.java.dbms.proj.entities.HourlyEmployee;
+import com.java.dbms.proj.entities.Part;
 import com.java.dbms.proj.entities.PayCheck;
 import com.java.dbms.proj.entities.Service;
 import com.java.dbms.proj.entities.TimeSlot;
@@ -192,13 +193,13 @@ public class HelperFunctions {
 
 	}
 
-	public static ArrayList<Service> getServiceHistory(Customer customer) throws SQLException {
+	public static ArrayList<Service> getServiceHistory(Customer customer,String serviceStatus) throws SQLException {
 		statement = DBFacade.getConnection().createStatement();
 		ArrayList<Service> serviceList = new ArrayList<Service>();
 		try {
 
 			resultSet = statement.executeQuery("SELECT * FROM APPOINTMENT WHERE CUSTOMER_ID = '"
-					+ customer.getCustomerId() + "' and STATE ='" + ApplicationConstants.COMPLETE + "'");
+					+ customer.getCustomerId() + "' and STATE ='" + serviceStatus + "'");
 
 		} catch (SQLException e) {
 
@@ -206,13 +207,13 @@ public class HelperFunctions {
 		}
 
 		while (resultSet.next()) {
-
 			Service service = new Service();
 			service.setAppointmentID(resultSet.getString("APPOINTMENT_ID"));
 			service.setAppointmentDate(resultSet.getString("APPOINTMENT_DATE"));
 			service.setServiceType(resultSet.getString("SERVICE_TYPE"));
 			service.setVehicleLicense(resultSet.getString("VEHICLE_LICENSE"));
 			service.setServiceStatus(resultSet.getString("STATE"));
+			service.setServiceTypeID(resultSet.getString("SERVICE_TYPE_ID"));
 			serviceList.add(service);
 		}
 
@@ -238,17 +239,28 @@ public class HelperFunctions {
 		return serviceList;
 	}
 
-	public static void displayServiceHistory(Customer customer) throws SQLException {
+	public static void displayServiceHistory(Customer customer,String serviceStatus) throws SQLException {
 
-		ArrayList<Service> serviceList = getServiceHistory(customer);
+		ArrayList<Service> serviceList = getServiceHistory(customer,serviceStatus);
 
-		if (serviceList.size() == 0)
+		if (serviceList.size() == 0 && serviceStatus == ApplicationConstants.COMPLETE)
 			System.out.println("There is no service history available for " + customer.getFirstName() + " "
 					+ customer.getLastName() + ".");
-
+		else if (serviceList.size() == 0 && serviceStatus == ApplicationConstants.PENDING)
+			System.out.println("There is no furture appointments available for " + customer.getFirstName() + " "
+					+ customer.getLastName() + ".");
+		
 		else {
+			if(serviceStatus == ApplicationConstants.COMPLETE) {
 			System.out.println("\n\tDISPLAY CUSTOMER SERVICE HISTORY");
-			System.out.println("\t-------------------------------\n");
+			System.out.println("\t--------------------------------------------------------\n");
+			}
+			
+			else if(serviceStatus == ApplicationConstants.PENDING) {
+				System.out.println("\n\tDISPLAY CUSTOMER APPOINTMENTS");
+				System.out.println("\t----------------------------------------------------\n");
+				}
+			
 
 			for (int index = 0; index < serviceList.size(); index++) {
 				Service service = serviceList.get(index);
@@ -257,6 +269,9 @@ public class HelperFunctions {
 				System.out.println("\tService ID                :\t" + service.getAppointmentID());
 				System.out.println("\tLicense Plate             :\t" + service.getVehicleLicense());
 				System.out.println("\tService Type              :\t" + service.getServiceType());
+				if(serviceStatus == ApplicationConstants.PENDING) 
+				System.out.println("\tService Details           :\t" + service.getServiceTypeID());
+				if(serviceStatus == ApplicationConstants.COMPLETE)
 				System.out.println("\tMechanic Name             :\t" + service.getMechanicFullName());
 				System.out.println("\tService Start Date|Time   :\t" + service.getAppointmentDate() + " | "
 						+ service.getTimeSlot().getStartTime());
@@ -264,7 +279,7 @@ public class HelperFunctions {
 				System.out.println("\tService End Date|Time     :\t" + service.getAppointmentDate() + " | "
 						+ service.getTimeSlot().getEndTime());
 				System.out.println("\tService Status            :\t" + service.getServiceStatus()
-						+ "\n\t-------------------------------\n");
+						+ "\n\t----------------------------------------------------------\n");
 
 			}
 		}
@@ -311,9 +326,9 @@ public class HelperFunctions {
 				serviceTobeScheduled = ApplicationConstants.SERVICEC;
 		} else {
 
-			if (lastServiceName.equals(ApplicationConstants.SERVICEA))
+			if (lastServiceName.equalsIgnoreCase(ApplicationConstants.SERVICEA))
 				serviceTobeScheduled = ApplicationConstants.SERVICEB;
-			else if (lastServiceName.equals(ApplicationConstants.SERVICEB))
+			else if (lastServiceName.equalsIgnoreCase(ApplicationConstants.SERVICEB))
 				serviceTobeScheduled = ApplicationConstants.SERVICEC;
 			else
 				serviceTobeScheduled = ApplicationConstants.SERVICEA;
@@ -322,8 +337,9 @@ public class HelperFunctions {
 		return serviceTobeScheduled;
 	}
 
-	public static int getVechileID(String vehicleLicenseNumber) {
+	public static int getVechileID(String vehicleLicenseNumber) throws SQLException {
 		int vid = 0;
+		statement = DBFacade.getConnection().createStatement();
 		try {
 			resultSet = statement
 					.executeQuery("SELECT VID FROM VEHICLE WHERE LICENSE = '" + vehicleLicenseNumber + "'");
@@ -340,40 +356,16 @@ public class HelperFunctions {
 		return vid;
 	}
 
-	public static ArrayList<Integer> getChildServiceList(String serviceName, String serviceType, String licenseNumber)
-			throws SQLException {
-		int vechicleId = 0;
-		vechicleId = getVechileID(licenseNumber);
-		ArrayList<Integer> childServiceList = new ArrayList<Integer>();
-		if (vechicleId != 0) {
-			int maintenanceId = 0;
-			if (serviceName == ApplicationConstants.MAINTENANCE)
-				resultSet = statement.executeQuery("SELECT MAINTENANCE_ID FROM MAINTENANCE WHERE MAINTENANCE_NAME = '"
-						+ serviceType + "' and VID='" + vechicleId + "'");
 
-			if (resultSet.next()) {
-				maintenanceId = resultSet.getInt("MAINTENANCE_ID");
-			}
-
-			if (maintenanceId != 0) {
-				resultSet = statement.executeQuery(
-						"SELECT SERVICE_ID FROM MAINTENANCE_SERVICE_MAPPING WHERE M_ID = '" + maintenanceId + "'");
-
-				while (resultSet.next()) {
-					int childServiceId = 0;
-					childServiceId = resultSet.getInt("SERVICE_ID");
-					childServiceList.add(childServiceId);
-				}
-			}
-
-		}
-		return childServiceList;
-	}
+	
+	
 
 	public static float calculateServiceDuration(String serviceName, String serviceType, String licenseNumber)
 			throws SQLException {
 		float timeDuration = 0;
+		statement = DBFacade.getConnection().createStatement();
 		ArrayList<Integer> childServiceList = getChildServiceList(serviceName, serviceType, licenseNumber);
+		System.out.println("child service size"+childServiceList.size());
 		for (int i = 0; i < childServiceList.size(); i++) {
 			resultSet = statement.executeQuery("SELECT TIME_REQUIRED,PART_ID FROM SERVICE_DETAILS WHERE SERVICE_ID = '"
 					+ childServiceList.get(i) + "'");
@@ -510,6 +502,7 @@ public class HelperFunctions {
 		ArrayList<Integer> partIDList = new ArrayList<Integer>();
 		ArrayList<Integer> childServiceList = getChildServiceList(serviceName, serviceType, licenseNumber);
 		HashMap<Integer, Integer> requiredPartList = new HashMap<Integer, Integer>();
+		statement = DBFacade.getConnection().createStatement();
 		for (int i = 0; i < childServiceList.size(); i++) {
 			resultSet = statement.executeQuery(
 					"SELECT PART_ID FROM SERVICE_DETAILS WHERE SERVICE_ID = '" + childServiceList.get(i) + "'");
@@ -543,6 +536,7 @@ public class HelperFunctions {
 			throws NumberFormatException, SQLException {
 		int numberOfDays = 0;
 		boolean partsAvailable = true;
+		statement = DBFacade.getConnection().createStatement();
 		HashMap<Integer, Integer> requiredPartList = getPartList(serviceName, serviceType, licenseNumber);
 		for (int index : requiredPartList.keySet()) {
 
@@ -609,5 +603,102 @@ public class HelperFunctions {
 		}
 		return maxDeliveryInDays;
 	}
+	
+	
+	
+	public static ArrayList<Integer> getChildServiceList(String serviceName, String serviceType, String licenseNumber)
+			throws SQLException {
+		int vechicleId = 0;
+		statement = DBFacade.getConnection().createStatement();
+		System.out.print("Entered child service method"+serviceName+",");
+		ArrayList<Integer> childServiceList = new ArrayList<Integer>();
+		if (ApplicationConstants.MAINTENANCE.equalsIgnoreCase(serviceName)) {
+			
+			System.out.println("Entered Maintenance");
+			vechicleId = getVechileID(licenseNumber);
+			if (vechicleId != 0) {
+			
+			int maintenanceId = 0;
+				resultSet = statement.executeQuery("SELECT MAINTENANCE_ID FROM MAINTENANCE WHERE MAINTENANCE_NAME = '"
+						+ serviceType + "' and VID='" + vechicleId + "'");
+
+			if (resultSet.next()) {
+				maintenanceId = resultSet.getInt("MAINTENANCE_ID");
+			}
+
+			if (maintenanceId != 0) {
+				
+				resultSet = statement.executeQuery(
+						"SELECT SERVICE_ID FROM MAINTENANCE_SERVICE_MAPPING WHERE M_ID = '" + maintenanceId + "'");
+
+				while (resultSet.next()) {
+					int childServiceId = 0;
+					childServiceId = resultSet.getInt("SERVICE_ID");
+					childServiceList.add(childServiceId);
+				}
+			}
+			}
+		}
+		else if(ApplicationConstants.REPAIR.equalsIgnoreCase(serviceName)) {
+			System.out.println("Entered Repair");
+			resultSet = statement.executeQuery("SELECT REQUIRED_SERVICE_ID FROM REPAIR_SERVICE_MAPPING where RID = '" + serviceType + "'");
+			while(resultSet.next()) {
+				childServiceList.add(resultSet.getInt("REQUIRED_SERVICE_ID"));
+			}
+		}
+		
+		return childServiceList;
+}
+	
+	
+	public static ArrayList<String> getChildRepairNameList(String serviceType)
+			throws SQLException {
+		statement = DBFacade.getConnection().createStatement();
+		ArrayList<String> subServices = new ArrayList<String>();
+			
+			resultSet = statement.executeQuery("SELECT REQUIRED_SERVICE_ID FROM REPAIR_SERVICE_MAPPING where RID = '" + serviceType + "'");
+			
+			ArrayList<Integer> subServicesId = new ArrayList<Integer>();
+			while(resultSet.next()) {
+				subServicesId.add(resultSet.getInt("REQUIRED_SERVICE_ID"));
+			}
+			
+			
+			for(int i=0;i<subServicesId.size();i++) {
+			resultSet = statement.executeQuery("SELECT SERVICE_NAME FROM SERVICE_DETAILS WHERE SERVICE_ID = '" + subServicesId.get(i) + "'");
+			if (resultSet.next()) {
+				subServices.add(resultSet.getString("SERVICE_NAME"));
+			}
+		}
+		return subServices;
+	
+}
+	
+	public static ArrayList<Part> getRepairParts(String serviceType)
+			throws SQLException {
+		statement = DBFacade.getConnection().createStatement();
+		ArrayList<Part> partList = new ArrayList<Part>();
+			resultSet = statement.executeQuery("SELECT REQUIRED_SERVICE_ID FROM REPAIR_SERVICE_MAPPING where RID = '" + serviceType + "'");
+			
+			ArrayList<String> subServicesId = new ArrayList<String>();
+			while (resultSet.next()) {
+				subServicesId.add(resultSet.getString("REQUIRED_SERVICE_ID"));
+			}
+			
+			for (int i = 0; i < subServicesId.size(); i++) {
+				resultSet = statement.executeQuery(
+						"SELECT P.PART_ID,P.PART_NAME FROM SERVICE_DETAILS S ,PARTS P WHERE P.PART_ID = S.PART_ID and SERVICE_ID = '" + subServicesId.get(i) + "'");
+				System.out.println("Inside childServiceList");
+				while (resultSet.next()) {
+					Part part=new Part();
+					part.setPartID(Integer.parseInt(resultSet.getString("PART_ID")));
+					part.setPartName(resultSet.getString("PART_NAME"));
+					System.out.println(part.getPartID()+"," + part.getPartName());
+					partList.add(part);
+				}
+			}
+			return partList;	
+}
+	
 	
 }

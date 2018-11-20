@@ -12,7 +12,7 @@ import java.util.Scanner;
 import com.java.dbms.proj.common.ApplicationConstants;
 import com.java.dbms.proj.common.DBFacade;
 import com.java.dbms.proj.common.HelperFunctions;
-import com.java.dbms.proj.common.Schedule;
+import com.java.dbms.proj.entities.Schedule;
 import com.java.dbms.proj.common.SchedulerHelper;
 import com.java.dbms.proj.entities.Appointment;
 import com.java.dbms.proj.entities.Customer;
@@ -59,25 +59,32 @@ public class CustomerScheduleMaintenanceController {
 			System.out.println("DISPLAY SERVICE DATES: lastServiceName"+ serviceTobeScheduled);
 			int vehicleID = HelperFunctions.getVechileID(licensePlateNumber); 
 			System.out.println("DISPLAY SERVICE DATES vehicleID" + vehicleID);
+			
+					
+			
+			
+			boolean partsavailability = HelperFunctions.checkPartAvailability(ApplicationConstants.MAINTENANCE, serviceTobeScheduled, licensePlateNumber);
+			System.out.println("Parts availability" +partsavailability );
+			if(partsavailability == true) {
 			float duration= HelperFunctions.calculateServiceDuration(ApplicationConstants.MAINTENANCE, serviceTobeScheduled, licensePlateNumber);
-		
-			System.out.println("DISPLAY SERVICE DATES duration" + duration);		
-			
-			System.out.println("Parts availability" + HelperFunctions.checkPartAvailability(ApplicationConstants.MAINTENANCE, serviceTobeScheduled, licensePlateNumber));
-			
+			System.out.println("DISPLAY SERVICE DATES duration" + duration);
 			numOfSlots = (int) Math.ceil((duration*60/30)); 
 			System.out.println("Number Of slots"+numOfSlots);
 			ArrayList<Schedule> scheduleList=new ArrayList<Schedule>();
-			scheduleList = SchedulerHelper.getTimeSlot(appointment.getRequestedMechanicFirstName(),appointment.getRequestedMechanicLastName(),numOfSlots,customer.getServiceCenterId());
-			for(int i=0;i<scheduleList.size();i++)
-			{			
-				Schedule schedule=new Schedule();
-				TimeSlot t=schedule.getAvailableTimeSlot();
-				Date date = schedule.getDate();
-				System.out.println("\n\tAvailable Time Slots : \t\t" + SchedulerHelper.datetoString(date) + " - " + t.getStartTime());
-			}
+			Date nextDate = new Date();
+			scheduleList = SchedulerHelper.getTimeSlot(appointment.getRequestedMechanicFirstName(),appointment.getRequestedMechanicLastName(),numOfSlots,customer.getServiceCenterId(),nextDate);
 			
-			System.out.println("Please select from the following user options:");
+			System.out.println("\n\t\t***********Available Time Slots Details***********");
+			for(int i=0;i<scheduleList.size();i++)
+			{		int index = i+1;	
+				Schedule schedule=scheduleList.get(i);
+				TimeSlot t=schedule.getAvailableTimeSlot();
+				String mechanicName = SchedulerHelper.getEmployeeName(schedule.getMechanicId()); 
+				Date date = schedule.getDate();
+				System.out.println("\t\t " + SchedulerHelper.datetoString(date) + " : " + t.getStartTime() + "\tMechanic Name: " +  mechanicName);
+			}
+			System.out.println("\t\t**************************************************\t\t");
+			System.out.println("\nPlease select from the following user options:");
 			System.out.println("\tEnter '1' to Schedule on Date");
 			System.out.println("\tEnter '2' to Go Back");
 			
@@ -91,11 +98,12 @@ public class CustomerScheduleMaintenanceController {
 				
 					for(int i=0;i<scheduleList.size();i++)
 					{			
-						Schedule schedule=new Schedule();
-						String mechanicName = SchedulerHelper.getEmployeeName(schedule.getMechanicId()); 
+						int index = i+1;
+						Schedule schedule=scheduleList.get(i);
+						String mechanicName = SchedulerHelper.getEmployeeName(schedule.getMechanicId());
 						TimeSlot t=schedule.getAvailableTimeSlot();
 						Date date = schedule.getDate();
-						System.out.println("\tEnter "+ i +" to Schedule on : " + SchedulerHelper.datetoString(date) + " : " + t.getStartTime() + "\tMechanic Name: " +  mechanicName);
+						System.out.println("\tEnter "+ index +" to Schedule on : " + SchedulerHelper.datetoString(date) + " : " + t.getStartTime() + "\tMechanic Name: " +  mechanicName);
 					}
 			
 				do {
@@ -106,43 +114,58 @@ public class CustomerScheduleMaintenanceController {
 				int counter=0;
 				if(userInput.equals("1"))
 				{
-					counter = 1;
+					counter = 0;
 				}
 				else
-					counter = 2;
+					counter = 1;
 				
 				resultSet = statement.executeQuery( "SELECT APPOINTMENT_SEQ.nextval from dual" );
-				int index = 0;
+				int appindex = 0;
 				if ( resultSet.next() ) {
-					index = resultSet.getInt( "NEXTVAL" );
+					appindex = resultSet.getInt( "NEXTVAL" );
 				}
 				String mechanicName = SchedulerHelper.getEmployeeName(scheduleList.get(counter).getMechanicId());
 				
-				/*statement.executeUpdate( "INSERT INTO APPOINTMENT VALUES ('" + index +"', '" + customer.getCustomerId() + "', '" + appointment.getVehicle().getLicense() + "', '" + 
-										 SchedulerHelper.datetoString(scheduleList.get(counter).getDate()) + "', '" +  + "', '" + serviceCenters.get(serviceCenterSelection - 1) + 
-										 "', '" + userName + "')");*/
-				
-			/*	 CREATE TABLE "AMOHAN7"."" 
-				   (	"APPOINTMENT_ID" NUMBER(20,0) NOT NULL ENABLE, 
-					"" NUMBER(20,0) NOT NULL ENABLE, 
-					"VEHICLE_LICENSE" VARCHAR2(20 BYTE) NOT NULL ENABLE, 
-					"APPOINTMENT_DATE" VARCHAR2(20 BYTE), 
-					"REQUESTED_MECHANIC" VARCHAR2(50 BYTE), 
-					"SERVICE_TYPE" VARCHAR2(100 BYTE) NOT NULL ENABLE, 
-					"STATE" VARCHAR2(9 BYTE) NOT NULL ENABLE, 
-					"SLOT_ID" NUMBER, 
-					"SERVICE_TYPE_ID" VARCHAR2(50 BYTE), 
-					"UNIT_COST" FLOAT(126), 
-					"MECHANIC_ID" NUMBER, */
+				statement.executeUpdate( "INSERT INTO APPOINTMENT VALUES ('" + appindex +"', '" + customer.getCustomerId() + "', '" + appointment.getVehicle().getLicense() + "', '" + 
+										 SchedulerHelper.datetoString(scheduleList.get(counter).getDate()) + "', '" + mechanicName + "', '"+ ApplicationConstants.MAINTENANCE +"', '"+ ApplicationConstants.PENDING + "' , '" + serviceTobeScheduled + "' , '"  + scheduleList.get(counter).getMechanicId()+  "')");					
 				
 				
+				resultSet = statement.executeQuery( "SELECT TIME_SLOT_SEQ.nextval from dual" );
+				
+				int index=0;
+				
+				if ( resultSet.next() ) {
+					index = resultSet.getInt( "NEXTVAL" );
+				}
+				
+				String startTime = scheduleList.get(counter).getAvailableTimeSlot().getStartTime() ;
+				
+				String endTime  = SchedulerHelper.searchEndSlot(startTime,numOfSlots);
+				System.out.println("End time is "+ endTime);
+				
+				int res = statement.executeUpdate( "INSERT INTO TIME_SLOT VALUES ('" + index +"', '" + appindex + "', '" + scheduleList.get(counter).getMechanicId() + "', '" + 
+						startTime + "', '" + endTime + "')");		
+				
+				if(res > 0 )
+				{
+					System.out.println("\t Thank you your appointment has been scheduled. \n-------------------------------------------------------------------------------------------------------------------------------------");
+					
+				}
+			
+			}
+			}
+			
+			else {
+				System.out.println("\t The parts required for the service are currently not availabile. Please try scheduling after " + partsavailability + " of days.\t\n Sorry for inconvenience. \n-------------------------------------------------------------------------------------------------------------------------------------");
 				
 			}
 		}
 			else {
-				System.out.println("***\t\tThe entered car details could not be found. Please re-enter the car details registered with ACME.***\n\n\n\n");
+				System.out.println("\t\t******The entered car details could not be found. Please re-enter the car details registered with ACME.******\n\n");
+				
 			}
 		}
+		
 	}
 
 }

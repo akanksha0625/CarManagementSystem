@@ -9,9 +9,10 @@ import com.java.dbms.proj.entities.Vehicle;
 
 public class CustomerScheduleServiceController {
 	
-	static Appointment appointment=new Appointment();
+	public static Appointment appointment=new Appointment();
 	static Vehicle vehicle = new Vehicle();
 	static String inputString="";
+	static String userInput="";
 	
 	public static void displayScheduleService(Scanner input) throws SQLException, ParseException {		
 		System.out.println("Please enter the below mandatory* details to schedule a service:\n");
@@ -51,8 +52,6 @@ public class CustomerScheduleServiceController {
 		System.out.println("\tEnter '1' to Schedule Maintenance");
 		System.out.println("\tEnter '2' to Schedule Repair");
 		System.out.println("\tEnter '3' to Go Back");
-		
-		String userInput = "";
 		do {
 			System.out.print("\nOption Selection : ");
 			userInput = input.nextLine();
@@ -67,7 +66,8 @@ public class CustomerScheduleServiceController {
 	
 	public static void scheduleService(Scanner input) throws SQLException, ParseException {
 		com.java.dbms.proj.views.CustomerView.displayScheduleService();
-		while(!inputString.equals(3))
-		displayScheduleService(input);
+		while(!userInput.equals("3"))
+			displayScheduleService(input);
+		
 }
 }

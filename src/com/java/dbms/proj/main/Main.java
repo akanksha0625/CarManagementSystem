@@ -28,24 +28,8 @@ public class Main {
 
     public static void main( String[] args ) throws SQLException, ClassNotFoundException, ParseException {
     	DBFacade.createConnection();
-
-//		/* Print welcome screen for the user. */
-//    	Home.displaypage();
-//       	try {
-//       	ApplicationController applicationController=new ApplicationController();
-//	       	 	
-//     	} catch( Exception e ) {
-//			/* Error occurred while creating a connection with the database. */
-//     		System.out.println( "Sorry for the inconvenience. Our System is out of service. Please try after some time." + e.getMessage() );
-//		}
-    	DailyTimeSlot d=new DailyTimeSlot();
-    	
-		TimeSlot t= d.getTimeslotList().get(0);
-    	System.out.println(t.getStartTime());
-    	System.out.println(t.getEndTime());
     	ApplicationController.home();
     
-    	//com.java.dbms.proj.common.HeadersTest.testHeaders();
 	}
     
 
