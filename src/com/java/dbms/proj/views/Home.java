@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class Home {
 	public static String displayHome(Scanner input) {
+		com.java.dbms.proj.common.ClearConsole.clearConsole();
 		System.out.println("|---------------------------------------------------------------------------------------------------------------------------------|");
 		System.out.println("|        d8888  .d8888b.  888b     d888 8888888888       .d8888b.  8888888888 8888888b.  888     888 8888888 .d8888b.  8888888888 |");
 		System.out.println("|       d88888 d88P  Y88b 8888b   d8888 888             d88P  Y88b 888        888   Y88b 888     888   888  d88P  Y88b 888        |");
@@ -24,15 +25,15 @@ public class Home {
 		System.out.println("|                            \"Y8888P\"  8888888888 888    Y888     888     8888888888 888   T88b                                   |");
 		System.out.println("|---------------------------------------------------------------------------------------------------------------------------------|");
 
-		System.out.println("Please select from the following user options:\n");
-		System.out.println( "\tEnter \"1\" to Login"); 
-		System.out.println( "\tEnter \"2\" to Sign Up");
-		System.out.println( "\tEnter \"3\" to Exit");
+		System.out.println("\n\tPlease select from the following user options:\n");
+		System.out.println( "\t\tEnter \"1\" to Login"); 
+		System.out.println( "\t\tEnter \"2\" to Sign Up");
+		System.out.println( "\t\tEnter \"3\" to Exit");
 		
 		String userInput = "";
 		
 		do {
-			System.out.print("\nOption Selection : ");
+			System.out.print("\n\tOption Selection : ");
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2") && !userInput.equals("3"));
 		return userInput;

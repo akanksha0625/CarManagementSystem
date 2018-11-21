@@ -8,6 +8,7 @@ public class Part {
 	int unitsRequired;
 	double installTime;
 	String chargeType;
+	private String associatedService;
 	
 	public int getUnitsRequired() { 
 		return unitsRequired;
@@ -68,6 +69,12 @@ public class Part {
 	}
 	public void setPartName(String partName) {
 		this.partName = partName;
+	}
+	public String getAssociatedService() {
+		return associatedService;
+	}
+	public void setAssociatedService(String associatedService) {
+		this.associatedService = associatedService;
 	}
 
 }

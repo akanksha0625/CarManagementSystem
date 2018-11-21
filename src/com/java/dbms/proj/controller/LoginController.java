@@ -29,19 +29,19 @@ public class LoginController {
 		 */
 		while (!success) {
 			attempts++;
-			System.out.print("Please enter username : ");
+			System.out.print("\tPlease enter username : ");
 			userLogin.setUserName(input.nextLine());
-			System.out.print("\nPlease enter password : ");
+			System.out.print("\n\tPlease enter password : ");
 			userLogin.setPassword(input.nextLine());
 			System.out.println(); // Spacing on console.
-			System.out.println("Please select from the following user options:");
-			System.out.println("\tEnter '1' to Login.");
-			System.out.println("\tEnter '2' to Go Back.");
+			System.out.println("\tPlease select from the following user options:");
+			System.out.println("\t\tEnter '1' to Login.");
+			System.out.println("\t\tEnter '2' to Go Back.");
 
 			String userInput = "";
 
 			do {
-				System.out.print("\nOption Selection : ");
+				System.out.print("\n\tOption Selection : ");
 				userInput = input.nextLine();
 			} while (!userInput.equals("1") && !userInput.equals("2"));
 
@@ -59,34 +59,34 @@ public class LoginController {
 							userLogin.setRole(resultSet.getString("role"));
 						}
 	
-						System.out.println("\n************************");
-						System.out.println("  - Login Successful -  ");
-						System.out.println("************************\n");
+						System.out.println("\n\t************************");
+						System.out.println("\t  - Login Successful -  ");
+						System.out.println("\t************************\n");
 						success = true;
 						return userLogin.getRole();
 					} else {
-						System.out.println("\n*********************************");
-						System.out.println("     - Login Unsuccessful -");
-						System.out.println("---------------------------------");
+						System.out.println("\n\t*********************************");
+						System.out.println("\t     - Login Unsuccessful -");
+						System.out.println("\t---------------------------------");
 	
 						/* Check if userName in the system. */
 						resultSet = statement.executeQuery(
 								"SELECT USERNAME " + "FROM Login " + "WHERE username = '" + userLogin.getUserName() + "'");
 	
 						if (!resultSet.next()) {
-							System.out.println(" User Name '" + userLogin.getUserName()
-									+ "' \ndoes not exist in the Acme Service System.");
+							System.out.println("\t User Name '" + userLogin.getUserName()
+									+ "' \n\tdoes not exist in the Acme Service System.");
 						} else {
-							System.out.println(" Incorrect Password --> Please try again.");
+							System.out.println("\t Incorrect Password --> Please try again.");
 						}
-						System.out.println("*********************************\n");
+						System.out.println("\t*********************************\n");
 						String response = "";
 						if (attempts >= 2) {
-							System.out.println("Having Trouble?");
+							System.out.println("\tHaving Trouble?");
 							do {
-								System.out.println("\t Enter 1 to Exit Login");
-								System.out.println("\t Enter 2 to Attempt Another Login");
-								System.out.print("\nOption Selection : ");
+								System.out.println("\t\t Enter 1 to Exit Login");
+								System.out.println("\t\t Enter 2 to Attempt Another Login");
+								System.out.print("\n\tOption Selection : ");
 								response = input.nextLine();
 							} while (!response.equals("1") && !response.equals("2"));
 						}
@@ -95,10 +95,12 @@ public class LoginController {
 						}
 					}
 				} catch (SQLException e) {
-					System.out.println("Login Unsuccessful due to database error : " + e);
+					System.out.println("\tLogin Unsuccessful due to database error : " + e);
 					e.printStackTrace();
 					break;
 				}
+			} else {
+				break;
 			}
 		}
 		return "fail";

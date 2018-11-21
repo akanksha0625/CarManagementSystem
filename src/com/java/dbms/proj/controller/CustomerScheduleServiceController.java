@@ -66,6 +66,7 @@ public class CustomerScheduleServiceController {
 	
 	public static void scheduleService(Scanner input) throws SQLException, ParseException {
 		com.java.dbms.proj.views.CustomerView.displayScheduleService();
+		
 		while(!userInput.equals("3"))
 			displayScheduleService(input);
 		

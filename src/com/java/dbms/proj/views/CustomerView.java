@@ -2,8 +2,13 @@ package com.java.dbms.proj.views;
 
 import java.util.Scanner;
 
+import com.java.dbms.proj.common.HelperFunctions;
+import com.java.dbms.proj.common.ClearConsole;
+
+
 public class CustomerView {
 	public static String displayLanding(Scanner input) {
+		ClearConsole.clearConsole();
 		System.out.println("******************************************************************************************************************************************************");
 		System.out.println("| 888       888          888                                               .d8888b.                    888                                           |");                                       
 		System.out.println("| 888   o   888          888                                              d88P  Y88b                   888                                           |");                                   
@@ -32,22 +37,24 @@ public class CustomerView {
 	}
 	
 	public static void displaySignUp() {
-		System.out.println("*****************************************************************************");
-		System.out.println("|         .d8888b.  d8b                        888     888                  |");
-		System.out.println("|        d88P  Y88b Y8P                        888     888                  |");
-		System.out.println("|        Y88b.                                 888     888                  |");
-		System.out.println("|         \"Y888b.   888  .d88b.  88888b.       888     888 88888b.          |");
-		System.out.println("|            \"Y88b. 888 d88P\"88b 888 \"88b      888     888 888 \"88b         |");
-		System.out.println("|              \"888 888 888  888 888  888      888     888 888  888         |");
-		System.out.println("|        Y88b  d88P 888 Y88b 888 888  888      Y88b. .d88P 888 d88P         |");
-		System.out.println("|         \"Y8888P\"  888  \"Y88888 888  888       \"Y88888P\"  88888P\"          |");
-		System.out.println("|                            888                           888              |");
-		System.out.println("|                       Y8b d88P                           888              |");
-		System.out.println("|                        \"Y88P\"                            888              |");
-		System.out.println("*****************************************************************************\n");
+		ClearConsole.clearConsole();
+		System.out.println("***************************************************************************************");
+		System.out.println("|              .d8888b.  d8b                        888     888                       |");
+		System.out.println("|             d88P  Y88b Y8P                        888     888                       |");
+		System.out.println("|             Y88b.                                 888     888                       |");
+		System.out.println("|              \"Y888b.   888  .d88b.  88888b.       888     888 88888b.               |");
+		System.out.println("|                 \"Y88b. 888 d88P\"88b 888 \"88b      888     888 888 \"88b              |");
+		System.out.println("|                   \"888 888 888  888 888  888      888     888 888  888              |");
+		System.out.println("|             Y88b  d88P 888 Y88b 888 888  888      Y88b. .d88P 888 d88P              |");
+		System.out.println("|              \"Y8888P\"  888  \"Y88888 888  888       \"Y88888P\"  88888P\"               |");
+		System.out.println("|                                 888                           888                   |");
+		System.out.println("|                            Y8b d88P                           888                   |");
+		System.out.println("|                             \"Y88P\"                            888                   |");
+		System.out.println("***************************************************************************************\n");
 	}
 	
 	public static void displayProfile() {
+		ClearConsole.clearConsole();
 		System.out.println("************************************************************************************************************************");
 		System.out.println("|        d8888                                            888         8888888b.                   .d888 d8b 888          |");        
 		System.out.println("|       d88888                                            888         888   Y88b                 d88P\"  Y8P 888          |");      
@@ -61,6 +68,7 @@ public class CustomerView {
 	}
 	
 	public static void displayInvoice() {
+		ClearConsole.clearConsole();
 		System.out.println("*******************************************************************************************************************************************");
 		System.out.println("|  .d8888b.                    888                                                8888888                            d8b                  |"); 
 		System.out.println("| d88P  Y88b                   888                                                  888                              Y8P                  |"); 
@@ -74,6 +82,7 @@ public class CustomerView {
 	}
 	
 	public static void displayInvoiceDetails() {
+		ClearConsole.clearConsole();
 		System.out.println("*********************************************************************************************************************");
 		System.out.println("| 8888888                            d8b                       8888888b.           888             d8b 888          |"); 
 		System.out.println("|   888                              Y8P                       888  \"Y88b          888             Y8P 888          |"); 
@@ -87,6 +96,7 @@ public class CustomerView {
 	}
 	
 	public static void displayCarRegistration() {
+		ClearConsole.clearConsole();
 		System.out.println("*************************************************************************************************************************************");
 		System.out.println("|    .d8888b.                        8888888b.                   d8b          888                    888    d8b                      |");           
 		System.out.println("|   d88P  Y88b                       888   Y88b                  Y8P          888                    888    Y8P                      |");               
@@ -103,6 +113,7 @@ public class CustomerView {
 	}
 	
 	public static void displayReschedule1() {
+		ClearConsole.clearConsole();
 		System.out.println("********************************************************************************************************************************************************");
 		System.out.println("| 8888888b.                            888                    888          888                .d8888b.                            d8b                  |");
 		System.out.println("| 888   Y88b                           888                    888          888               d88P  Y88b                           Y8P                  |");
@@ -115,6 +126,7 @@ public class CustomerView {
 		System.out.println("********************************************************************************************************************************************************\n");
 	}
 	public static void displayReschedule2() {
+		ClearConsole.clearConsole();
 		System.out.println("********************************************************************************************************************************************************");
 		System.out.println("| 8888888b.                            888                    888          888                .d8888b.                            d8b                  |");
 		System.out.println("| 888   Y88b                           888                    888          888               d88P  Y88b                           Y8P                  |");
@@ -128,6 +140,7 @@ public class CustomerView {
 	}
 	
 	public static void displayScheduleMaintenance1() {
+		ClearConsole.clearConsole();
 		System.out.println("*****************************************************************************************************************************************************************************");
 		System.out.println("|   .d8888b.           888                    888          888               888b     d888          d8b          888                                                        |");
 		System.out.println("|  d88P  Y88b          888                    888          888               8888b   d8888          Y8P          888                                                        |");
@@ -141,6 +154,7 @@ public class CustomerView {
 	}
 		
 	public static void displayScheduleMaintenance2() {
+		ClearConsole.clearConsole();
 		System.out.println("*****************************************************************************************************************************************************************************");
 		System.out.println("|   .d8888b.           888                    888          888               888b     d888          d8b          888                                                        |");
 		System.out.println("|  d88P  Y88b          888                    888          888               8888b   d8888          Y8P          888                                                        |");
@@ -154,6 +168,7 @@ public class CustomerView {
 	}
 		
 	public static void displayScheduleRepair1() {
+		ClearConsole.clearConsole();
 		System.out.println("******************************************************************************************************************************");
 		System.out.println("|  .d8888b.           888                    888          888               8888888b.                            d8b         |"); 
 		System.out.println("| d88P  Y88b          888                    888          888               888   Y88b                           Y8P         |");  
@@ -169,6 +184,7 @@ public class CustomerView {
 		System.out.println("******************************************************************************************************************************\n");
 	}
 		public static void displayScheduleRepair2() {
+			ClearConsole.clearConsole();
 			System.out.println("******************************************************************************************************************************");
 			System.out.println("|  .d8888b.           888                    888          888               8888888b.                            d8b         |"); 
 			System.out.println("| d88P  Y88b          888                    888          888               888   Y88b                           Y8P         |");  
@@ -185,6 +201,7 @@ public class CustomerView {
 		}
 			
 		public static void displayScheduleService() {
+			ClearConsole.clearConsole();
 			System.out.println("*****************************************************************************************************************************************");
 			System.out.println("|   .d8888b.           888                    888          888                .d8888b.                            d8b                   |");
 			System.out.println("|  d88P  Y88b          888                    888          888               d88P  Y88b                           Y8P                   |");
@@ -198,6 +215,7 @@ public class CustomerView {
 		}
 			
 		public static void displayService() {
+			ClearConsole.clearConsole();
 			System.out.println("************************************************************************************************************");
 			System.out.println("|                            .d8888b.                            d8b                                       |");                  
 			System.out.println("|                           d88P  Y88b                           Y8P                                       |");                
@@ -211,6 +229,7 @@ public class CustomerView {
 		}
 		
 		public static void displayServiceHistory() {
+			ClearConsole.clearConsole();
 			System.out.println("**************************************************************************************************************************");
 			System.out.println("|  .d8888b.                            d8b                       888    888 d8b          888                             |");
 			System.out.println("| d88P  Y88b                           Y8P                       888    888 Y8P          888                             |");
@@ -227,6 +246,7 @@ public class CustomerView {
 		}
 			
 		public static void displayUpdateProfile() {
+			ClearConsole.clearConsole();
 			System.out.println("*************************************************************************************************************************************");
 			System.out.println("  .d8888b.                    888                                                8888888b.                   .d888 d8b 888          |");
 			System.out.println(" d88P  Y88b                   888                                                888   Y88b                 d88P\"  Y8P 888          |"); 
@@ -240,6 +260,7 @@ public class CustomerView {
 		}
 			
 		public static void displayViewProfile( ) {
+			ClearConsole.clearConsole();
 			System.out.println("*************************************************************************************************************************************");
 			System.out.println("  .d8888b.                    888                                                8888888b.                   .d888 d8b 888          |");
 			System.out.println(" d88P  Y88b                   888                                                888   Y88b                 d88P\"  Y8P 888          |"); 

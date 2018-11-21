@@ -28,7 +28,6 @@ public class ManagerCarServiceDetailsController {
 				details.setVid(resultSet.getInt("VID"));
 				details.setMake(resultSet.getString("MAKE"));
 				details.setModel(resultSet.getString("MODEL"));
-				details.setYear(resultSet.getString("YEAR"));
 				serviceDetailsList.add(details);
 			}
 		} catch (SQLException e) {

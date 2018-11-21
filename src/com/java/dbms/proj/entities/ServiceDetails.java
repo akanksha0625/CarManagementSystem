@@ -22,6 +22,8 @@ public class ServiceDetails {
 	private int aMaintenanceID = 0;
 	private int bMaintenanceID = 0;
 	private int cMaintenanceID = 0;
+	int aEndIndex = 0;
+	int bEndIndex = 0;
 
 	public int getaMaintenanceID() {
 		return aMaintenanceID;
@@ -188,10 +190,10 @@ public class ServiceDetails {
 
 	public String toString() {
 		return "\n\tMake | Model | Year :\t" + this.make + " | " + this.model + " | " + this.year + "\n\tService A:"
-				+ "\n\t\tMiles  : " + this.aMiles + "\n\t\tMonths : " + this.aMonths
+				+ "\n\t\tMiles  : " + this.aMiles
 				+ "\n\t\tParts  : Required Parts Listed Below\n\t\t\t--------------------------------\n" + detailPartsToString(this.serviceAParts)
 				+ "\n\tService B:" + "\n\t\tMiles  : " + this.bMiles + "\n\t\tMonths : " + this.bMonths
-				+ "\n\t\tParts  : Additional Required Parts Listed Below\n\t\t\t--------------------------------\n" + detailPartsToString(this.serviceBParts)
+				+ "\n\t\tParts  : Required Parts Listed Below\n\t\t\t--------------------------------\n" + detailPartsToString(this.serviceBParts)
 				+ "\n\tService C:" + "\n\t\tMiles  : " + this.cMiles + "\n\t\tMonths : " + this.cMonths
 				+ "\n\t\tParts  : Additional Required Parts Listed Below\n\t\t\t--------------------------------\n" + detailPartsToString(this.serviceCParts)
 				+ "\n";

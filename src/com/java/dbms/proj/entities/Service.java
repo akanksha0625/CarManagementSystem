@@ -41,6 +41,7 @@ public class Service implements Comparable{
 	private int vid = -1;
 	public Calendar calAppointmentDate = null;
 	public boolean added = false;
+	public String make;
 
 	public int getVid() {
 		return vid;
@@ -104,7 +105,7 @@ public class Service implements Comparable{
 	}
 
 	public double getTotalCost() {
-		return this.totalCost;
+		return this.totalInstallationCost + this.totalPartsCost;
 	}
 
 	public void addToTotalHours(double hours) {
@@ -224,8 +225,7 @@ public class Service implements Comparable{
 		this.totalCost += this.totalPartsCost;
 
 		return "Service ID              :\t" + this.getAppointmentID() + "\nService Start Date|Time :\t" + this.getAppointmentDate() + "|"
-				+ this.getTimeSlot().getStartTime() + "\nService End Date|Time   :\t" + this.getAppointmentDate() + "|"
-				+ this.getTimeSlot().getEndTime()
+				+ this.getTimeSlot().getStartTime() + "\nService End Date   :\t" + this.getAppointmentDate()
 				+ "\nVehicle License         :\t" + this.getVehicleLicense() + "\nService Type            :\t"
 				+ this.getServiceType() + " : \"" + this.getServiceName() + "\"" + "\nMechanic Name           :\t"
 				+ this.getMechanicFullName() + "\nTotal Labor Hours       :\t" + df.format(this.getTotalHours())
@@ -251,8 +251,7 @@ public class Service implements Comparable{
 
 		return "Service ID              :\t" + this.getAppointmentID() + "\nCustomer Name           :\t"
 				+ this.getCustomerName() + "\nService Start Date|Time :\t" + this.getAppointmentDate() + "|"
-				+ this.getTimeSlot().getStartTime() + "\nService End Date|Time   :\t" + this.getAppointmentDate() + "|"
-				+ this.getTimeSlot().getEndTime()
+				+ this.getTimeSlot().getStartTime() + "\nService End Date   :\t" + this.getAppointmentDate()
 				+ "\nVehicle License         :\t" + this.getVehicleLicense() + "\nService Type            :\t"
 				+ this.getServiceType() + " : \"" + this.getServiceName() + "\"" + "\nMechanic Name           :\t"
 				+ this.getMechanicFullName() + "\nTotal Labor Hours       :\t" + df.format(this.getTotalHours())
