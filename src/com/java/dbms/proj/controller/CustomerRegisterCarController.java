@@ -29,6 +29,7 @@ public class CustomerRegisterCarController {
 		int vid = 0;
 		int cid;
 		cid=customer.getCustomerId();
+		System.out.println(cid);
 		System.out.print("Please enter Licence plate :");
 		licence=input.nextLine();
 		
@@ -39,8 +40,23 @@ public class CustomerRegisterCarController {
 		
 		System.out.print("\nPlease enter Make :");
 		make=input.nextLine();
+		
+		while(make.isEmpty()==true){
+			System.out.println("\n Please enter a valid Make:");
+			make = input.nextLine();
+		}
+		
+		make=make.toUpperCase();
+		
 		System.out.print("\nPlease enter Model :");
 		model=input.nextLine();
+		
+		while(model.isEmpty()==true){
+			System.out.println("\n Please enter a valid Make:");
+			model = input.nextLine();
+		}
+		
+		model=model.toUpperCase();
 	
 		try {
 			resultSet = statement.executeQuery( "SELECT VID FROM VEHICLE_TYPE WHERE MAKE = '" + make + "' and MODEL = '" + model + "'" );
@@ -57,11 +73,30 @@ public class CustomerRegisterCarController {
 		}
 		System.out.print("\nPlease enter Year :");
 		year=input.nextLine();
+		
+		while(year.isEmpty()==true){
+			System.out.println("\n Please enter a valid year:");
+			year = input.nextLine();
+		}
+		
 		System.out.print("\nPlease enter Current Mileage :");
 		currentMileage=input.nextLine();
+		
+		while(currentMileage.isEmpty()==true){
+			System.out.println("\n Please enter a valid Mileage:");
+			currentMileage = input.nextLine();
+		}
+		
+		
 		do {
 			System.out.print("\nPlease enter Last service date (i.e. dd-MMM-yyyy) :");
 			lastServiceDate=input.nextLine();
+			
+			while(lastServiceDate.isEmpty()==true){
+				System.out.println("\n Please enter a valid Date in DD-MMM-YYYY:");
+				lastServiceDate = input.nextLine();
+			}
+			
 		}while(!HelperFunctions.checkDate(lastServiceDate));
 		System.out.println();
 	
@@ -70,20 +105,21 @@ public class CustomerRegisterCarController {
 		System.out.println("\tEnter '1' to Register");
 		
 		System.out.println("\tEnter '2' to Cancel");
-		
-		
-		
+				
 		
 		String userInput = "";
 		System.out.print("\nOption Selection : ");
 		do {
 			userInput = input.nextLine();
 		}while(!userInput.equals("1") && !userInput.equals("2"));
-		
+		try {
 		if(userInput.equals("1")) {
 			statement.executeUpdate( "INSERT INTO VEHICLE VALUES ('" + licence + "', '" + purchaseDate + "', '" + currentMileage + "','" + lastServiceDate + "', '((null))', '" + vid + "', '" + year + "','" + cid + "', '(null)', '(null)', '(null)', '(null)')" );
 		}
-		
+		}
+		catch ( SQLException e ) {
+			System.out.println( "Vehicle already registered");
+		}
 	}
 	
 

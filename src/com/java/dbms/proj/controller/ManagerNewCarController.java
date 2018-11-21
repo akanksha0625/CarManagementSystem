@@ -34,14 +34,32 @@ public class ManagerNewCarController {
 	
 		System.out.print("\tPlease enter Make:");
 		make=input.nextLine();
+		
+		while(make.isEmpty()==true){
+			System.out.println("\n Please enter a valid Make:");
+			make = input.nextLine();
+		}
+		
 		System.out.print("\n\tPlease enter Model:");
 		model=input.nextLine();
+		
+		while(model.isEmpty()==true){
+			System.out.println("\n Please enter a valid Make:");
+			model = input.nextLine();
+		}
+		
 		System.out.print("\n\tPlease enter Year:");
 		year=input.nextLine();
 		
+		while(year.isEmpty()==true){
+			System.out.println("\n Please enter a valid year:");
+			year = input.nextLine();
+		}
+		
+		
 		try {
 			resultSet = statement.executeQuery(
-					"SELECT VID FROM VEHICLE_TYPE WHERE MAKE = '" + make + "' AND MODEL = '" + model + "' AND YEAR = '"+ year +"'");
+					"SELECT VID FROM VEHICLE_TYPE WHERE MAKE = '" + make + "' AND MODEL = '" + model + "'");
 			if (resultSet.next()) {
 				vid = resultSet.getInt("VID");
 				resultSet = statement.executeQuery(
@@ -51,11 +69,11 @@ public class ManagerNewCarController {
 							return;
 					}
 				}
-			 else {
+			/* else {
 				System.out.println("\nSorry, we are unable to accommodate this vehicle type : " + make + ", "
 						+ model + " at this time.");
 				return;
-			 	}
+			 	}*/
 		} catch (SQLException e) {
 			System.out.println("\nInvalid Vehicle Type : " + e.getMessage());
 			return;
@@ -76,6 +94,8 @@ public class ManagerNewCarController {
 		
 		System.out.print("\n\tPlease enter number of miles for Service B:");
 		bmiles=input.nextInt();
+		
+		
 		System.out.print("\n\tPlease enter number of months for Service B:");
 		bmonths=input.nextInt();
 
@@ -83,6 +103,11 @@ public class ManagerNewCarController {
 
 		servicelistb=input.nextLine();
 		servicelistb=input.nextLine();	
+		
+		while(servicelistb.isEmpty()==true){
+			System.out.println("\n Please enter a valid list of services for Service B:");
+			year = input.nextLine();
+		}
 		
 		String[] valuesb = servicelistb.split(",");
 		
@@ -96,19 +121,13 @@ public class ManagerNewCarController {
 		servicelistc=input.nextLine();	
 		servicelistc=input.nextLine();	
 		
-		String[] valuesc = servicelistc.split(",");
+		while(servicelistc.isEmpty()==true){
+			System.out.println("\n Please enter a valid list of services for Service B:");
+			year = input.nextLine();
+		}
 		
-				try {
-					resultSet = statement.executeQuery( "SELECT VID FROM VEHICLE_TYPE WHERE MAKE = '" + make + "' and MODEL = '" + model + "'" );
-					if (resultSet.next())
-					{
-						vid=resultSet.getInt("VID");
-					}					
-					
-				}
-				catch ( SQLException e ) {
-					System.out.println( "Invalid Vehicle Type : " + e.getMessage() );
-				}
+		String[] valuesc = servicelistc.split(",");
+	
 				
 		System.out.println( "\nPlease select from the following user options:" );
 		System.out.println( "\tEnter '1' to Add Car" );		
@@ -128,7 +147,13 @@ public class ManagerNewCarController {
 				if ( resultSet.next() ) {
 					mid = resultSet.getInt( "NEXTVAL" );
 				}
+				
+				resultSet = statement.executeQuery( "SELECT VEHICLE_TYPE_SEQ.nextval from dual" );
+				if ( resultSet.next() ) {
+					vid = resultSet.getInt( "NEXTVAL" );
+				}
 				try {
+				statement.executeUpdate( "INSERT INTO VEHICLE_TYPE VALUES ('" + vid + "', '" + make + "', '" + model + "')" );	
 				statement.executeUpdate( "INSERT INTO MAINTENANCE VALUES ('" + vid + "', '" + amiles + "', '" + amonths + "', '" + mid + "', 'A')" );
 				}
 				catch ( SQLException e ) {
@@ -137,8 +162,12 @@ public class ManagerNewCarController {
 			    }
 				
 				while(i <= valuesa.length-1) {
+					try {
 					resultSet = statement.executeQuery( "SELECT SERVICE_ID FROM SERVICE_DETAILS WHERE SERVICE_NAME = '"+valuesa[i]+"'");
-				
+					}
+					catch(SQLException e) {
+						System.out.println( "Service entered is invalid or not available");
+					}
 				
 				if (resultSet.next())
 				{
@@ -170,8 +199,12 @@ public class ManagerNewCarController {
 			statement.executeUpdate( "INSERT INTO MAINTENANCE VALUES ('" + vid + "', '" + bmiles + "', '" + bmonths + "','" + mid + "', '" + "B" + "')" );
 			i=0;
 			while(i<=valuesb.length-1) {
+				try {
 				resultSet = statement.executeQuery( "SELECT SERVICE_ID FROM SERVICE_DETAILS WHERE SERVICE_NAME = '"+valuesb[i]+"'");
-			
+				}
+				catch(SQLException e) {
+					System.out.println( "Service entered is invalid or not available");
+				}
 			
 			if (resultSet.next())
 			{
@@ -206,8 +239,12 @@ public class ManagerNewCarController {
 			statement.executeUpdate( "INSERT INTO MAINTENANCE VALUES ('" + vid + "', '" + cmiles + "', '" + cmonths + "','" + mid + "', '" + "C" + "')" );
 			i=0;
 			while(i<=valuesc.length-1) {
+				try {
 				resultSet = statement.executeQuery( "SELECT SERVICE_ID FROM SERVICE_DETAILS WHERE SERVICE_NAME = '"+valuesc[i]+"'");
-			
+				}
+				catch(SQLException e) {
+					System.out.println( "Service entered is invalid or not available");
+				}
 			
 			if (resultSet.next())
 			{

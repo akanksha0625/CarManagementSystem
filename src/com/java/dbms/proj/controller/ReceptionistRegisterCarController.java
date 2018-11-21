@@ -25,6 +25,11 @@ public class ReceptionistRegisterCarController {
 		System.out.print("Please enter Customer email address :");
 		String email = "";
 		email = input.nextLine();
+		
+		while(email.isEmpty()==true){
+			System.out.println("\n Please enter a valid email:");
+			email = input.nextLine();
+		}
 		System.out.println();
 
 		try {
@@ -34,12 +39,36 @@ public class ReceptionistRegisterCarController {
 				cid = resultSet.getInt("CID");
 				System.out.print("Please enter Licence plate : ");
 				licence = input.nextLine();
+				
+				while(licence.isEmpty()==true){
+					System.out.println("\n Please enter a valid licence:");
+					licence = input.nextLine();
+				}
+				
 				System.out.print("\nPlease enter Purchase Date : ");
 				purchaseDate = input.nextLine();
+				
+				while(purchaseDate.isEmpty()==true){
+					System.out.println("\n Please enter a valid Purchace Date in DD-MMM-YYYY:");
+					purchaseDate = input.nextLine();
+				}
+				
 				System.out.print("\nPlease enter Make : ");
 				make = input.nextLine();
+				
+				while(make.isEmpty()==true){
+					System.out.println("\n Please enter a valid Make:");
+					make = input.nextLine();
+				}
+				
 				System.out.print("\nPlease enter Model : ");
 				model = input.nextLine();
+				
+				while(model.isEmpty()==true){
+					System.out.println("\n Please enter a valid Make:");
+					model = input.nextLine();
+				}
+				
 
 				try {
 					resultSet = statement.executeQuery(
@@ -58,10 +87,28 @@ public class ReceptionistRegisterCarController {
 
 				System.out.print("\nPlease enter Year : ");
 				year = input.nextLine();
+				
+				while(year.isEmpty()==true){
+					System.out.println("\n Please enter a valid year:");
+					year = input.nextLine();
+				}
+				
 				System.out.print("\nPlease enter Current Mileage : ");
 				currentMileage = input.nextLine();
+				
+				while(currentMileage.isEmpty()==true){
+					System.out.println("\n Please enter a valid Mileage:");
+					currentMileage = input.nextLine();
+				}
+				
 				System.out.print("\nPlease enter Last service date : ");
 				lastServiceDate = input.nextLine();
+				
+				while(lastServiceDate.isEmpty()==true){
+					System.out.println("\n Please enter a valid Date in DD-MMM-YYYY:");
+					lastServiceDate = input.nextLine();
+				}
+				
 
 			} else {
 				System.out.println("The customer email \"" + email + "\" is not recognized for this service center.");
@@ -88,6 +135,7 @@ public class ReceptionistRegisterCarController {
 				statement.executeUpdate("INSERT INTO VEHICLE VALUES ('" + licence + "', '" + purchaseDate + "', '"
 						+ currentMileage + "','" + lastServiceDate + "', '(((null)))', '" + vid + "', '" + year + "','"
 						+ cid + "', '((null))', '((null))', '((null))', '((null))')");
+				System.out.println("\n Car registered in the system.");
 
 			} catch (SQLException e) {
 				System.out.println("Service for this Car type is not available ");
