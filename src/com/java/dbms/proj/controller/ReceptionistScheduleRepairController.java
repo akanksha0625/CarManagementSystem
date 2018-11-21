@@ -31,6 +31,16 @@ public class ReceptionistScheduleRepairController {
 		if(appointment!=null && appointment.getVehicle()!=null) {
 			isValidVehicle = HelperFunctions.validateCarDetails(customer,appointment.getVehicle().getLicense());
 		}
+		
+		boolean isValidMechanic = SchedulerHelper.checkValidMechanic(appointment.getRequestedMechanicFirstName(),appointment.getRequestedMechanicLastName(),customer.getServiceCenterId());
+		if(isValidMechanic==false && !appointment.getRequestedMechanicFirstName().isEmpty())
+		{
+			appointment.setRequestedMechanicFirstName("");
+			appointment.setRequestedMechanicLastName("");
+			System.out.println("\n\t\tThe entered mechanic is not associated with this service center. \n\t\t We would schedule you with the mechanics working only at this service center.\n");
+		}
+		
+		
 		if(isValidVehicle) {
 			ReceptionistView.displayScheduleRepair1(); //Display page header
 		
@@ -68,13 +78,10 @@ public class ReceptionistScheduleRepairController {
 			repairService.setPartsList(HelperFunctions.getRepairParts(repairService.getRepairID()));
 			
 			
-			int partsavailability = HelperFunctions.checkPartAvailability(ApplicationConstants.REPAIR,repairService.getRepairID(),"",customer.getServiceCenterId());
-			System.out.println("Parts availability" +partsavailability );
+			int partsavailability = HelperFunctions.checkPartAvailability(ApplicationConstants.REPAIR,repairService.getRepairID(),appointment.getVehicle().getLicense(),customer.getServiceCenterId());
 			if(partsavailability == 0) {
-			float duration= HelperFunctions.calculateServiceDuration(ApplicationConstants.REPAIR, repairService.getRepairID(), "");
-			System.out.println("DISPLAY SERVICE DATES duration" + duration);
+			float duration= HelperFunctions.calculateServiceDuration(ApplicationConstants.REPAIR, repairService.getRepairID(), appointment.getVehicle().getLicense());
 			int numOfSlots = (int) Math.ceil((duration*60/30)); 
-			System.out.println("Number Of slots"+numOfSlots);
 			ArrayList<Schedule> scheduleList=new ArrayList<Schedule>();
 			Date nextDate = new Date();
 			scheduleList = SchedulerHelper.getTimeSlot(appointment.getRequestedMechanicFirstName(),appointment.getRequestedMechanicLastName(),numOfSlots,customer.getServiceCenterId(),nextDate);
@@ -164,9 +171,8 @@ public class ReceptionistScheduleRepairController {
 			}
 			
 			String startTime = scheduleList.get(counter).getAvailableTimeSlot().getStartTime() ;
-			System.out.println("Num of slots:"+numOfSlots);
 			String endTime  = SchedulerHelper.searchEndSlot(startTime,numOfSlots);
-			System.out.println("End time is "+ endTime);
+			
 			
 			int res = statement.executeUpdate( "INSERT INTO TIME_SLOT VALUES ('" + index +"', '" + appindex + "', '" + scheduleList.get(counter).getMechanicId() + "', '" + 
 					startTime + "', '" + endTime + "')");		
@@ -185,7 +191,7 @@ public class ReceptionistScheduleRepairController {
 		}
 		}
 			else {
-				System.out.println("\t\t******The entered car details could not be found. Please re-enter the car details registered with ACME.******\n\n");
+				System.out.println("\t\t******The entered car details could not be found regsitered in customer's name. Please re-enter the car details registered with ACME.******\n\n");
 				
 			}
 			

@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.util.Scanner;
 
 import com.java.dbms.proj.common.DBFacade;
+import com.java.dbms.proj.common.HelperFunctions;
 import com.java.dbms.proj.entities.Appointment;
 import com.java.dbms.proj.entities.Customer;
 import com.java.dbms.proj.entities.Vehicle;
@@ -78,10 +79,11 @@ public class ReceptionistScheduleServiceController {
 		
 		if(userInput.equals("1") || userInput.equals("2"))
 		{
-			System.out.print("emial"+customer.getEmail());
+
+			System.out.print("emial"+ApplicationController.employee.getServiceCenterId());
 			try {
-				resultSet = statement.executeQuery("SELECT * FROM CUSTOMER WHERE EMAIL = '" + customer.getEmail()+ "'");
-						//+ "' AND SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "'");
+				resultSet = statement.executeQuery("SELECT * FROM CUSTOMER WHERE EMAIL = '" + customer.getEmail()
+						+ "' AND SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "'");
 
 				if (resultSet.next()) {
 					System.out.println("Hello"+customer.getCustomerId());
@@ -94,7 +96,7 @@ public class ReceptionistScheduleServiceController {
 				}
 				
 				else {
-					System.out.println("\n\tCustomer email \"" + inputString + "\" is not associated with this service center.\n");
+					System.out.println("\n\tCustomer email \"" + customer.getEmail() + "\" is not associated with this service center.\n");
 					return;
 				}
 			} catch (SQLException e) {
@@ -104,17 +106,15 @@ public class ReceptionistScheduleServiceController {
 			}
 			
 		
+		
 		}
 		
 		if(!userInput.equals("3")){	
-			System.out.print("test scheduling srevice");
 			scheduleService(input);
 		}
 	}
 	public static void scheduleService(Scanner input) throws SQLException, ParseException {
-		System.out.print("Entered scheduling srevice"+userInput);
-			if(userInput.equals("1")) {
-				System.out.print("Rep scheduling srevice");
+		if(userInput.equals("1")) {
 				ReceptionistScheduleMaintenanceController.scheduleMaintenance(input);
 			}else if(userInput.equals("2")) {
 				ReceptionistScheduleRepairController.scheduleRepair(input);

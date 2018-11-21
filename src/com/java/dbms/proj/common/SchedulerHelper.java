@@ -17,6 +17,7 @@ import com.java.dbms.proj.entities.DailyTimeSlot;
 import com.java.dbms.proj.entities.HourlyEmployee;
 import com.java.dbms.proj.entities.TimeSlot;
 import com.java.dbms.proj.entities.Vehicle;
+import com.java.dbms.proj.views.ReceptionistView;
 import com.java.dbms.proj.entities.Schedule;
 public class SchedulerHelper {
 	
@@ -51,7 +52,6 @@ public class SchedulerHelper {
 		public static ArrayList<Schedule> getPreferredMechanicTimeSlot(int empId, int slotsRequired, String serviceCenterId, Date nextDate) throws SQLException, ParseException {
 			statement = DBFacade.getConnection().createStatement();
 			ArrayList<Schedule>  result = new ArrayList<Schedule>();
-			
 			if (empId != 0) {
 				String startTime = "";
 				String endTime = "";
@@ -66,9 +66,7 @@ public class SchedulerHelper {
 					nextDate = calendar.getTime();
 					int month = nextDate.getMonth() + 1;
 					int year = nextDate.getYear() + 1900;
-
 					String dateFormatted = nextDate.getDate() + "-" + month + "-" + year;			
-					System.out.println("The new format looks like"+ HelperFunctions.translateBack(dateFormatted));
 					resultSet = statement.executeQuery(
 							"SELECT APPOINTMENT_DATE FROM APPOINTMENT WHERE STATE='PENDING' AND MECHANIC_ID = '"
 									+ empId + "' and APPOINTMENT_DATE = '" + HelperFunctions.translateBack(dateFormatted)+"'");
@@ -81,28 +79,17 @@ public class SchedulerHelper {
 
 					DailyTimeSlot dailyTimeSlotObj = new DailyTimeSlot();
 					ArrayList<TimeSlot> bookedTimeSlotList  = dailyTimeSlotObj.getTimeslotList();
-					System.out.println(nextDate);
 					dailyTimeSlotObj.setDate(nextDate);
 
 					while (resultSet.next()) {
 						boolean activeSlots = false;
-						// Creating a daily timeslot for a mechanic
-						// TimeSlot timeSlot=new TimeSlot();
 						startTime = resultSet.getString("START_TIME");
 						endTime = resultSet.getString("END_TIME");
-						System.out.println("startTime"+startTime);
-						System.out.println("endTime"+endTime);
-						// bookedTimeSlotList.add(timeSlot);
-						System.out.println("STime" + startTime + "+ end time" + endTime);
 						for (int i = 0; i < ApplicationConstants.TIMESLOTS; i++) {
-							System.out.println(
-									"inside first loop of bookedtimelsot" + bookedTimeSlotList.get(i).getStartTime());
 							if (startTime.equalsIgnoreCase(bookedTimeSlotList.get(i).getStartTime())) {
 								activeSlots = true;
 							}
-							System.out.println("Outsie looop End time: "+endTime + "End time of slot :" + bookedTimeSlotList.get(i).getEndTime());
 							if (endTime.equalsIgnoreCase(bookedTimeSlotList.get(i).getEndTime())) {
-								System.out.println("End time: "+endTime + "End time of slot :" + bookedTimeSlotList.get(i).getEndTime());
 								bookedTimeSlotList.get(i).setIsbooked(true);
 								activeSlots = false;
 								break;
@@ -110,10 +97,6 @@ public class SchedulerHelper {
 							if (activeSlots == true)
 								bookedTimeSlotList.get(i).setIsbooked(true);
 
-							System.out.println("activeSlots" + activeSlots);
-
-							System.out.println(
-									"inside first loop of bookedtimelsot" + bookedTimeSlotList.get(i).isIsbooked());
 						}
 
 						// search for free time slots
@@ -123,8 +106,6 @@ public class SchedulerHelper {
 					int firstIndex = -1;
 					for (int i = 0; i < ApplicationConstants.TIMESLOTS; i++) {
 						if (bookedTimeSlotList.get(i).isIsbooked() == false) {
-							System.out.print(
-									"Entered loop for seraching bookedtimeslot" + bookedTimeSlotList.get(i).isIsbooked());
 							if (countFreeSlots == 0)
 								firstIndex = i;
 
@@ -137,15 +118,12 @@ public class SchedulerHelper {
 							firstIndex = -1;
 						}
 					}
-					System.out.print("firstIndex" + firstIndex);
-					System.out.print("countFreeSlots" + countFreeSlots);
 					if (firstIndex != -1) {
 						Schedule schedule =new Schedule();
 						schedule.setAvailableTimeSlot(bookedTimeSlotList.get(firstIndex));
 						schedule.setDate(nextDate);
 						schedule.setMechanicId(empId);
 						result.add(schedule);
-						System.out.print("Booked Time slot" + bookedTimeSlotList.get(firstIndex).getStartTime());
 					}
 					
 				}
@@ -159,7 +137,6 @@ public class SchedulerHelper {
 					schedule.setDate(nextDate);
 					schedule.setMechanicId(empId);
 					result.add(schedule);
-					System.out.println("First appointment is booked on" + nextDate + firstTimeSlotList.get(0).getStartTime());
 				}
 					
 				}
@@ -169,22 +146,34 @@ public class SchedulerHelper {
 			return result;
 		}
 		
+		public static boolean checkValidMechanic(String mechanicFirstName,String mechanicLastName,String serviceCenter) throws SQLException {
+			boolean isMechanicValid=false;
+			statement = DBFacade.getConnection().createStatement();
+			if (mechanicFirstName != null && mechanicFirstName != "" && mechanicLastName != null && mechanicLastName != "")
+				resultSet = statement.executeQuery("SELECT SC_ID FROM EMPLOYEE WHERE FIRSTNAME = '" + mechanicFirstName
+						+ "' and LASTNAME = '" + mechanicLastName + "'");
 		
+			else if (mechanicFirstName != null && mechanicFirstName != ""
+					&& (mechanicLastName == null || mechanicLastName == "")) 
+				resultSet = statement.executeQuery("SELECT SC_ID FROM EMPLOYEE WHERE FIRSTNAME = '" + mechanicFirstName + "'");
+		
+			if (resultSet!=null && resultSet.next()&& serviceCenter!=null &&!serviceCenter.isEmpty()) {
+				isMechanicValid =serviceCenter.equalsIgnoreCase(resultSet.getString("SC_ID"));
+				//System.out.println("isMechanicValid"+isMechanicValid+"resultset"+resultSet.getString("SC_ID"));
+			}
+			return isMechanicValid;
+		}
 		
 		public static ArrayList<Schedule> getTimeSlot(String mechanicFirstName, String mechanicLastName,
 				int slotsRequired, String serviceCenterId, Date nextDate) throws SQLException, ParseException {
 			// add service center id logic to check only mechanics with same customer id as
 			// customer			
+		//	System.out.println("mechanicFirstName" + mechanicFirstName+"mechanicLastName"+mechanicLastName);
 			int empId = 0;
 			statement = DBFacade.getConnection().createStatement();
 			ArrayList<Schedule>  result = new ArrayList<Schedule>();
-			ArrayList<Schedule>  mechanicScheduleList = new ArrayList<Schedule>();
-			HourlyEmployee mechanic = new HourlyEmployee();
-			
-			System.out.println("MEchanic first name"  + mechanicFirstName );
-			
-			System.out.println("MEchanic last name"  +  mechanicLastName);
-			
+			//HourlyEmployee mechanic = new HourlyEmployee();
+			Date currDate=nextDate;
 			if (mechanicFirstName != null && mechanicFirstName != "" && mechanicLastName != null && mechanicLastName != "")
 				try {
 				resultSet = statement.executeQuery("SELECT EID FROM EMPLOYEE WHERE FIRSTNAME = '" + mechanicFirstName
@@ -194,22 +183,33 @@ public class SchedulerHelper {
 				System.out.println("Unable to get the employee");
 			}
 			else if (mechanicFirstName != null && mechanicFirstName != ""
-					&& (mechanicLastName == null || mechanicLastName == ""))
+					&& (mechanicLastName == null || mechanicLastName == "")) {
 				resultSet = statement.executeQuery("SELECT EID FROM EMPLOYEE WHERE FIRSTNAME = '" + mechanicFirstName + "'");
 			
 			if (resultSet.next()) {
 
 				empId = Integer.parseInt(resultSet.getString("EID"));
-				mechanic.setEmpId(empId);
-				System.out.println("The employee id is " + empId);
 			}
-			
+			}
 			// Fetch employee based on only last name information
 			
-			if(empId!=0)
+			if(empId!=0) {
+			//	System.out.println("empId is enetered cond "+empId);
 				return getPreferredMechanicTimeSlot(empId,slotsRequired,serviceCenterId,nextDate);
-			
-			if(empId==0) {
+			}
+			else if(empId==0) {
+				
+				ArrayList<Integer> mechanicList = new ArrayList<Integer>();
+				if(serviceCenterId.isEmpty())
+					resultSet = statement.executeQuery("SELECT EID FROM EMPLOYEE WHERE ROLE = 'MECHANIC'");
+				else
+				resultSet = statement.executeQuery("SELECT EID FROM EMPLOYEE WHERE ROLE = 'MECHANIC' and SC_ID = '"+ serviceCenterId+"'");
+
+				while(resultSet.next()) {
+					int mechanicId=resultSet.getInt("EID");
+					mechanicList.add(mechanicId);
+					
+				}			
 				
 				final Calendar calendar = Calendar.getInstance();				
 				while(result.size()<2) {
@@ -221,27 +221,26 @@ public class SchedulerHelper {
 					int year = nextDate.getYear() + 1900;
 
 					String dateFormatted = nextDate.getDate() + "-" + month + "-" + year;			
-					System.out.println("The new format looks like" + HelperFunctions.translateBack(dateFormatted));
-					
 					resultSet = statement.executeQuery(
 							"SELECT APPOINTMENT_DATE FROM APPOINTMENT WHERE STATE='PENDING' AND APPOINTMENT_DATE = '" + HelperFunctions.translateBack(dateFormatted)+"'");
 					
 					
 					//If appointment is present on the next day
-				if(resultSet.next()) {
-					ArrayList<Integer> mechanicList = new ArrayList<Integer>();
-					resultSet = statement.executeQuery("SELECT EID FROM EMPLOYEE WHERE ROLE = 'MECHANIC'");
-
-					while(resultSet.next()) {
-						int mechanicId=resultSet.getInt("EID");
-						mechanicList.add(mechanicId);
-						
-					}
+				if(resultSet!=null && resultSet.next()) {
+				
+					ArrayList<Schedule>  mechanicScheduleList = new ArrayList<Schedule>();
 					//book mechanic who does not have any appointments
 					//return getPreferredMechanicTimeSlot(mechanicList.get(0),slotsRequired,serviceCenterId,nextDate);
-				
+					Date date;
+					if(result.size()==0)
+						date=currDate;
+					else {
+						calendar.setTime(currDate);
+						calendar.add(Calendar.DAY_OF_YEAR, 1);
+						date = calendar.getTime();
+					}
 					for( int i=0; i<mechanicList.size();i++ ) {
-						mechanicScheduleList.addAll(getPreferredMechanicTimeSlot(mechanicList.get(i),slotsRequired,serviceCenterId,nextDate));
+						mechanicScheduleList.addAll(getPreferredMechanicTimeSlot(mechanicList.get(i),slotsRequired,serviceCenterId,date));
 				}
 		
 					Collections.sort(mechanicScheduleList);
@@ -257,9 +256,8 @@ public class SchedulerHelper {
 					Schedule schedule =new Schedule();
 					schedule.setAvailableTimeSlot(firstTimeSlotList.get(0));
 					schedule.setDate(nextDate);
-					schedule.setMechanicId(empId);
+					schedule.setMechanicId(mechanicList.get(0));
 					result.add(schedule);
-					System.out.println("First appointment is booked on" + nextDate + firstTimeSlotList.get(0).getStartTime());
 				}
 				}
 				}
@@ -276,7 +274,6 @@ public class SchedulerHelper {
 			for(int i=0,j=0;i<timeSlotList.size()&& j<=numOfSlots ;i++){
 			
 				if(timeSlotList.get(i).getStartTime().equalsIgnoreCase(startTime)){
-					System.out.println("matchFound is "+matchFound);
 					matchFound=true;
 				}
 				if(matchFound==true)
@@ -285,9 +282,7 @@ public class SchedulerHelper {
 				}
 				if(j==numOfSlots)
 				{
-					System.out.println("Value of j is "+j);
 					endTime = timeSlotList.get(i).getEndTime();
-					System.out.println(endTime);
 					break;
 				}
 			}
@@ -303,24 +298,23 @@ public class SchedulerHelper {
 			licensePlateNumber = appointment.getVehicle().getLicense();
 			mileage = appointment.getVehicle().getCurrentMileage();
 		}
-		
-		System.out.println("DISPLAY SERVICE DATES");
-		
+		statement = DBFacade.getConnection().createStatement();
+		boolean isValidVehicle = HelperFunctions.validateCarDetails(customer,licensePlateNumber);
+		boolean isValidMechanic = SchedulerHelper.checkValidMechanic(appointment.getRequestedMechanicFirstName(),appointment.getRequestedMechanicLastName(),customer.getServiceCenterId());
+		if(isValidMechanic==false && !appointment.getRequestedMechanicFirstName().isEmpty())
+		{
+			appointment.setRequestedMechanicFirstName("");
+			appointment.setRequestedMechanicLastName("");
+			System.out.println("\n\t\tThe entered mechanic is not associated with this service center. \n\t\t We would schedule you with the mechanics working only at this service center.\n");
+		}
+		if(isValidVehicle) {
+			ReceptionistView.displayScheduleMaintenance2();
 		String serviceTobeScheduled = HelperFunctions.getServiceToBeScheduled(licensePlateNumber, mileage);   
-		System.out.println("DISPLAY SERVICE DATES: lastServiceName"+ serviceTobeScheduled);
-		int vehicleID = HelperFunctions.getVechileID(licensePlateNumber); 
-		System.out.println("DISPLAY SERVICE DATES vehicleID" + vehicleID);
-		
-				
-		
-		
+		int vehicleID = HelperFunctions.getVechileID(licensePlateNumber); 						
 		int partsavailability = HelperFunctions.checkPartAvailability(ApplicationConstants.MAINTENANCE, serviceTobeScheduled, licensePlateNumber,customer.getServiceCenterId());
-		System.out.println("Parts availability" +partsavailability );
 		if(partsavailability == 0) {
 		float duration= HelperFunctions.calculateServiceDuration(ApplicationConstants.MAINTENANCE, serviceTobeScheduled, licensePlateNumber);
-		System.out.println("DISPLAY SERVICE DATES duration" + duration);
 		numOfSlots = (int) Math.ceil((duration*60/30)); 
-		System.out.println("Number Of slots"+numOfSlots);
 		ArrayList<Schedule> scheduleList=new ArrayList<Schedule>();
 		Date nextDate = new Date();
 		scheduleList = SchedulerHelper.getTimeSlot(appointment.getRequestedMechanicFirstName(),appointment.getRequestedMechanicLastName(),numOfSlots,customer.getServiceCenterId(),nextDate);
@@ -332,7 +326,7 @@ public class SchedulerHelper {
 			TimeSlot t=schedule.getAvailableTimeSlot();
 			String mechanicName = SchedulerHelper.getEmployeeName(schedule.getMechanicId()); 
 			Date date = schedule.getDate();
-			System.out.println("\t\t " + SchedulerHelper.datetoString(date) + " : " + t.getStartTime() + "\tMechanic Name: " +  mechanicName);
+			System.out.println("\t\t " + SchedulerHelper.datetoString(date) + " : " + t.getStartTime() + "|\t\tMechanic Name: " +  mechanicName);
 		}
 		System.out.println("\t\t**************************************************\t\t");
 		System.out.println("\nPlease select from the following user options:");
@@ -376,7 +370,6 @@ public class SchedulerHelper {
 				appindex = resultSet.getInt( "NEXTVAL" );
 			}
 			String mechanicName = SchedulerHelper.getEmployeeName(scheduleList.get(counter).getMechanicId());
-			System.out.println(customer.getCustomerId());
 			statement.executeUpdate( "INSERT INTO APPOINTMENT VALUES ('" + appindex +"', '" + customer.getCustomerId() + "', '" + appointment.getVehicle().getLicense() + "', '" + 
 									 SchedulerHelper.datetoString(scheduleList.get(counter).getDate()) + "', '" + mechanicName + "', '"+ ApplicationConstants.MAINTENANCE +"', '"+ ApplicationConstants.PENDING + "' , '" + serviceTobeScheduled + "' , '"  + scheduleList.get(counter).getMechanicId()+  "')");					
 			
@@ -392,7 +385,7 @@ public class SchedulerHelper {
 			String startTime = scheduleList.get(counter).getAvailableTimeSlot().getStartTime() ;
 			
 			String endTime  = SchedulerHelper.searchEndSlot(startTime,numOfSlots);
-			System.out.println("End time is "+ endTime);
+			
 			
 			int res = statement.executeUpdate( "INSERT INTO TIME_SLOT VALUES ('" + index +"', '" + appindex + "', '" + scheduleList.get(counter).getMechanicId() + "', '" + 
 					startTime + "', '" + endTime + "')");		
@@ -408,6 +401,11 @@ public class SchedulerHelper {
 		
 		else {
 			System.out.println("\t The parts required for the service are currently not availabile. Please try scheduling after " + partsavailability + " days.\t\n Sorry for inconvenience. \n-------------------------------------------------------------------------------------------------------------------------------------");
+			
+		}
+		}
+		else {
+			System.out.println("\t\t******The entered car details could not be found registered in your name. Please re-enter your car details registered with ACME.******\n\n");
 			
 		}
 	}

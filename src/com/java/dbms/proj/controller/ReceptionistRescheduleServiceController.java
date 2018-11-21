@@ -39,21 +39,21 @@ public class ReceptionistRescheduleServiceController {
 		}while(inputString.equals("")|| inputString.equals(null));
 		customer.setEmail(inputString);
 		try {
-			resultSet = statement.executeQuery("SELECT * FROM CUSTOMER WHERE EMAIL = '" + customer.getEmail()+ "'");
-					//+ "' AND SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "'");
+			resultSet = statement.executeQuery("SELECT * FROM CUSTOMER WHERE EMAIL = '" + customer.getEmail()+ 
+					 "' AND SC_ID = '" + ApplicationController.employee.getServiceCenterId() + "'");
 
 			if (resultSet.next()) {
 				System.out.println("Hello"+customer.getCustomerId());
 				if (resultSet.getString("CID") != null && resultSet.getString("CID") != "")
 					customer.setCustomerId(resultSet.getInt("CID"));
-				System.out.println(customer.getCustomerId());
+				
 				if (resultSet.getString("SC_ID") != null && resultSet.getString("SC_ID") != "")
 					customer.setServiceCenterId(resultSet.getString("SC_ID"));
 			
 			}
 			
 			else {
-				System.out.println("\n\tCustomer email \"" + inputString + "\" is not associated with this service center.\n");
+				System.out.println("\n\tCustomer email \"" + customer.getEmail() + "\" is not associated with this service center.\n");
 				return;
 			}
 		} catch (SQLException e) {
@@ -96,16 +96,9 @@ public class ReceptionistRescheduleServiceController {
 					vehicle.setLicense(resultSet.getString("VEHICLE_LICENSE").trim());
 					vehicle.setVid(HelperFunctions.getVechileID(vehicle.getLicense()));
 					
-					System.out.println("getServiceType"+appointment.getServiceType());
-					System.out.println("getServiceID"+appointment.getServiceID());
-					System.out.println("getLicense"+vehicle.getLicense());
-					System.out.println("getApp Date"+appointment.getAppointmentDate());
-			
-					
+				
 					float duration= HelperFunctions.calculateServiceDuration(appointment.getServiceType(), appointment.getServiceID(), vehicle.getLicense());
-					System.out.println("DISPLAY SERVICE DATES duration" + duration);
 					int numOfSlots = (int) Math.ceil((duration*60/30)); 
-					System.out.println("Number Of slots"+numOfSlots);
 					ArrayList<Schedule> scheduleList=new ArrayList<Schedule>();
 					
 					SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
@@ -169,12 +162,8 @@ public class ReceptionistRescheduleServiceController {
 							System.out.println( "System Query Error : " + e );
 							e.printStackTrace();
 						}
-						System.out.println("tuples"+tuples);
 						String startTime = scheduleList.get(counter).getAvailableTimeSlot().getStartTime() ;
 						String endTime  = SchedulerHelper.searchEndSlot(startTime,numOfSlots);
-						System.out.println("Start time is "+ startTime);
-						System.out.println("End time is "+ endTime);
-						System.out.println("End numOfSlots is "+ numOfSlots);
 						
 						try {
 							 tuples= statement.executeUpdate("UPDATE TIME_SLOT SET START_TIME = '" + startTime +

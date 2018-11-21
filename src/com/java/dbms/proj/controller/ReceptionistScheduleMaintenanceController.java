@@ -22,7 +22,7 @@ public class ReceptionistScheduleMaintenanceController {
 		}while(!userInput.equals("1") && !userInput.equals("2"));
 		
 		if(userInput.equals("1")) {
-			ReceptionistView.displayScheduleMaintenance2(); //Display next page header
+			 //Display next page header
 			
 			SchedulerHelper.scheduleMaintenance(ReceptionistScheduleServiceController.customer, ReceptionistScheduleServiceController.appointment, input);
 		}

@@ -60,21 +60,15 @@ public class CustomerRescheduleServiceController {
 				vehicle.setLicense(resultSet.getString("VEHICLE_LICENSE").trim());
 				vehicle.setVid(HelperFunctions.getVechileID(vehicle.getLicense()));
 				
-				System.out.println("getServiceType"+appointment.getServiceType());
-				System.out.println("getServiceID"+appointment.getServiceID());
-				System.out.println("getLicense"+vehicle.getLicense());
-				System.out.println("getApp Date"+appointment.getAppointmentDate());
-		
-				
+						
 				float duration= HelperFunctions.calculateServiceDuration(appointment.getServiceType(), appointment.getServiceID(), vehicle.getLicense());
-				System.out.println("DISPLAY SERVICE DATES duration" + duration);
 				int numOfSlots = (int) Math.ceil((duration*60/30)); 
-				System.out.println("Number Of slots"+numOfSlots);
+				
 				ArrayList<Schedule> scheduleList=new ArrayList<Schedule>();
 				
 				SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
 				Date nextDate = sdf.parse(appointment.getAppointmentDate());
-				System.out.println("The formatted appointment date is "+ nextDate);
+				
 				scheduleList = SchedulerHelper.getTimeSlot(appointment.getRequestedMechanicFirstName(),appointment.getRequestedMechanicLastName(),numOfSlots,customer.getServiceCenterId(),nextDate);
 				System.out.println("\n\t\t***********Available Time Slots Details***********");
 				for(int i=0;i<scheduleList.size();i++)
@@ -122,7 +116,6 @@ public class CustomerRescheduleServiceController {
 					
 					 mechanicName = SchedulerHelper.getEmployeeName(scheduleList.get(counter).getMechanicId());
 					 int tuples=0;
-					 System.out.println("appointment.getAppointmentID()"+appointment.getAppointmentID());
 					try {
 						 tuples= statement.executeUpdate("UPDATE APPOINTMENT SET APPOINTMENT_DATE = '" + SchedulerHelper.datetoString(scheduleList.get(counter).getDate()) +
 								 "' , REQUESTED_MECHANIC = '"+ mechanicName +    "' , MECHANIC_ID = '"   + scheduleList.get(counter).getMechanicId() 
@@ -136,9 +129,6 @@ public class CustomerRescheduleServiceController {
 					System.out.println("tuples"+tuples);
 					String startTime = scheduleList.get(counter).getAvailableTimeSlot().getStartTime() ;
 					String endTime  = SchedulerHelper.searchEndSlot(startTime,numOfSlots);
-					System.out.println("Start time is "+ startTime);
-					System.out.println("End time is "+ endTime);
-					System.out.println("End numOfSlots is "+ numOfSlots);
 					
 					try {
 						 tuples= statement.executeUpdate("UPDATE TIME_SLOT SET START_TIME = '" + startTime +

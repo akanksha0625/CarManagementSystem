@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import com.java.dbms.proj.entities.Appointment;
 import com.java.dbms.proj.entities.Customer;
 import com.java.dbms.proj.entities.Part;
 import com.java.dbms.proj.entities.PayCheck;
@@ -294,7 +295,7 @@ public class HelperFunctions {
 		String lastServiceName = "";
 		String lastServiceType = "";
 		String serviceTobeScheduled = "";
-		// int mileage=0;
+		 int mileagePast=0;
 
 		statement = DBFacade.getConnection().createStatement();
 
@@ -309,13 +310,13 @@ public class HelperFunctions {
 
 		if (resultSet.next()) {
 			lastServiceName = resultSet.getString("LAST_MAINTENANCE_TYPE");
-			// mileage = resultSet.getInt("CURRENT_MILEAGE");
+			mileagePast = resultSet.getInt("CURRENT_MILEAGE");
 		}
-
+		
 		if (lastServiceName == null || lastServiceName.equals("")) {
-			if (mileage < 10000)
+			if (mileage-mileagePast < 10000)
 				serviceTobeScheduled = ApplicationConstants.SERVICEA;
-			else if (mileage < 250000)
+			else if (mileage-mileagePast < 250000)
 				serviceTobeScheduled = ApplicationConstants.SERVICEB;
 			else
 				serviceTobeScheduled = ApplicationConstants.SERVICEC;
@@ -351,7 +352,23 @@ public class HelperFunctions {
 		return vid;
 	}
 
-
+	public static String getMake(String vehicleLicenseNumber) throws SQLException {
+		String make = "";
+		statement = DBFacade.getConnection().createStatement();
+		try {
+			resultSet = statement
+					.executeQuery("SELECT VT.MAKE FROM VEHICLE_TYPE VT,VEHICLE V WHERE VT.VID = V.VID and V.LICENSE = '" + vehicleLicenseNumber + "'");
+			if (resultSet.next()) {
+				/* Find Customer Appointment */
+				make = resultSet.getString("MAKE");
+			} else {
+				System.out.println("There is no vehicle associated with the given car.");
+			}
+		} catch (SQLException e) {
+			System.out.println("Unable to access the Vehicle Table : " + e.getMessage());
+		}
+		return make;
+	}
 	
 	
 
@@ -360,7 +377,6 @@ public class HelperFunctions {
 		float timeDuration = 0;
 		statement = DBFacade.getConnection().createStatement();
 		ArrayList<Integer> childServiceList = getChildServiceList(serviceName, serviceType, licenseNumber);
-		System.out.println("child service size"+childServiceList.size());
 		for (int i = 0; i < childServiceList.size(); i++) {
 			resultSet = statement.executeQuery("SELECT TIME_REQUIRED,PART_ID FROM SERVICE_DETAILS WHERE SERVICE_ID = '"
 					+ childServiceList.get(i) + "'");
@@ -382,19 +398,14 @@ public class HelperFunctions {
 		try {
 
 			Date current = formatter1.parse(currentDate + ", " + currentTime);
-			System.out.println("CURRENT : " + current);
+			
 			Date possible = formatter1.parse(possibleDate + ", " + possibleTime);
-			System.out.println("POSSIBLE : " + possible);
+			
 
-			if (current.compareTo(possible) > 0) {
-				System.out.println("CURRENT is after POSSIBLE");
+			if (current.compareTo(possible) > 0) 
 				return false;
-			} else if (current.compareTo(possible) < 0) {
-				System.out.println("CURRENT is before POSSIBLE");
+			else if (current.compareTo(possible) < 0) 
 				return true;
-			} else if (current.compareTo(possible) == 0) {
-				System.out.println("CURRENT is equal to POSSIBLE");
-			}
 		} catch (ParseException e) {
 			System.out.println("Unable to Parse Date");
 		}
@@ -452,7 +463,7 @@ public class HelperFunctions {
 
 		if ((startCal.get(Calendar.MONTH) == endCal.get(Calendar.MONTH) + 1)
 				&& (startCal.get(Calendar.YEAR) == endCal.get(Calendar.YEAR))) {
-			System.out.println("CURRENT MONTH CHECK");
+			
 			endCal.add(Calendar.DAY_OF_MONTH, current.get(Calendar.DAY_OF_MONTH) - 1);
 		} else {
 			endCal.add(Calendar.DAY_OF_MONTH, (endCal.getActualMaximum(Calendar.DAY_OF_MONTH) + 1) - day);
@@ -496,29 +507,32 @@ public class HelperFunctions {
 			throws SQLException {
 		ArrayList<Integer> partIDList = new ArrayList<Integer>();
 		ArrayList<Integer> childServiceList = getChildServiceList(serviceName, serviceType, licenseNumber);
+		int vehicleId=getVechileID(licenseNumber);
 		HashMap<Integer, Integer> requiredPartList = new HashMap<Integer, Integer>();
 		statement = DBFacade.getConnection().createStatement();
 		for (int i = 0; i < childServiceList.size(); i++) {
 			resultSet = statement.executeQuery(
 					"SELECT PART_ID FROM SERVICE_DETAILS WHERE SERVICE_ID = '" + childServiceList.get(i) + "'");
-			System.out.println("Inside childServiceList");
+			
 			while (resultSet.next()) {
 				int partID = 0;
 				partID = Integer.parseInt(resultSet.getString("PART_ID"));
-				System.out.println("Required Part id:" + partID);
 				partIDList.add(partID);
 			}
+		}
+		
+		String serviceList = ""+ childServiceList.get(0);
+		for (int i=1; i< childServiceList.size();i++) {
+			serviceList = serviceList+","+childServiceList.get(i);
 		}
 
 		for (int index = 0; index < partIDList.size(); index++) {
 			resultSet = statement.executeQuery(
-					"SELECT QUANTITY FROM PARTS_QUANTITY WHERE PART_ID = '" + partIDList.get(index) + "'");
-			System.out.println("Inside Calculate parts quantity");
-
+					"SELECT QUANTITY FROM PARTS_QUANTITY WHERE PART_ID = '" + partIDList.get(index) + "' and VID='"+ vehicleId+"'and SERVICE_ID IN (" + serviceList + ")");
+			
 			while (resultSet.next()) {
 				int quantity = Integer.parseInt(resultSet.getString("QUANTITY"));
 				requiredPartList.put(partIDList.get(index), quantity);
-				System.out.println("Part id:" + partIDList.get(index) + ":" + quantity);
 			}
 
 		}
@@ -531,12 +545,13 @@ public class HelperFunctions {
 			throws NumberFormatException, SQLException {
 		int numOfDays  = 0;
 		boolean partsAvailable = true;
+		String make=getMake(licenseNumber);
 		statement = DBFacade.getConnection().createStatement();
 		HashMap<Integer, Integer> requiredPartList = getPartList(serviceName, serviceType, licenseNumber);
 		for (int index : requiredPartList.keySet()) {
 
 			resultSet = statement
-					.executeQuery("SELECT CURRENT_QUANTITY FROM ACME_INVENTORY WHERE PART_ID = '" + index + "'");
+					.executeQuery("SELECT CURRENT_QUANTITY FROM ACME_INVENTORY WHERE PART_ID = '" + index + "' and SC_ID = '"+serviceCenterId+"' and MAKE = '"+  make +"'");
 
 			while (resultSet.next()) {
 				int quantity = Integer.parseInt(resultSet.getString("CURRENT_QUANTITY"));
@@ -553,7 +568,7 @@ public class HelperFunctions {
 	
 	public static int calculateDeliveryWindowForParts(HashMap<Integer,Integer> partIdList, String serviceCenterId) throws SQLException {
 		
-		Statement statement = DBFacade.getConnection().createStatement();
+		 statement = DBFacade.getConnection().createStatement();
 		ResultSet inventoryResult;
 
 		int minOrderThreshold =0;
@@ -605,11 +620,9 @@ public class HelperFunctions {
 			throws SQLException {
 		int vechicleId = 0;
 		statement = DBFacade.getConnection().createStatement();
-		System.out.print("Entered child service method"+serviceName+",");
 		ArrayList<Integer> childServiceList = new ArrayList<Integer>();
 		if (ApplicationConstants.MAINTENANCE.equalsIgnoreCase(serviceName)) {
 			
-			System.out.println("Entered Maintenance");
 			vechicleId = getVechileID(licenseNumber);
 			if (vechicleId != 0) {
 			
@@ -635,7 +648,6 @@ public class HelperFunctions {
 			}
 		}
 		else if(ApplicationConstants.REPAIR.equalsIgnoreCase(serviceName)) {
-			System.out.println("Entered Repair");
 			resultSet = statement.executeQuery("SELECT REQUIRED_SERVICE_ID FROM REPAIR_SERVICE_MAPPING where RID = '" + serviceType + "'");
 			while(resultSet.next()) {
 				childServiceList.add(resultSet.getInt("REQUIRED_SERVICE_ID"));
@@ -682,13 +694,11 @@ public class HelperFunctions {
 			
 			for (int i = 0; i < subServicesId.size(); i++) {
 				resultSet = statement.executeQuery(
-						"SELECT P.PART_ID,P.PART_NAME FROM SERVICE_DETAILS S ,PARTS P WHERE P.PART_ID = S.PART_ID and SERVICE_ID = '" + subServicesId.get(i) + "'");
-				System.out.println("Inside childServiceList");
+						"SELECT DISTINCT P.PART_ID,P.PART_NAME FROM SERVICE_DETAILS S ,PARTS P WHERE P.PART_ID = S.PART_ID and SERVICE_ID = '" + subServicesId.get(i) + "'");
 				while (resultSet.next()) {
 					Part part=new Part();
 					part.setPartID(Integer.parseInt(resultSet.getString("PART_ID")));
 					part.setPartName(resultSet.getString("PART_NAME"));
-					System.out.println(part.getPartID()+"," + part.getPartName());
 					partList.add(part);
 				}
 			}

@@ -31,11 +31,20 @@ public class Schedule implements Comparable<Schedule>{
 	}
 	@Override
 	public int compareTo(Schedule other) {
+		if(this.getDate().compareTo(other.getDate())==0) {
 		if(this.getAvailableTimeSlot().getSlotID()>other.getAvailableTimeSlot().getSlotID())
 		return 1;
 		else if(this.getAvailableTimeSlot().getSlotID()<other.getAvailableTimeSlot().getSlotID())
 			return -1;
 		return 0;
+		}
+		else if(this.getDate().compareTo(other.getDate())>=1)
+			return 1;
+		return -1;
+		
+	}
+	public String toString() {
+		return "mechanicId:"+mechanicId+"availableTimeSlot"+availableTimeSlot.getStartTime();
 	}
 	
 }
