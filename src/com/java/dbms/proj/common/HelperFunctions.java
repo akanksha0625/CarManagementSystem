@@ -695,5 +695,41 @@ public class HelperFunctions {
 			return partList;	
 }
 	
+	public static void updateAppointmentStatus() throws SQLException {
+		statement = DBFacade.getConnection().createStatement();
+		ArrayList<Appointment> appointmentList = new ArrayList<Appointment>();
+		
+		try {
+			resultSet = statement.executeQuery("SELECT * FROM APPOINTMENT WHERE STATE = 'PENDING'");
+			
+			while(resultSet.next()) {
+				if(true) {
+					Appointment appointment = new Appointment();
+
+					appointment.setAppointmentID(Integer.parseInt(resultSet.getString("APPOINTMENT_ID")));
+					appointment.setVehicleLicense(resultSet.getString("VEHICLE_LICENSE"));
+					appointment.setServiceType(resultSet.getString("SERVICE_TYPE"));
+					appointment.setServiceID(resultSet.getString("SERVICE_TYPE_ID"));
+					
+					appointmentList.add(appointment);					
+				}
+				
+			}
+			
+			int tuples = 0;
+			for(int i = 0; i < appointmentList.size(); i++) {		
+				 tuples = statement.executeUpdate( "UPDATE APPOINTMENT SET STATE = 'COMPLETE' WHERE APPOINTMENT_ID = " + appointmentList.get(i).getAppointmentID() );
+			}
+			
+			for(int i = 0; i < appointmentList.size(); i++) {		
+				 tuples = statement.executeUpdate( "UPDATE VEHICLE SET LAST_SERVICE_TYPE = '" + appointmentList.get(i).getServiceType() + "', LAST_MAINTENANCE_TYPE = '" + appointmentList.get(i).getServiceID() + "' WHERE LICENSE = '" + appointmentList.get(i).getVehicleLicense() + "'" );
+			}			
+		} catch (SQLException e) {
+			System.out.println(	"Query failed : " + e.getMessage());
+		}
+		System.out.println(	"Updating appointments complete");
+
+	}
+		
 	
 }

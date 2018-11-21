@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.Scanner;
 
 import com.java.dbms.proj.common.DBFacade;
+import com.java.dbms.proj.common.HelperFunctions;
 
 public class ManagerInventoryController {
 	public static void displayInventory( Scanner input )  throws ClassNotFoundException, SQLException {
@@ -13,7 +14,8 @@ public class ManagerInventoryController {
 		Statement statement = DBFacade.getConnection().createStatement();
 		ResultSet resultSet;
 		
-		try {
+		try {	
+			
 			/* Get inventory details */
 			resultSet = statement.executeQuery("SELECT * FROM ACME_INVENTORY WHERE SC_ID = '"+ ApplicationController.employee.getServiceCenterId() + 	"'");
 			

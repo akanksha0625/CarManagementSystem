@@ -112,7 +112,7 @@ public class ManagerNewOrderController {
 				String dateFormatted2 = date.getDate()+"-"+ month +"-" + year;
 				dateFormatted2 = HelperFunctions.translateBack(dateFormatted2);
 			    
-				int tuples = statement.executeUpdate( "INSERT INTO PURCHASE_ORDER VALUES ('" + sourceId + "', '" + orderDeliverySource + "',"+ partId + ", '"+ dateFormatted2 +"',"+ quantity +", " + index + ", 'PENDING' , '" + scId + "', 'PENDING' , " + make + " )" );
+				int tuples = statement.executeUpdate( "INSERT INTO PURCHASE_ORDER VALUES ('" + sourceId + "', '" + orderDeliverySource + "',"+ partId + ", '"+ dateFormatted2 +"',"+ quantity +", " + index + ", 'PENDING' , '" + scId + "', 'PENDING' , '" + make + "' )" );
 				if ( tuples != 1 ) {
 					System.out.println ( "Unable to place order Table." );
 				} else {

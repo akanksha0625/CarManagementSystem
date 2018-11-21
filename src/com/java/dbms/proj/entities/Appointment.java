@@ -6,6 +6,18 @@ public class Appointment {
 	String requestedMechanicFirstName;
 	String requestedMechanicLastName;
 	int mechanicId;
+	String serviceName;
+	String vehicleLicense;
+
+	
+	public String getVehicleLicense() {
+		return vehicleLicense;
+	}
+	public void setVehicleLicense(String vehicleLicense) {
+		this.vehicleLicense = vehicleLicense;
+	}
+	
+	
 	public int getMechanicId() {
 		return mechanicId;
 	}
@@ -69,4 +81,12 @@ public class Appointment {
 	public void setServiceID(String serviceID) {
 		this.serviceID = serviceID;
 	}
+	
+	public String getServiceName() {
+		return serviceName;
+	}
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
+	
 }
